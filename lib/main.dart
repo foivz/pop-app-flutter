@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'register.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
             seedColor: const Color.fromRGBO(225, 25, 60, 1)),
         useMaterial3: true,
       ),
-      home: const Text("Start here"),
+      home: RegisterScreen(),
     );
   }
 }
