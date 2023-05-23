@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:flutter/material.dart';
 import 'package:pop_app/myconstants.dart';
 
@@ -40,69 +42,70 @@ class _LoginHomepageState extends State<LoginHomepage> {
                   alignment: Alignment.topLeft,
                   color: MyConstants.textfieldBackground,
                   width: MyConstants.textFieldWidth,
-                  padding: const EdgeInsets.fromLTRB(15, 10, 10, 10),
-                  child: Stack(children: [
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      heightFactor: _evaluate(isUserFocused, usernameController) ? 1.25 : 0.75,
-                      child: Text(
-                        'Username',
-                        style: TextStyle(
-                          color: _color(isUserFocused),
-                          fontSize: _evaluate(isUserFocused, usernameController) ? 20 : 10,
+                  padding: const EdgeInsets.fromLTRB(15, 0, 10, 10),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+                        (states) => const TextStyle(color: MyConstants.accentColor),
+                      ),
+                      labelStyle: MaterialStateTextStyle.resolveWith(
+                        (states) => TextStyle(
+                          color: MyConstants.red,
+                          fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
                         ),
-                        textAlign: !isUserFocused ? TextAlign.center : TextAlign.left,
                       ),
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.fromLTRB(0, 15, 5, 5),
-                        suffixIcon: usernameController.text.isNotEmpty || isUserFocused
-                            ? IconButton(
-                                icon: const Icon(Icons.cancel),
-                                onPressed: () => setState(() {
-                                  usernameController.clear();
-                                }),
-                              )
-                            : null,
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: MyConstants.accentColor),
                       ),
-                      controller: usernameController,
-                      validator: (value) {
-                        return value == null || value.isEmpty
-                            ? 'Please enter a valid username'
-                            : null;
-                      },
-                      onTap: () {
-                        setState(() {
-                          isUserFocused = true;
-                          isPasswordFocused = false;
-                        });
-                      },
+                      contentPadding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
+                      suffixIcon: usernameController.text.isNotEmpty || isUserFocused
+                          ? IconButton(
+                              icon: const Icon(Icons.cancel),
+                              onPressed: () => setState(() {
+                                usernameController.clear();
+                              }),
+                            )
+                          : null,
                     ),
-                  ]),
+                    controller: usernameController,
+                    validator: (value) {
+                      return value == null || value.isEmpty
+                          ? 'Please enter a valid username'
+                          : null;
+                    },
+                    onTap: () {
+                      setState(() {
+                        isUserFocused = true;
+                        isPasswordFocused = false;
+                      });
+                    },
+                  ),
                 ),
                 const SizedBox(height: MyConstants.formInputSpacer),
                 Container(
                   alignment: Alignment.topLeft,
                   color: MyConstants.textfieldBackground,
                   width: 300,
-                  padding: const EdgeInsets.fromLTRB(15, 10, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(15, 0, 10, 10),
                   child: Stack(children: [
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      heightFactor: _evaluate(isPasswordFocused, passwordController) ? 1.25 : 0.75,
-                      child: Text(
-                        'Password',
-                        style: TextStyle(
-                          color: _color(isPasswordFocused),
-                          fontSize: _evaluate(isPasswordFocused, passwordController) ? 20 : 10,
-                        ),
-                        textAlign: !isPasswordFocused ? TextAlign.center : TextAlign.left,
-                      ),
-                    ),
                     TextFormField(
+                      obscureText: true,
                       decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.fromLTRB(0, 15, 5, 5),
+                        labelText: 'Password',
+                        floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+                          (states) => const TextStyle(color: MyConstants.accentColor),
+                        ),
+                        labelStyle: MaterialStateTextStyle.resolveWith(
+                          (states) => TextStyle(
+                            color: MyConstants.red,
+                            fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
+                          ),
+                        ),
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: MyConstants.accentColor),
+                        ),
+                        contentPadding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
                         suffixIcon: passwordController.text.isNotEmpty || isPasswordFocused
                             ? IconButton(
                                 icon: const Icon(Icons.cancel),
@@ -136,9 +139,7 @@ class _LoginHomepageState extends State<LoginHomepage> {
                     shape: MaterialStateProperty.all<OutlinedBorder>(
                       RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                     ),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                      MyConstants.red,
-                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(MyConstants.red),
                     overlayColor: MaterialStateProperty.all<Color>(MyConstants.accentColor),
                   ),
                   onPressed: () {},
