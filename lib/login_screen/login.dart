@@ -6,7 +6,7 @@ import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
 import 'package:pop_app/myconstants.dart';
 
-import '../register.dart';
+import '../register_screen/register.dart';
 
 class LoginHomepage extends StatefulWidget {
   const LoginHomepage({super.key});

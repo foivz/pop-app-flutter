@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'register.dart';
 import 'package:pop_app/login_screen/login.dart';
 import 'package:pop_app/myconstants.dart';
 
