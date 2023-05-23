@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pop_app/login_screen/login.dart';
+import 'package:pop_app/myconstants.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,14 +12,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Pop app',
       theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          color: MyConstants.red,
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
+          ),
+        ),
         colorScheme: ColorScheme.fromSeed(
-            primary: const Color.fromRGBO(225, 25, 60, 1),
-            seedColor: const Color.fromRGBO(225, 25, 60, 1)),
+          primary: MyConstants.red,
+          seedColor: MyConstants.red,
+        ),
         useMaterial3: true,
       ),
-      home: const Text("Start here"),
+      home: const LoginHomepage(),
     );
   }
 }
