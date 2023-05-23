@@ -6,6 +6,8 @@ import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
 import 'package:pop_app/myconstants.dart';
 
+import '../register.dart';
+
 class LoginHomepage extends StatefulWidget {
   const LoginHomepage({super.key});
   @override
@@ -55,9 +57,10 @@ class _LoginHomepageState extends State<LoginHomepage> {
                 const SizedBox(height: MyConstants.formInputSpacer / 2),
                 FormSubmitButton(
                   buttonText: 'Register',
-                  onPressed: () {
-                    print("Willing to register as user ${usernameController.text}");
-                  },
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegisterScreen())),
                   type: FormSubmitButtonType.RED_OUTLINE,
                 ),
               ],
