@@ -1,97 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
+import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
+import 'package:pop_app/myconstants.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  TextEditingController nameController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
   TextEditingController surnameController = TextEditingController();
-  bool isNameFocused = false;
-  bool isSurnameFocused = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register yourself'),
+        title: const Text('Register yourself'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      body: Form(
+        key: _formKey,
+        child: Center(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 50),
-              AnimatedContainer(
-                duration: Duration(milliseconds: 200),
-                margin: EdgeInsets.only(
-                  top: isNameFocused || nameController.text.isNotEmpty ? 0 : 24,
-                ),
-                child: const Text(
-                  'Name',
-                  style: TextStyle(
-                    color: Color.fromRGBO(223, 24, 60, 1),
-                  ),
-                ),
+              CustomTextFormField(
+                inputLabel: "First Name",
+                textEditingController: firstNameController,
+                autoFocus: true,
               ),
-              TextField(
-                controller: nameController,
-                onTap: () {
-                  setState(() {
-                    isNameFocused = true;
-                    isSurnameFocused = false;
-                  });
-                },
+              const SizedBox(height: MyConstants.formInputSpacer),
+              CustomTextFormField(
+                inputLabel: "Surname",
+                textEditingController: surnameController,
+                obscureText: true,
               ),
-              const SizedBox(height: 20),
-              AnimatedContainer(
-                duration: Duration(milliseconds: 200),
-                margin: EdgeInsets.only(
-                  top: isSurnameFocused || surnameController.text.isNotEmpty
-                      ? 0
-                      : 24,
-                ),
-                child: const Text(
-                  'Surname',
-                  style: TextStyle(
-                    color: Color.fromRGBO(223, 24, 60, 1),
-                  ),
-                ),
-              ),
-              TextField(
-                controller: surnameController,
-                onTap: () {
-                  setState(() {
-                    isSurnameFocused = true;
-                    isNameFocused = false;
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  String name = nameController.text;
-                  String surname = surnameController.text;
-                  print('Name: $name');
-                  print('Surname: $surname');
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Colors.transparent,
-                  ),
-                  elevation: MaterialStateProperty.all<double>(0),
-                  overlayColor: MaterialStateProperty.all<Color>(
-                    Color.fromRGBO(223, 24, 60, 0.2),
-                  ),
-                ),
-                child: const Text(
-                  'Next',
-                  style: TextStyle(
-                    color: Color.fromRGBO(223, 24, 60, 1),
-                  ),
-                ),
+              const SizedBox(height: MyConstants.formInputSpacer * 1.5),
+              FormSubmitButton(
+                buttonText: 'Next',
+                onPressed: () => {},
+                type: FormSubmitButtonType.RED_FILL,
               ),
             ],
           ),
