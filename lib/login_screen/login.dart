@@ -1,6 +1,9 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
+import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
+import 'package:pop_app/login_screen/linewithtext_widget.dart';
 import 'package:pop_app/myconstants.dart';
 
 class LoginHomepage extends StatefulWidget {
@@ -13,16 +16,6 @@ class _LoginHomepageState extends State<LoginHomepage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  bool isUserFocused = false;
-  bool isPasswordFocused = false;
-
-  void setFocused(bool usernameFocusedState, passwordFocusedState) {
-    setState(() {
-      isUserFocused = usernameFocusedState;
-      isPasswordFocused = passwordFocusedState;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,165 +31,34 @@ class _LoginHomepageState extends State<LoginHomepage> {
             child: Column(
               children: [
                 const Center(), // centers the widgets after it, do not remove
-                Container(
-                  alignment: Alignment.topLeft,
-                  color: MyConstants.textfieldBackground,
-                  width: MyConstants.textFieldWidth,
-                  padding: const EdgeInsets.fromLTRB(15, 0, 10, 10),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      floatingLabelStyle: MaterialStateTextStyle.resolveWith(
-                        (states) => const TextStyle(color: MyConstants.accentColor),
-                      ),
-                      labelStyle: MaterialStateTextStyle.resolveWith(
-                        (states) => TextStyle(
-                          color: MyConstants.red,
-                          fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
-                        ),
-                      ),
-                      focusedBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: MyConstants.accentColor),
-                      ),
-                      contentPadding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                      suffixIcon: usernameController.text.isNotEmpty || isUserFocused
-                          ? IconButton(
-                              icon: const Icon(Icons.cancel),
-                              onPressed: () => setState(() {
-                                usernameController.clear();
-                              }),
-                            )
-                          : null,
-                    ),
-                    controller: usernameController,
-                    validator: (value) {
-                      return value == null || value.isEmpty
-                          ? 'Please enter a valid username'
-                          : null;
-                    },
-                    onTap: () {
-                      setState(() {
-                        isUserFocused = true;
-                        isPasswordFocused = false;
-                      });
-                    },
-                  ),
+                CustomTextFormField(
+                  inputLabel: "Username",
+                  textEditingController: usernameController,
+                  autoFocus: true,
                 ),
                 const SizedBox(height: MyConstants.formInputSpacer),
-                Container(
-                  alignment: Alignment.topLeft,
-                  color: MyConstants.textfieldBackground,
-                  width: 300,
-                  padding: const EdgeInsets.fromLTRB(15, 0, 10, 10),
-                  child: Stack(children: [
-                    TextFormField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        floatingLabelStyle: MaterialStateTextStyle.resolveWith(
-                          (states) => const TextStyle(color: MyConstants.accentColor),
-                        ),
-                        labelStyle: MaterialStateTextStyle.resolveWith(
-                          (states) => TextStyle(
-                            color: MyConstants.red,
-                            fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: MyConstants.accentColor),
-                        ),
-                        contentPadding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                        suffixIcon: passwordController.text.isNotEmpty || isPasswordFocused
-                            ? IconButton(
-                                icon: const Icon(Icons.cancel),
-                                onPressed: () => setState(() {
-                                  passwordController.clear();
-                                }),
-                              )
-                            : null,
-                      ),
-                      controller: passwordController,
-                      validator: (value) {
-                        return value == null || value.isEmpty
-                            ? 'Please enter a valid password'
-                            : null;
-                      },
-                      onTap: () {
-                        setState(() {
-                          isPasswordFocused = true;
-                          isUserFocused = false;
-                        });
-                      },
-                    ),
-                  ]),
+                CustomTextFormField(
+                  inputLabel: "Password",
+                  textEditingController: passwordController,
+                  obscureText: true,
                 ),
                 const SizedBox(height: MyConstants.formInputSpacer),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    fixedSize: MaterialStateProperty.all<Size>(
-                      const Size(MyConstants.textFieldWidth, MyConstants.submitButtonHeight),
-                    ),
-                    shape: MaterialStateProperty.all<OutlinedBorder>(
-                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                    ),
-                    backgroundColor: MaterialStateProperty.all<Color>(MyConstants.red),
-                    overlayColor: MaterialStateProperty.all<Color>(MyConstants.accentColor),
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    'Login',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
-                    ),
-                  ),
+                FormSubmitButton(
+                  buttonText: 'Login',
+                  onPressed: () {
+                    print("Logging in as user ${usernameController.text}");
+                  },
+                  type: FormSubmitButtonType.RED_FILL,
                 ),
                 const SizedBox(height: MyConstants.formInputSpacer / 2),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: MyConstants.textFieldWidth / 2,
-                      height: 1,
-                      decoration: const BoxDecoration(
-                        color: Colors.black,
-                      ),
-                    ),
-                    const Center(
-                      child: Text(
-                        'or',
-                        style: TextStyle(
-                          backgroundColor: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
+                const LineWithText(lineText: 'or'),
                 const SizedBox(height: MyConstants.formInputSpacer / 2),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    fixedSize: MaterialStateProperty.all<Size>(
-                      const Size(MyConstants.textFieldWidth, MyConstants.submitButtonHeight),
-                    ),
-                    shape: MaterialStateProperty.all<OutlinedBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        side: const BorderSide(color: MyConstants.red, width: 3),
-                      ),
-                    ),
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                    overlayColor: MaterialStateProperty.all<Color>(MyConstants.accentColor),
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    'Register',
-                    style: TextStyle(
-                      color: MyConstants.red,
-                      fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
-                    ),
-                  ),
+                FormSubmitButton(
+                  buttonText: 'Register',
+                  onPressed: () {
+                    print("Willing to register as user ${usernameController.text}");
+                  },
+                  type: FormSubmitButtonType.RED_OUTLINE,
                 ),
               ],
             ),
@@ -205,7 +67,4 @@ class _LoginHomepageState extends State<LoginHomepage> {
       ),
     );
   }
-
-  Color _color(bool condition) => condition ? MyConstants.accentColor : MyConstants.red;
-  bool _evaluate(bool focus, controller) => !focus && controller.text.isEmpty;
 }
