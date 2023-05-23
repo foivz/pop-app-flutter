@@ -151,7 +151,28 @@ class _LoginHomepageState extends State<LoginHomepage> {
                   ),
                 ),
                 const SizedBox(height: MyConstants.formInputSpacer / 2),
-                const Center(child: Text("- or -", style: TextStyle(fontSize: 20))),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: MyConstants.textFieldWidth / 2,
+                      height: 1,
+                      decoration: const BoxDecoration(
+                        color: Colors.black,
+                      ),
+                    ),
+                    const Center(
+                      child: Text(
+                        'or',
+                        style: TextStyle(
+                          backgroundColor: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
                 const SizedBox(height: MyConstants.formInputSpacer / 2),
                 ElevatedButton(
                   style: ButtonStyle(
