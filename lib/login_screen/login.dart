@@ -60,7 +60,7 @@ class _LoginHomepageState extends State<LoginHomepage> {
                   onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => RegisterScreen())),
+                          builder: (context) => const RegisterScreen())),
                   type: FormSubmitButtonType.RED_OUTLINE,
                 ),
               ],
