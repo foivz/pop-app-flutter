@@ -1,7 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
-import 'package:pop_app/login_screen/company_data_widget.dart';
+import 'package:pop_app/login_screen/company_data_container_widget.dart';
 
 class CompanySelectionScreen extends StatefulWidget {
   const CompanySelectionScreen({super.key});
@@ -17,12 +17,27 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
       child: Scaffold(
         appBar: AppBar(title: const Text("Company selection")),
         body: FutureBuilder(
-            builder: (context, snapshot) {
-              List<Widget> companies = [];
-              if (snapshot.hasData)
-                (snapshot.data as Map).forEach((key, value) {
-                  companies.add(CompanyDataContainer(companyName: key, employeeCount: value));
-                });
+          builder: (context, snapshot) {
+            List<Widget> companies = [];
+            if (snapshot.hasData) {
+              (snapshot.data as Map).forEach((key, value) {
+                GlobalKey companyKey = GlobalKey();
+                companies.add(CompanyDataContainer(
+                  key: companyKey,
+                  companyName: key,
+                  employeeCount: value,
+                  onTapCallback: () {
+                    companies
+                        .where((element) =>
+                            ((element.key as GlobalKey).currentState as CompanyDataContainerState)
+                                .isSelected)
+                        .forEach((element) =>
+                            (((element.key as GlobalKey).currentState) as CompanyDataContainerState)
+                                .select());
+                    (companyKey.currentState as CompanyDataContainerState).select();
+                  },
+                ));
+              });
               return Scrollbar(
                 child: SingleChildScrollView(
                   child: Container(
@@ -31,19 +46,17 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
                   ),
                 ),
               );
-            },
-            initialData: const {
-              'Comp1 d.o.o.': 3,
-              'Comp2 d.o.o.': 1,
-              'Comp3 d.o.o.': 3,
-              'Comp4 d.o.o.': 0,
-              'Comp5 d.o.o.': 2,
-              'Comp6 d.o.o.': 5,
-              'Comp7 d.o.o.': 2,
-              'Comp8 d.o.o.': 1,
-              'Comp9 d.o.o.': 1,
-              'Comp10 d.o.o.': 4,
-            }),
+            } else
+              return const Center(child: CircularProgressIndicator());
+          },
+          // TODO: define future to load data: "future: asyncFunc()" and remove initialData
+          initialData: const {
+            "Company1 d.o.o.": 2,
+            "Company2 d.o.o.": 1,
+            "Company3 d.o.o.": 3,
+            "Company4 d.o.o.": 1
+          },
+        ),
       ),
     );
   }

@@ -22,6 +22,7 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(onPressed: () {}, child: const Icon(Icons.check)),
       appBar: AppBar(
         title: const Text("Login"),
       ),

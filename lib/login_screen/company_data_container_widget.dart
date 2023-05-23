@@ -6,14 +6,20 @@ import 'package:pop_app/myconstants.dart';
 class CompanyDataContainer extends StatefulWidget {
   final String companyName;
   final int employeeCount;
+  final void Function() onTapCallback;
 
-  const CompanyDataContainer({super.key, required this.companyName, required this.employeeCount});
+  const CompanyDataContainer({
+    super.key,
+    required this.companyName,
+    required this.employeeCount,
+    required this.onTapCallback,
+  });
 
   @override
-  State<CompanyDataContainer> createState() => _CompanyDataContainerState();
+  State<CompanyDataContainer> createState() => CompanyDataContainerState();
 }
 
-class _CompanyDataContainerState extends State<CompanyDataContainer>
+class CompanyDataContainerState extends State<CompanyDataContainer>
     with SingleTickerProviderStateMixin {
   bool isSelected = false;
   late AnimationController _animCont;
@@ -39,12 +45,13 @@ class _CompanyDataContainerState extends State<CompanyDataContainer>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7.5),
       child: InkWell(
-        onTap: select,
-        highlightColor: isSelected ? Colors.blue : null,
+        onTap: () {
+          widget.onTapCallback.call();
+        },
         child: Container(
           padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
           width: MediaQuery.of(context).size.width,
-          decoration: _border,
+          decoration: _border(),
           child: Stack(children: [
             Text("${widget.companyName} - ${widget.employeeCount} employees"),
             Align(
@@ -57,7 +64,7 @@ class _CompanyDataContainerState extends State<CompanyDataContainer>
                   child: Icon(
                     Icons.verified,
                     color: isSelected
-                        ? MyConstants.red
+                        ? MyConstants.accentColor
                         : Colors.grey, // Change color based on isSelected value
                   ),
                 ),
@@ -69,8 +76,13 @@ class _CompanyDataContainerState extends State<CompanyDataContainer>
     );
   }
 
-  final BoxDecoration _border = BoxDecoration(
-    borderRadius: BorderRadius.circular(10),
-    border: Border.all(color: MyConstants.red, width: 3),
-  );
+  BoxDecoration _border() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(
+        color: isSelected ? MyConstants.accentColor : MyConstants.red,
+        width: 3,
+      ),
+    );
+  }
 }
