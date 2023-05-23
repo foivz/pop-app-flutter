@@ -16,6 +16,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         appBarTheme: AppBarTheme(
+          actionsIconTheme: const IconThemeData(color: MyConstants.accentColor),
+          foregroundColor: Colors.white,
           color: MyConstants.red,
           titleTextStyle: TextStyle(
             color: Colors.white,
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const LoginHomepage(),
+      home: const BaseLoginScreen(),
     );
   }
 }

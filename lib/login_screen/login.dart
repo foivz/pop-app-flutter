@@ -1,18 +1,20 @@
-// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/login_screen/company_selection.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
 import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/screentransitions.dart';
 
-class LoginHomepage extends StatefulWidget {
-  const LoginHomepage({super.key});
+class BaseLoginScreen extends StatefulWidget {
+  const BaseLoginScreen({super.key});
   @override
-  State<LoginHomepage> createState() => _LoginHomepageState();
+  State<BaseLoginScreen> createState() => _BaseLoginScreenState();
 }
 
-class _LoginHomepageState extends State<LoginHomepage> {
+class _BaseLoginScreenState extends State<BaseLoginScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -46,7 +48,10 @@ class _LoginHomepageState extends State<LoginHomepage> {
                 FormSubmitButton(
                   buttonText: 'Login',
                   onPressed: () {
-                    print("Logging in as user ${usernameController.text}");
+                    Navigator.of(context).push(PageRouteBuilder(
+                      pageBuilder: (c, a, s) => const CompanySelectionScreen(),
+                      transitionsBuilder: ScreenTransitions.slideLeft,
+                    ));
                   },
                   type: FormSubmitButtonType.RED_FILL,
                 ),

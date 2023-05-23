@@ -11,6 +11,6 @@ class AppRoot extends StatefulWidget {
 class _AppRootState extends State<AppRoot> {
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(child: LoginHomepage());
+    return const SafeArea(child: BaseLoginScreen());
   }
 }

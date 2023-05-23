@@ -1,4 +1,4 @@
-// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: curly_braces_in_flow_control_structures, constant_identifier_names
 
 import 'package:flutter/material.dart';
 import 'package:pop_app/myconstants.dart';
