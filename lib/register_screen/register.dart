@@ -137,9 +137,15 @@ class SecondRegisterScreen extends StatelessWidget {
           ),
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
-            inputLabel: "Email address",
-            textEditingController: widget.emailController,
-          ),
+              inputLabel: "Email address",
+              textEditingController: widget.emailController,
+              validateCallback: (value) {
+                if (value == null || value.isEmpty || !value.contains('@')) {
+                  return "Enter valid mail";
+                } else {
+                  return null;
+                }
+              }),
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
             inputLabel: "Password",
