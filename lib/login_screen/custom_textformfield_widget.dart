@@ -12,6 +12,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool autoFocus;
   final Function(String value)? submitCallback;
   final String? Function(String?)? validateCallback;
+  final Function()? onUpdateCallback;
   final TextInputAction textInputAction;
 
   const CustomTextFormField({
@@ -23,6 +24,7 @@ class CustomTextFormField extends StatefulWidget {
     this.autoFocus = false,
     this.submitCallback,
     this.validateCallback,
+    this.onUpdateCallback,
     this.textInputAction = TextInputAction.done,
   });
 
@@ -76,7 +78,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     : null;
               },
           onTap: () => setState(() => isFocused = true),
-          onChanged: (_) => setState(() => isFocused = true),
+          onChanged: (_) {
+            widget.onUpdateCallback?.call();
+            setState(() => isFocused = true);
+          },
         ),
       ]),
     );
