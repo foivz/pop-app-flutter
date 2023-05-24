@@ -8,12 +8,21 @@ class RegisterScreen extends StatefulWidget {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController surnameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  static RegisterScreenState? of(BuildContext context) {
+    try {
+      return context.findAncestorStateOfType<RegisterScreenState>();
+    } catch (err) {
+      return null;
+    }
+  }
+
   RegisterScreen({super.key});
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<RegisterScreen> createState() => RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   int _previousCurrentStep = 0;
   int _currentStep = 0;
   List<Widget> registerScreens = [];
