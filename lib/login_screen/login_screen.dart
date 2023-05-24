@@ -22,9 +22,7 @@ class _LoginHomepageState extends State<LoginHomepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login"),
-      ),
+      appBar: MyConstants.appBarAsTopBorder,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

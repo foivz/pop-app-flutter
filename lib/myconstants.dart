@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 class MyConstants {
   static const Color red = Color.fromRGBO(225, 25, 60, 1);
   static const Color textfieldBackground = Color(0xffefefef);
@@ -7,4 +9,5 @@ class MyConstants {
   static const double formInputSpacer = 20;
   static const double textFieldWidth = 300;
   static const double submitButtonHeight = 50;
+  static final AppBar appBarAsTopBorder = AppBar(toolbarHeight: 10);
 }

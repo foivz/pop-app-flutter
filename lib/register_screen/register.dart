@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/role_selection/role_selection_widget.dart';
 import 'package:pop_app/screentransitions.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -46,6 +47,7 @@ class RegisterScreenState extends State<RegisterScreen> {
     super.initState();
     _registerScreens.add(FirstRegisterScreen(widget));
     _registerScreens.add(SecondRegisterScreen(widget));
+    _registerScreens.add(const RoleSelectWidget());
   }
 
   _animatedSwitcher() {
