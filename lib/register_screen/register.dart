@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/screentransitions.dart';
 
 class RegisterScreen extends StatefulWidget {
   final TextEditingController firstNameController = TextEditingController();
@@ -13,11 +14,13 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  int _previousCurrentStep = 0;
   int _currentStep = 0;
   List<Widget> registerScreens = [];
 
   void showNextRegisterScreen() {
     setState(() {
+      _previousCurrentStep = _currentStep;
       _currentStep++;
     });
   }
@@ -29,11 +32,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
     registerScreens.add(const Placeholder());
   }
 
+  _animatedSwitcher() {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      transitionBuilder:
+          ScreenTransitions.navAnimH(_currentStep > _previousCurrentStep),
+      reverseDuration: const Duration(milliseconds: 0),
+      child: registerScreens[_currentStep],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () async {
           setState(() {
+            _previousCurrentStep = _currentStep;
             _currentStep--;
           });
           return false;
@@ -42,7 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             appBar: AppBar(
               title: const Text('Register yourself'),
             ),
-            body: Center(child: registerScreens[_currentStep])));
+            body: Center(child: _animatedSwitcher())));
   }
 }
 
