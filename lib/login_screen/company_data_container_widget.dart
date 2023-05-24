@@ -30,6 +30,12 @@ class CompanyDataContainerState extends State<CompanyDataContainer>
     _animCont = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
   }
 
+  @override
+  void dispose() {
+    _animCont.dispose();
+    super.dispose();
+  }
+
   void select() {
     setState(() {
       isSelected = !isSelected;

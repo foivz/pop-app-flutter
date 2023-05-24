@@ -1,7 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
+import 'package:pop_app/login_screen/company_data_container_widget.dart';
 
 import 'package:flutter/material.dart';
-import 'package:pop_app/login_screen/company_data_container_widget.dart';
 
 class CompanySelectionScreen extends StatefulWidget {
   const CompanySelectionScreen({super.key});
@@ -11,11 +11,31 @@ class CompanySelectionScreen extends StatefulWidget {
 }
 
 class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
+  GlobalKey? selectedCompany;
+  bool _lockSnackbar = false;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(title: const Text("Company selection")),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            if (selectedCompany == null) {
+              if (!_lockSnackbar) {
+                _lockSnackbar = true;
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  dismissDirection: DismissDirection.down,
+                  content: Text("You must select a company."),
+                  duration: Duration(seconds: 1),
+                ));
+                Future.delayed(const Duration(seconds: 1), () => _lockSnackbar = false);
+              }
+            } else {
+              showAboutDialog(context: context);
+            }
+          },
+          child: const Icon(Icons.check),
+        ),
         body: FutureBuilder(
           builder: (context, snapshot) {
             List<Widget> companies = [];
@@ -27,14 +47,12 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
                   companyName: key,
                   employeeCount: value,
                   onTapCallback: () {
-                    companies
-                        .where((element) =>
-                            ((element.key as GlobalKey).currentState as CompanyDataContainerState)
-                                .isSelected)
-                        .forEach((element) =>
-                            (((element.key as GlobalKey).currentState) as CompanyDataContainerState)
-                                .select());
+                    state(o) => (((o.key as GlobalKey).currentState) as CompanyDataContainerState);
+                    companies.where((company) => state(company).isSelected).forEach((company) {
+                      state(company).select();
+                    });
                     (companyKey.currentState as CompanyDataContainerState).select();
+                    selectedCompany = companyKey;
                   },
                 ));
               });

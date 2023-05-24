@@ -3,9 +3,10 @@ import 'package:pop_app/myconstants.dart';
 
 ThemeData lightTheme(context) {
   return ThemeData(
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: MyConstants.red,
       foregroundColor: Colors.white,
+      splashColor: MyConstants.accentColor.withOpacity(1),
     ),
     appBarTheme: AppBarTheme(
       foregroundColor: Colors.white,
