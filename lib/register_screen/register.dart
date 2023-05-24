@@ -25,7 +25,7 @@ class RegisterScreen extends StatefulWidget {
 class RegisterScreenState extends State<RegisterScreen> {
   int _previousCurrentStep = 0;
   int _currentStep = 0;
-  List<Widget> registerScreens = [];
+  final List<Widget> _registerScreens = [];
 
   void showNextRegisterScreen() {
     setState(() {
@@ -37,8 +37,8 @@ class RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    registerScreens.add(FirstRegisterScreen(widget, showNextRegisterScreen));
-    registerScreens.add(const Placeholder());
+    _registerScreens.add(FirstRegisterScreen(widget));
+    _registerScreens.add(SecondRegisterScreen(widget));
   }
 
   _animatedSwitcher() {
@@ -47,7 +47,7 @@ class RegisterScreenState extends State<RegisterScreen> {
       transitionBuilder:
           ScreenTransitions.navAnimH(_currentStep > _previousCurrentStep),
       reverseDuration: const Duration(milliseconds: 0),
-      child: registerScreens[_currentStep],
+      child: _registerScreens[_currentStep],
     );
   }
 
@@ -71,8 +71,7 @@ class RegisterScreenState extends State<RegisterScreen> {
 
 class FirstRegisterScreen extends StatelessWidget {
   final RegisterScreen widget;
-  final Function proceedToNextPage;
-  const FirstRegisterScreen(this.widget, this.proceedToNextPage, {super.key});
+  const FirstRegisterScreen(this.widget, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +95,44 @@ class FirstRegisterScreen extends StatelessWidget {
           const SizedBox(height: MyConstants.formInputSpacer * 1.5),
           FormSubmitButton(
             buttonText: 'Next',
-            onPressed: () => proceedToNextPage(),
+            onPressed: () =>
+                RegisterScreen.of(context)?.showNextRegisterScreen(),
+            type: FormSubmitButtonType.RED_FILL,
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SecondRegisterScreen extends StatelessWidget {
+  final RegisterScreen widget;
+  const SecondRegisterScreen(this.widget, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: widget._formKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CustomTextFormField(
+            inputLabel: "First Name",
+            textEditingController: widget.firstNameController,
+            autoFocus: true,
+          ),
+          const SizedBox(height: MyConstants.formInputSpacer),
+          CustomTextFormField(
+            inputLabel: "Surname",
+            textEditingController: widget.surnameController,
+            obscureText: true,
+          ),
+          const SizedBox(height: MyConstants.formInputSpacer * 1.5),
+          FormSubmitButton(
+            buttonText: 'Next',
+            onPressed: () =>
+                RegisterScreen.of(context)?.showNextRegisterScreen(),
             type: FormSubmitButtonType.RED_FILL,
           )
         ],
