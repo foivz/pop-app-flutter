@@ -7,6 +7,11 @@ import 'package:pop_app/screentransitions.dart';
 class RegisterScreen extends StatefulWidget {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController surnameController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController repeatedPasswordController =
+      TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   static RegisterScreenState? of(BuildContext context) {
@@ -123,14 +128,25 @@ class SecondRegisterScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CustomTextFormField(
-            inputLabel: "First Name",
-            textEditingController: widget.firstNameController,
+            inputLabel: "Username",
+            textEditingController: widget.usernameController,
             autoFocus: true,
           ),
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
-            inputLabel: "Surname",
-            textEditingController: widget.surnameController,
+            inputLabel: "Email address",
+            textEditingController: widget.emailController,
+          ),
+          const SizedBox(height: MyConstants.formInputSpacer),
+          CustomTextFormField(
+            inputLabel: "Password",
+            textEditingController: widget.passwordController,
+            obscureText: true,
+          ),
+          const SizedBox(height: MyConstants.formInputSpacer),
+          CustomTextFormField(
+            inputLabel: "Confirm password",
+            textEditingController: widget.repeatedPasswordController,
             obscureText: true,
           ),
           const SizedBox(height: MyConstants.formInputSpacer * 1.5),
