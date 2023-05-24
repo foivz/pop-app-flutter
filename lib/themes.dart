@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pop_app/myconstants.dart';
 
 ThemeData lightTheme(context) {
@@ -9,6 +10,10 @@ ThemeData lightTheme(context) {
       splashColor: MyConstants.accentColor.withOpacity(1),
     ),
     appBarTheme: AppBarTheme(
+      systemOverlayStyle: const SystemUiOverlayStyle(
+        statusBarColor: MyConstants.red,
+        systemNavigationBarColor: MyConstants.red,
+      ),
       foregroundColor: Colors.white,
       color: MyConstants.red,
       titleTextStyle: TextStyle(
