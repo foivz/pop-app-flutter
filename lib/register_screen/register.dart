@@ -120,7 +120,16 @@ class FirstRegisterScreen extends StatelessWidget {
 
 class SecondRegisterScreen extends StatelessWidget {
   final RegisterScreen widget;
-  const SecondRegisterScreen(this.widget, {super.key});
+  SecondRegisterScreen(this.widget, {super.key});
+  var emailFieldKey = GlobalKey<FormFieldState>();
+
+  String? validateEmail(value) {
+    if (value == null || value.isEmpty || !value.contains('@')) {
+      return "Enter valid mail";
+    } else {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,15 +146,12 @@ class SecondRegisterScreen extends StatelessWidget {
           ),
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
-              inputLabel: "Email address",
-              textEditingController: widget.emailController,
-              validateCallback: (value) {
-                if (value == null || value.isEmpty || !value.contains('@')) {
-                  return "Enter valid mail";
-                } else {
-                  return null;
-                }
-              }),
+            fieldKey: emailFieldKey,
+            inputLabel: "Email address",
+            textEditingController: widget.emailController,
+            validateCallback: validateEmail,
+            onUpdateCallback: () => emailFieldKey.currentState?.validate(),
+          ),
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
             inputLabel: "Password",

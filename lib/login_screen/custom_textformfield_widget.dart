@@ -13,10 +13,12 @@ class CustomTextFormField extends StatefulWidget {
   final Function(String value)? submitCallback;
   final String? Function(String?)? validateCallback;
   final Function()? onUpdateCallback;
+  final GlobalKey<FormFieldState>? fieldKey;
   final TextInputAction textInputAction;
 
   const CustomTextFormField({
     super.key,
+    this.fieldKey,
     this.obscureText = false,
     required this.inputLabel,
     required this.textEditingController,
@@ -43,6 +45,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       padding: widget.padding,
       child: Stack(children: [
         TextFormField(
+          key: widget.fieldKey,
           autofocus: widget.autoFocus,
           obscureText: widget.obscureText,
           decoration: InputDecoration(
