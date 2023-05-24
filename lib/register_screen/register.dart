@@ -29,8 +29,10 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   void showNextRegisterScreen() {
     setState(() {
-      _previousCurrentStep = _currentStep;
-      _currentStep++;
+      if (_currentStep < _registerScreens.length - 1) {
+        _previousCurrentStep = _currentStep;
+        _currentStep++;
+      }
     });
   }
 
@@ -55,11 +57,14 @@ class RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () async {
+          bool tryingToExitRegister = _currentStep == 0;
           setState(() {
-            _previousCurrentStep = _currentStep;
-            _currentStep--;
+            if (_currentStep > 0) {
+              _previousCurrentStep = _currentStep;
+              _currentStep--;
+            }
           });
-          return false;
+          return tryingToExitRegister;
         },
         child: Scaffold(
             appBar: AppBar(
