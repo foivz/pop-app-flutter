@@ -86,6 +86,7 @@ class FirstRegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Form(
+      autovalidateMode: AutovalidateMode.always,
       key: widget._formKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -100,13 +101,15 @@ class FirstRegisterScreen extends StatelessWidget {
           CustomTextFormField(
             inputLabel: "Surname",
             textEditingController: widget.surnameController,
-            obscureText: true,
           ),
           const SizedBox(height: MyConstants.formInputSpacer * 1.5),
           FormSubmitButton(
             buttonText: 'Next',
-            onPressed: () =>
-                RegisterScreen.of(context)?.showNextRegisterScreen(),
+            onPressed: () {
+              if (widget._formKey.currentState!.validate()) {
+                RegisterScreen.of(context)?.showNextRegisterScreen();
+              }
+            },
             type: FormSubmitButtonType.RED_FILL,
           )
         ],
@@ -152,8 +155,11 @@ class SecondRegisterScreen extends StatelessWidget {
           const SizedBox(height: MyConstants.formInputSpacer * 1.5),
           FormSubmitButton(
             buttonText: 'Next',
-            onPressed: () =>
-                RegisterScreen.of(context)?.showNextRegisterScreen(),
+            onPressed: () {
+              if (widget._formKey.currentState!.validate()) {
+                RegisterScreen.of(context)?.showNextRegisterScreen();
+              }
+            },
             type: FormSubmitButtonType.RED_FILL,
           )
         ],
