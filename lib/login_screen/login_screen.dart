@@ -23,9 +23,7 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 10,
-      ),
+      appBar: MyConstants.appBarAsTopBorder,
       body: SingleChildScrollView(
         child: Column(children: [
           Padding(

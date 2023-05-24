@@ -2,6 +2,8 @@
 import 'package:pop_app/login_screen/company_data_container_widget.dart';
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/role_selection/role_selection_screen.dart';
+import 'package:pop_app/screentransitions.dart';
 
 class CompanySelectionScreen extends StatefulWidget {
   const CompanySelectionScreen({super.key});
@@ -31,7 +33,10 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
                 Future.delayed(const Duration(seconds: 1), () => _lockSnackbar = false);
               }
             } else {
-              showAboutDialog(context: context);
+              Navigator.of(context).push(PageRouteBuilder(
+                pageBuilder: (c, a, s) => const RoleSelectionScreen(),
+                transitionsBuilder: ScreenTransitions.slideLeft,
+              ));
             }
           },
           child: const Icon(Icons.check),
