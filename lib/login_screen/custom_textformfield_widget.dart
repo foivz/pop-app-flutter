@@ -11,6 +11,7 @@ class CustomTextFormField extends StatefulWidget {
   final EdgeInsets padding;
   final bool autoFocus;
   final Function(String value)? submitCallback;
+  final String? Function(String?)? validateCallback;
   final TextInputAction textInputAction;
 
   const CustomTextFormField({
@@ -21,6 +22,7 @@ class CustomTextFormField extends StatefulWidget {
     this.padding = const EdgeInsets.fromLTRB(10, 0, 10, 10),
     this.autoFocus = false,
     this.submitCallback,
+    this.validateCallback,
     this.textInputAction = TextInputAction.done,
   });
 
@@ -67,11 +69,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           ),
           textInputAction: widget.textInputAction,
           controller: widget.textEditingController,
-          validator: (value) {
-            return value == null || value.isEmpty
-                ? 'Please enter a valid ${widget.inputLabel.toLowerCase()}'
-                : null;
-          },
+          validator: widget.validateCallback ??
+              (value) {
+                return value == null || value.isEmpty
+                    ? 'Please enter a valid ${widget.inputLabel.toLowerCase()}'
+                    : null;
+              },
           onTap: () => setState(() => isFocused = true),
           onChanged: (_) => setState(() => isFocused = true),
         ),
