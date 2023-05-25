@@ -1,4 +1,5 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
+import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
@@ -15,8 +16,8 @@ class BaseLoginScreen extends StatefulWidget {
 }
 
 class _BaseLoginScreenState extends State<BaseLoginScreen> {
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController usernameCont = TextEditingController();
+  TextEditingController passwordCont = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -48,23 +49,24 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                     const Center(), // centers the widgets after it, do not remove
                     CustomTextFormField(
                       inputLabel: "Username",
-                      textEditingController: usernameController,
+                      textEditingController: usernameCont,
                       autoFocus: true,
                     ),
                     const SizedBox(height: MyConstants.formInputSpacer),
                     CustomTextFormField(
                       inputLabel: "Password",
-                      textEditingController: passwordController,
+                      textEditingController: passwordCont,
                       obscureText: true,
                     ),
                     const SizedBox(height: MyConstants.formInputSpacer * 3),
                     FormSubmitButton(
                       buttonText: 'Login',
                       onPressed: () {
-                        Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (c, a, s) => const CompanySelectionScreen(),
-                          transitionsBuilder: ScreenTransitions.slideLeft,
-                        ));
+                        if (_formKey.currentState!.validate()) {
+                          ApiRequestManager.login(usernameCont.text, passwordCont.text).then((val) {
+                            print(val);
+                          });
+                        }
                       },
                       type: FormSubmitButtonType.RED_FILL,
                     ),
@@ -74,7 +76,7 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                     FormSubmitButton(
                       buttonText: 'Register',
                       onPressed: () {
-                        print("Willing to register as user ${usernameController.text}");
+                        print("Willing to register as user ${usernameCont.text}");
                       },
                       type: FormSubmitButtonType.RED_OUTLINE,
                     ),
@@ -86,5 +88,12 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
         ]),
       ),
     );
+  }
+
+  _navigate() {
+    Navigator.of(context).push(PageRouteBuilder(
+      pageBuilder: (c, a, s) => const CompanySelectionScreen(),
+      transitionsBuilder: ScreenTransitions.slideLeft,
+    ));
   }
 }
