@@ -86,7 +86,6 @@ class FirstRegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Form(
-      autovalidateMode: AutovalidateMode.always,
       key: widget._formKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
