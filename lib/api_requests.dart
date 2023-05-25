@@ -22,18 +22,16 @@ class ApiRequestManager {
   static Uri route(Routes route) => Uri.parse("$root${route.name}.php");
 
   static Future login(String username, String password) async {
-    var username_ = {"name": "KorisnickoIme", "value": username};
-    var password_ = {"name": "Lozinka", "value": password};
-    print('sending request with data ${json.encode({
-          "form": [username_, password_]
-        })}');
+    var fm = {"KorisnickoIme": username, "Lozinka": password};
     http.Response response = await http.post(
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        "form": [username_, password_],
-      }),
+      body: fm,
       route(Routes.login),
     );
-    return json.decode(response.body);
+    var responseData = json.decode(response.body);
+    try {
+      var tokenData = responseData["DATA"]["Token"];
+      token = tokenData;
+    } catch (e) {}
+    return responseData;
   }
 }

@@ -5,7 +5,7 @@ import 'package:pop_app/myconstants.dart';
 
 enum FormSubmitButtonType { RED_FILL, RED_OUTLINE }
 
-class FormSubmitButton extends StatelessWidget {
+class FormSubmitButton extends StatefulWidget {
   final FormSubmitButtonType type;
   final double width, height;
   final double? fontSize;
@@ -23,32 +23,43 @@ class FormSubmitButton extends StatelessWidget {
   });
 
   @override
+  State<FormSubmitButton> createState() => FormSubmitButtonState();
+}
+
+class FormSubmitButtonState extends State<FormSubmitButton> {
+  bool enabled = true;
+
+  void setEnabled(bool state) => setState(() => enabled = state);
+
+  @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: _style(),
-      onPressed: onPressed,
+      onPressed: widget.onPressed,
       child: Text(
-        buttonText,
+        widget.buttonText,
         style: TextStyle(
           color: _isRedFill() ? Colors.white : MyConstants.red,
-          fontSize: fontSize ?? Theme.of(context).textTheme.titleLarge!.fontSize,
+          fontSize: widget.fontSize ?? Theme.of(context).textTheme.titleLarge!.fontSize,
         ),
       ),
     );
   }
 
-  bool _isRedFill() => type == FormSubmitButtonType.RED_FILL;
+  bool _isRedFill() => widget.type == FormSubmitButtonType.RED_FILL;
 
   ButtonStyle _style() {
-    var size = MaterialStateProperty.all<Size>(Size(width, height));
-    var acc = MaterialStateProperty.all<Color>(MyConstants.accentColor);
+    var size = MaterialStateProperty.all<Size>(Size(widget.width, widget.height));
+    var acc = MaterialStateProperty.all<Color>(
+        enabled ? MyConstants.accentColor : MyConstants.accentColor.withOpacity(0.3));
     if (_isRedFill())
       return ButtonStyle(
         fixedSize: size,
         shape: MaterialStateProperty.all<OutlinedBorder>(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         ),
-        backgroundColor: MaterialStateProperty.all<Color>(MyConstants.red),
+        backgroundColor: MaterialStateProperty.all<Color>(
+            enabled ? MyConstants.red : MyConstants.red.withOpacity(0.3)),
         overlayColor: acc,
       );
     else

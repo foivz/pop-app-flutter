@@ -1,10 +1,10 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
-import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
 import 'package:pop_app/login_screen/company_selection.dart';
 import 'package:pop_app/screentransitions.dart';
+import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
@@ -20,9 +20,17 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
   TextEditingController passwordCont = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool blockLoginRequests = false;
+
+  String message = "";
+  void error(bool showError) {
+    String errorMessage = "Username or password not valid.";
+    showError ? setState(() => message = errorMessage) : message = "";
+  }
 
   @override
   Widget build(BuildContext context) {
+    GlobalKey loginButtonKey = GlobalKey();
     return Scaffold(
       appBar: MyConstants.appBarAsTopBorder,
       body: SingleChildScrollView(
@@ -47,6 +55,7 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                 child: Column(
                   children: [
                     const Center(), // centers the widgets after it, do not remove
+                    Text(message, style: Theme.of(context).textTheme.titleMedium),
                     CustomTextFormField(
                       inputLabel: "Username",
                       textEditingController: usernameCont,
@@ -60,11 +69,19 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                     ),
                     const SizedBox(height: MyConstants.formInputSpacer * 3),
                     FormSubmitButton(
+                      key: loginButtonKey,
                       buttonText: 'Login',
                       onPressed: () {
-                        if (_formKey.currentState!.validate()) {
+                        if (_formKey.currentState!.validate() && !blockLoginRequests) {
+                          blockLoginRequests = true;
+                          (loginButtonKey.currentState as FormSubmitButtonState).setEnabled(false);
                           ApiRequestManager.login(usernameCont.text, passwordCont.text).then((val) {
-                            print(val);
+                            if (val["STATUS"])
+                              _navigate();
+                            else
+                              error(val.keys.length > 0);
+                            (loginButtonKey.currentState as FormSubmitButtonState).setEnabled(true);
+                            blockLoginRequests = false;
                           });
                         }
                       },
