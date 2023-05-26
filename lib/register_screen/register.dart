@@ -3,6 +3,7 @@ import 'package:pop_app/models/user.dart';
 import 'package:pop_app/register_screen/register_screen_1.dart';
 import 'package:pop_app/register_screen/register_screen_2.dart';
 import 'package:pop_app/register_screen/register_screen_3.dart';
+import 'package:pop_app/register_screen/register_screen_4.dart';
 import 'package:pop_app/screentransitions.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -13,6 +14,7 @@ class RegisterScreen extends StatefulWidget {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController repeatedPasswordController =
       TextEditingController();
+  final TextEditingController storeNameController = TextEditingController();
   final User user = User.empty();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -51,6 +53,7 @@ class RegisterScreenState extends State<RegisterScreen> {
     _registerScreens.add(FirstRegisterScreen(widget));
     _registerScreens.add(SecondRegisterScreen(widget));
     _registerScreens.add(ThirdRegisterScreen(widget));
+    _registerScreens.add(FourthRegisterScreen(widget));
   }
 
   _animatedSwitcher() {
