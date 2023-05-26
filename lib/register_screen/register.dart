@@ -33,9 +33,7 @@ class RegisterScreen extends StatefulWidget {
 class RegisterScreenState extends State<RegisterScreen> {
   int _previousCurrentStep = 0;
   int _currentStep = 0;
-  final int _roleSelectionStepIndex = 2;
   final _roleSelectionWidgetKey = GlobalKey();
-  var selectedRole = "buyer";
   final List<Widget> _registerScreens = [];
 
   void showNextRegisterScreen() {
@@ -43,11 +41,6 @@ class RegisterScreenState extends State<RegisterScreen> {
       if (_currentStep < _registerScreens.length - 1) {
         _previousCurrentStep = _currentStep;
         _currentStep++;
-        if (_previousCurrentStep == _roleSelectionStepIndex) {
-          selectedRole =
-              (_roleSelectionWidgetKey.currentState as RoleSelectWidgetState)
-                  .selectedOption;
-        }
       }
     });
   }
@@ -207,6 +200,10 @@ class ThirdRegisterScreen extends StatelessWidget {
       key: widget._formKey,
       child: RoleSelectionScreen(
         key: RegisterScreen.of(context)?._roleSelectionWidgetKey,
+        onSelectedCallback: (selectedRole) {
+          widget.user.role = selectedRole;
+          RegisterScreen.of(context)?.showNextRegisterScreen();
+        },
         showAppBar: false,
       ),
     );

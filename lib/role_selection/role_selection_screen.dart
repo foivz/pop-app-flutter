@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   final bool showAppBar;
-  const RoleSelectionScreen({super.key, this.showAppBar = true});
+  final void Function(String value)? onSelectedCallback;
+  const RoleSelectionScreen(
+      {super.key, this.onSelectedCallback, this.showAppBar = true});
 
   @override
   State<RoleSelectionScreen> createState() => _RoleSelectionScreenState();
@@ -47,7 +49,11 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   const Duration(seconds: 1), () => _lockSnackbar = false);
             }
           } else {
-            showAboutDialog(context: context);
+            if (widget.onSelectedCallback != null) {
+              widget.onSelectedCallback!.call(roleSelect.selectedOption);
+            } else {
+              showAboutDialog(context: context);
+            }
           }
         },
         child: const Icon(Icons.check),
