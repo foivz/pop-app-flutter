@@ -75,6 +75,38 @@ class RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () async {
+          if (widget.user.registered) {
+            bool quitEarly = false;
+
+            await showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Quit registration?'),
+                content: const Text(
+                    'You are registered. However, the process is not done yet. '
+                    'You might have to complete additional steps later. Exit registration anyway?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      quitEarly = false;
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      quitEarly = true;
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Exit registration'),
+                  ),
+                ],
+              ),
+            );
+
+            return quitEarly;
+          }
+
           bool tryingToExitRegister = _currentStep == 0;
           setState(() {
             if (_currentStep > 0) {
