@@ -14,10 +14,21 @@ class SecondRegisterScreen extends StatefulWidget {
 
 class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
   final emailFieldKey = GlobalKey<FormFieldState>();
+  final passwordFieldKey = GlobalKey<FormFieldState>();
+  final repeatedPasswordFieldKey = GlobalKey<FormFieldState>();
 
   String? validateEmail(value) {
     if (value == null || value.isEmpty || !value.contains('@')) {
       return "Enter valid mail";
+    } else {
+      return null;
+    }
+  }
+
+  String? validatePasswords(value) {
+    if (widget.widget.passwordController.text !=
+        widget.widget.repeatedPasswordController.text) {
+      return "Double-check the entered passwords!";
     } else {
       return null;
     }
@@ -46,15 +57,18 @@ class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
           ),
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
+            fieldKey: passwordFieldKey,
             inputLabel: "Password",
             textEditingController: widget.widget.passwordController,
             obscureText: true,
           ),
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
+            fieldKey: repeatedPasswordFieldKey,
             inputLabel: "Confirm password",
             textEditingController: widget.widget.repeatedPasswordController,
             obscureText: true,
+            validateCallback: validatePasswords,
           ),
           const SizedBox(height: MyConstants.formInputSpacer * 1.5),
           FormSubmitButton(
