@@ -12,6 +12,15 @@ class MainMenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     const SellerMenu sellerMenu = SellerMenu();
     const Widget buyerMenu = Placeholder();
-    return Scaffold(body: role == UserRole.seller ? sellerMenu : buyerMenu);
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Welcome, ${role.name}!"),
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(icon: const Icon(Icons.person), onPressed: () {}),
+            IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
+          ],
+        ),
+        body: role == UserRole.seller ? sellerMenu : buyerMenu);
   }
 }
