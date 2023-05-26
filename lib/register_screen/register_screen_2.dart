@@ -4,9 +4,15 @@ import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/myconstants.dart';
 import 'package:pop_app/register_screen/register.dart';
 
-class SecondRegisterScreen extends StatelessWidget {
+class SecondRegisterScreen extends StatefulWidget {
   final RegisterScreen widget;
-  SecondRegisterScreen(this.widget, {super.key});
+  const SecondRegisterScreen(this.widget, {super.key});
+
+  @override
+  State<SecondRegisterScreen> createState() => _SecondRegisterScreenState();
+}
+
+class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
   final emailFieldKey = GlobalKey<FormFieldState>();
 
   String? validateEmail(value) {
@@ -20,44 +26,46 @@ class SecondRegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: widget.formKey,
+      key: widget.widget.formKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CustomTextFormField(
             inputLabel: "Username",
-            textEditingController: widget.usernameController,
+            textEditingController: widget.widget.usernameController,
             autoFocus: true,
           ),
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
             fieldKey: emailFieldKey,
             inputLabel: "Email address",
-            textEditingController: widget.emailController,
+            textEditingController: widget.widget.emailController,
             validateCallback: validateEmail,
             onUpdateCallback: () => emailFieldKey.currentState?.validate(),
           ),
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
             inputLabel: "Password",
-            textEditingController: widget.passwordController,
+            textEditingController: widget.widget.passwordController,
             obscureText: true,
           ),
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
             inputLabel: "Confirm password",
-            textEditingController: widget.repeatedPasswordController,
+            textEditingController: widget.widget.repeatedPasswordController,
             obscureText: true,
           ),
           const SizedBox(height: MyConstants.formInputSpacer * 1.5),
           FormSubmitButton(
             buttonText: 'Next',
             onPressed: () {
-              if (widget.formKey.currentState!.validate()) {
-                widget.user.username = widget.usernameController.text;
-                widget.user.email = widget.emailController.text;
-                widget.user.password = widget.passwordController.text;
+              if (widget.widget.formKey.currentState!.validate()) {
+                widget.widget.user.username =
+                    widget.widget.usernameController.text;
+                widget.widget.user.email = widget.widget.emailController.text;
+                widget.widget.user.password =
+                    widget.widget.passwordController.text;
                 RegisterScreen.of(context)?.showNextRegisterScreen();
               }
             },
