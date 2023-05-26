@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 import 'package:pop_app/role_selection/role_selection_screen.dart';
-import 'package:pop_app/role_selection/role_selection_widget.dart';
 import 'package:pop_app/screentransitions.dart';
 
 class RegisterScreen extends StatefulWidget {
   final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController surnameController = TextEditingController();
+  final TextEditingController lastName = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController repeatedPasswordController =
       TextEditingController();
+  final User user = User.empty();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   static RegisterScreenState? of(BuildContext context) {
@@ -111,13 +112,15 @@ class FirstRegisterScreen extends StatelessWidget {
           const SizedBox(height: MyConstants.formInputSpacer),
           CustomTextFormField(
             inputLabel: "Surname",
-            textEditingController: widget.surnameController,
+            textEditingController: widget.lastName,
           ),
           const SizedBox(height: MyConstants.formInputSpacer * 1.5),
           FormSubmitButton(
             buttonText: 'Next',
             onPressed: () {
               if (widget._formKey.currentState!.validate()) {
+                widget.user.firstName = widget.firstNameController.text;
+                widget.user.lastName = widget.lastName.text;
                 RegisterScreen.of(context)?.showNextRegisterScreen();
               }
             },
@@ -180,6 +183,9 @@ class SecondRegisterScreen extends StatelessWidget {
             buttonText: 'Next',
             onPressed: () {
               if (widget._formKey.currentState!.validate()) {
+                widget.user.username = widget.usernameController.text;
+                widget.user.email = widget.emailController.text;
+                widget.user.password = widget.passwordController.text;
                 RegisterScreen.of(context)?.showNextRegisterScreen();
               }
             },
