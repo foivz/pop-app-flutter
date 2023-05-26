@@ -5,6 +5,7 @@ import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
 import 'package:pop_app/login_screen/company_selection.dart';
+import 'package:pop_app/register_screen/register.dart';
 import 'package:pop_app/screentransitions.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/myconstants.dart';
@@ -104,10 +105,11 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                     const SizedBox(height: MyConstants.formInputSpacer / 2),
                     FormSubmitButton(
                       buttonText: 'Register',
-                      onPressed: () {
-                        print(
-                            "Willing to register as user ${usernameCont.text}");
-                      },
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  RegisterScreen(usernameCont.text))),
                       type: FormSubmitButtonType.RED_OUTLINE,
                     ),
                   ],

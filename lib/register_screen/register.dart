@@ -27,7 +27,10 @@ class RegisterScreen extends StatefulWidget {
     }
   }
 
-  RegisterScreen({super.key});
+  RegisterScreen(String initialUsername, {super.key}) {
+    firstNameController.text = initialUsername;
+  }
+
   @override
   State<RegisterScreen> createState() => RegisterScreenState();
 }
