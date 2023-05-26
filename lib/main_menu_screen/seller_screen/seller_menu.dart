@@ -16,9 +16,9 @@ class _SellerMenuState extends State<SellerMenu> {
       shrinkWrap: true,
       children: [
         _buildButton('assets/icons/sell-icon.png', 'Sell'),
-        _buildButton('assets/icons/settings-icon.png', 'Settings'),
+        _buildButton('assets/icons/view-icon.png', 'Invoices'),
         _buildButton('assets/icons/wallet-icon.png', 'Wallet'),
-        _buildButton('assets/icons/view-icon.png', 'View'),
+        _buildButton('assets/icons/settings-icon.png', 'Settings'),
       ],
     );
   }
