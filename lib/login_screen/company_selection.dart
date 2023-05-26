@@ -2,14 +2,15 @@
 import 'package:pop_app/login_screen/company_data_container_widget.dart';
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/models/store.dart';
 import 'package:pop_app/role_selection/role_selection_screen.dart';
 import 'package:pop_app/screentransitions.dart';
 
 class CompanySelectionScreen extends StatefulWidget {
   final Function(String company) onCompanySelected;
   final bool showAppBar;
-  final Map<int, String> companyNamesWithNoOfMembers;
-  const CompanySelectionScreen(this.onCompanySelected, this.companyNamesWithNoOfMembers,
+  final List<Store> stores;
+  const CompanySelectionScreen(this.onCompanySelected, this.stores,
       {super.key, this.showAppBar = true});
 
   @override
@@ -50,12 +51,12 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
           builder: (context, snapshot) {
             List<Widget> companies = [];
             if (snapshot.hasData) {
-              (snapshot.data as Map).forEach((key, value) {
+              for (var store in (snapshot.data as List<Store>)) {
                 GlobalKey companyKey = GlobalKey();
                 companies.add(CompanyDataContainer(
                   key: companyKey,
-                  companyName: value,
-                  employeeCount: key,
+                  companyName: store.storeName,
+                  employeeCount: store.employeeCount,
                   onTapCallback: () {
                     state(o) => (((o.key as GlobalKey).currentState) as CompanyDataContainerState);
                     companies.where((company) => state(company).isSelected).forEach((company) {
@@ -65,7 +66,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
                     selectedCompany = companyKey;
                   },
                 ));
-              });
+              }
               return Scrollbar(
                 child: SingleChildScrollView(
                   child: Container(
@@ -77,7 +78,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
             } else
               return const Center(child: CircularProgressIndicator());
           },
-          initialData: widget.companyNamesWithNoOfMembers,
+          initialData: widget.stores,
         ),
       ),
     );

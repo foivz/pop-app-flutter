@@ -5,6 +5,7 @@ import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
 import 'package:pop_app/login_screen/company_selection.dart';
+import 'package:pop_app/models/store.dart';
 import 'package:pop_app/register_screen/register.dart';
 import 'package:pop_app/role_selection/role_selection_screen.dart';
 import 'package:pop_app/screentransitions.dart';
@@ -122,7 +123,7 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
           transitionsBuilder: ScreenTransitions.slideLeft,
         ));
         // TODO: Load actual data here, to be done on a seperate issue for fixing the login.
-      }, const {1: "ok"}),
+      }, List.from([Store(1, "test", 0, 0)])),
       transitionsBuilder: ScreenTransitions.slideLeft,
     ));
   }

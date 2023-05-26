@@ -3,6 +3,7 @@ import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/login_screen/company_selection.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
+import 'package:pop_app/models/store.dart';
 import 'package:pop_app/myconstants.dart';
 import 'package:pop_app/register_screen/register.dart';
 import 'package:pop_app/reusable_components/message.dart';
@@ -18,20 +19,17 @@ class FourthRegisterScreen extends StatefulWidget {
 class _FourthRegisterScreenState extends State<FourthRegisterScreen> {
   bool areStoresFetched = false;
   bool storeFetchingFailed = false;
-  Map<int, String>? fetchedStores = null;
+  List<Store> fetchedStores = List.empty(growable: true);
 
   void fetchStores() async {
     var stores = await ApiRequestManager.getAllStores(widget.widget.user);
 
     if ((stores?["DATA"] != null) && context.mounted) {
-      Map<int, String> storesMap = Map();
-
       for (var store in stores["DATA"]) {
-        Map<int, String> currentEntry = {int.parse(store["Id_Trgovine"]): store["NazivTrgovine"]};
-        storesMap.addAll(currentEntry);
+        fetchedStores.add(Store(int.parse(store["Id_Trgovine"]), store["NazivTrgovine"],
+            int.parse(store["StanjeRacuna"]), store["BrojZaposlenika"]));
       }
 
-      fetchedStores = storesMap;
       setState(() {
         areStoresFetched = true;
       });
