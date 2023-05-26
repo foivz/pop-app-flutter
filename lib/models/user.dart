@@ -6,6 +6,7 @@ class User {
   late String password;
   late String role;
   late String storeName;
+  bool registered = false;
 
   User.empty();
 
