@@ -4,6 +4,7 @@ import 'package:pop_app/register_screen/register_screen_1.dart';
 import 'package:pop_app/register_screen/register_screen_2.dart';
 import 'package:pop_app/register_screen/register_screen_3.dart';
 import 'package:pop_app/register_screen/register_screen_4.dart';
+import 'package:pop_app/register_screen/register_screen_5.dart';
 import 'package:pop_app/screentransitions.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -54,6 +55,7 @@ class RegisterScreenState extends State<RegisterScreen> {
     _registerScreens.add(SecondRegisterScreen(widget));
     _registerScreens.add(ThirdRegisterScreen(widget));
     _registerScreens.add(FourthRegisterScreen(widget));
+    _registerScreens.add(const FifthRegisterScreen());
   }
 
   _animatedSwitcher() {
