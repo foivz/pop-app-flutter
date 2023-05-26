@@ -31,6 +31,9 @@ class RegisterScreen extends StatefulWidget {
 class RegisterScreenState extends State<RegisterScreen> {
   int _previousCurrentStep = 0;
   int _currentStep = 0;
+  final int _roleSelectionStepIndex = 2;
+  final _roleSelectionWidgetKey = GlobalKey();
+  var selectedRole = "buyer";
   final List<Widget> _registerScreens = [];
 
   void showNextRegisterScreen() {
@@ -38,6 +41,11 @@ class RegisterScreenState extends State<RegisterScreen> {
       if (_currentStep < _registerScreens.length - 1) {
         _previousCurrentStep = _currentStep;
         _currentStep++;
+        if (_previousCurrentStep == _roleSelectionStepIndex) {
+          selectedRole =
+              (_roleSelectionWidgetKey.currentState as RoleSelectWidgetState)
+                  .selectedOption;
+        }
       }
     });
   }
@@ -45,9 +53,12 @@ class RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
+
+    var roleSelectionWidget = RoleSelectWidget(key: _roleSelectionWidgetKey);
+
     _registerScreens.add(FirstRegisterScreen(widget));
     _registerScreens.add(SecondRegisterScreen(widget));
-    _registerScreens.add(const RoleSelectWidget());
+    _registerScreens.add(roleSelectionWidget);
   }
 
   _animatedSwitcher() {
