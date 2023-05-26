@@ -28,21 +28,35 @@ class FormSubmitButton extends StatefulWidget {
 
 class FormSubmitButtonState extends State<FormSubmitButton> {
   bool enabled = true;
+  bool loading = false;
 
   void setEnabled(bool state) => setState(() => enabled = state);
+  void setLoading(bool state) {
+    setState(() {
+      loading = state;
+      enabled = !state;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    double squareSize = widget.height > widget.width ? widget.width - 20 : widget.height - 20;
     return ElevatedButton(
       style: _style(),
       onPressed: widget.onPressed,
-      child: Text(
-        widget.buttonText,
-        style: TextStyle(
-          color: _isRedFill() ? Colors.white : MyConstants.red,
-          fontSize: widget.fontSize ?? Theme.of(context).textTheme.titleLarge!.fontSize,
-        ),
-      ),
+      child: loading
+          ? SizedBox(
+              height: squareSize,
+              width: squareSize,
+              child: const CircularProgressIndicator(),
+            )
+          : Text(
+              widget.buttonText,
+              style: TextStyle(
+                color: _isRedFill() ? Colors.white : MyConstants.red,
+                fontSize: widget.fontSize ?? Theme.of(context).textTheme.titleLarge!.fontSize,
+              ),
+            ),
     );
   }
 
