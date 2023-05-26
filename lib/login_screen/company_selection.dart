@@ -7,7 +7,8 @@ import 'package:pop_app/screentransitions.dart';
 
 class CompanySelectionScreen extends StatefulWidget {
   final Function(String company) onCompanySelected;
-  const CompanySelectionScreen(this.onCompanySelected, {super.key});
+  final bool showAppBar;
+  const CompanySelectionScreen(this.onCompanySelected, {super.key, this.showAppBar = true});
 
   @override
   State<CompanySelectionScreen> createState() => _CompanySelectionScreenState();
@@ -20,7 +21,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: const Text("Company selection")),
+        appBar: widget.showAppBar ? AppBar(title: const Text("Company selection")) : null,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (selectedCompany == null) {
@@ -37,7 +38,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
               var state = selectedCompany?.currentState;
 
               if (state != null) {
-                widget.onCompanySelected((state as CompanyDataContainer).companyName);
+                widget.onCompanySelected((state as CompanyDataContainerState).widget.companyName);
               }
             }
           },
