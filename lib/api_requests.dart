@@ -25,7 +25,9 @@ enum Routes {
 
 class ApiRequestManager {
   static const String root = "https://cortex.foi.hr/pop/api/v1/";
-  static String? token;
+  static String? _token;
+
+  static String? getToken() => _token;
 
   /// Call an API route
   static Uri route(Routes route) => Uri.parse("$root${route.name}.php");
@@ -37,11 +39,15 @@ class ApiRequestManager {
       route(Routes.login),
     );
     var responseData = json.decode(response.body);
+    _updateTokenData(responseData);
+    return responseData;
+  }
+
+  static void _updateTokenData(responseData) {
     try {
       var tokenData = responseData["DATA"]["Token"];
-      token = tokenData;
+      _token = tokenData;
     } catch (e) {}
-    return responseData;
   }
 
   static Future register(User user) async {
@@ -60,10 +66,7 @@ class ApiRequestManager {
 
     var responseData = json.decode(response.body);
 
-    try {
-      var tokenData = responseData["DATA"]["Token"];
-      token = tokenData;
-    } catch (e) {}
+    _updateTokenData(responseData);
 
     return responseData;
   }
