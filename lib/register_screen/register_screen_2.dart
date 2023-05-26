@@ -30,8 +30,7 @@ class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
   }
 
   String? validatePasswords(value) {
-    if (widget.widget.passwordController.text !=
-        widget.widget.repeatedPasswordController.text) {
+    if (widget.widget.passwordController.text != widget.widget.repeatedPasswordController.text) {
       return "Double-check the entered passwords!";
     } else {
       return null;
@@ -116,8 +115,7 @@ class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
                   if (context.mounted) {
                     if (failedLoginMessage == null) {
                       RegisterScreen.of(context)?.showNextRegisterScreen();
-                      Message.info(context)
-                          .show("Welcome, ${widget.widget.user.firstName}!");
+                      Message.info(context).show("Welcome, ${widget.widget.user.firstName}!");
                     } else {
                       Message.error(context).show(failedLoginMessage!);
                     }

@@ -19,10 +19,7 @@ class _FifthRegisterScreenState extends State<FifthRegisterScreen> {
       child: Text(
         "A professor has to confirm your registration.\n\n"
         "After your account is confirmed, you will gain access to the rest of the application.",
-        style: TextStyle(
-            color: MyConstants.red,
-            fontSize: 16,
-            fontFamily: "RobotoMono-Regular"),
+        style: TextStyle(color: MyConstants.red, fontSize: 16, fontFamily: "RobotoMono-Regular"),
       ),
     ),
   );
@@ -41,8 +38,7 @@ class _FifthRegisterScreenState extends State<FifthRegisterScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Center(
-            child: isLoading ? loaderContent : registrationSuccessfulContent),
+        child: Center(child: isLoading ? loaderContent : registrationSuccessfulContent),
       ),
     );
   }
