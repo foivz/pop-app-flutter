@@ -62,4 +62,56 @@ class ApiRequestManager {
 
     return responseData;
   }
+
+  static Future<dynamic?> getAllStores(User user) async {
+    var fm = {
+      "Token": _token,
+      "KorisnickoIme": user.username,
+      "Readall": "True",
+    };
+
+    dynamic responseData;
+
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(
+        body: fm,
+        route(Routes.trgovine),
+      );
+      String body = response.body;
+
+      return body;
+    });
+
+    return responseData;
+  }
+
+  /// Wraps whatever fetching logic into a token check.
+  /// If the server reports token is invalid, this method attempts login once.
+  /// If the new token is still invalid, method returns null instead of response.
+  /// [requestCallback] should return a response body!
+  static Future<dynamic> _executeWithToken(
+      User user, Future<String> Function() requestCallback) async {
+    int attempts = 0;
+
+    dynamic responseData;
+    bool isTokenValid = false;
+    do {
+      String body = await requestCallback();
+      responseData = jsonDecode(body);
+      isTokenValid = _isTokenValid(responseData);
+      if (!isTokenValid) {
+        login(user.username, user.password);
+      }
+    } while (!isTokenValid && ++attempts != 2);
+
+    if (attempts == 2) {
+      responseData = null;
+    }
+
+    return responseData;
+  }
+
+  static bool _isTokenValid(responseData) {
+    return responseData["STATUSMESSAGE"] != "OLD TOKEN";
+  }
 }

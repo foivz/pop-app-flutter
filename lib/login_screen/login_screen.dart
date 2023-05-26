@@ -121,7 +121,8 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
           pageBuilder: (c, a, s) => const RoleSelectionScreen(),
           transitionsBuilder: ScreenTransitions.slideLeft,
         ));
-      }),
+        // TODO: Load actual data here, to be done on a seperate issue for fixing the login.
+      }, const {1: "ok"}),
       transitionsBuilder: ScreenTransitions.slideLeft,
     ));
   }

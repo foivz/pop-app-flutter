@@ -8,7 +8,9 @@ import 'package:pop_app/screentransitions.dart';
 class CompanySelectionScreen extends StatefulWidget {
   final Function(String company) onCompanySelected;
   final bool showAppBar;
-  const CompanySelectionScreen(this.onCompanySelected, {super.key, this.showAppBar = true});
+  final Map<int, String> companyNamesWithNoOfMembers;
+  const CompanySelectionScreen(this.onCompanySelected, this.companyNamesWithNoOfMembers,
+      {super.key, this.showAppBar = true});
 
   @override
   State<CompanySelectionScreen> createState() => _CompanySelectionScreenState();
@@ -52,8 +54,8 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
                 GlobalKey companyKey = GlobalKey();
                 companies.add(CompanyDataContainer(
                   key: companyKey,
-                  companyName: key,
-                  employeeCount: value,
+                  companyName: value,
+                  employeeCount: key,
                   onTapCallback: () {
                     state(o) => (((o.key as GlobalKey).currentState) as CompanyDataContainerState);
                     companies.where((company) => state(company).isSelected).forEach((company) {
@@ -75,13 +77,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
             } else
               return const Center(child: CircularProgressIndicator());
           },
-          // TODO: define future to load data: "future: asyncFunc()" and remove initialData
-          initialData: const {
-            "Company1 d.o.o.": 2,
-            "Company2 d.o.o.": 1,
-            "Company3 d.o.o.": 3,
-            "Company4 d.o.o.": 1
-          },
+          initialData: widget.companyNamesWithNoOfMembers,
         ),
       ),
     );
