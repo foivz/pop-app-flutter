@@ -28,8 +28,7 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
   bool blockLoginRequests = false;
 
   String message = "";
-  void error(bool showError,
-      {String errorMessage = "Username or password not valid."}) {
+  void error(bool showError, {String errorMessage = "Username or password not valid."}) {
     showError ? setState(() => message = errorMessage) : message = "";
   }
 
@@ -44,8 +43,7 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
             padding: const EdgeInsets.all(16),
             child: OrientationBuilder(
               builder: (context, orientation) => SizedBox(
-                height:
-                    orientation.name == Orientation.portrait.name ? 200 : 100,
+                height: orientation.name == Orientation.portrait.name ? 200 : 100,
                 child: Image.asset(
                   'assets/foi/foi-building.png',
                   color: MyConstants.red,
@@ -61,8 +59,7 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                 child: Column(
                   children: [
                     const Center(), // centers the widgets after it, do not remove
-                    Text(message,
-                        style: Theme.of(context).textTheme.titleMedium),
+                    Text(message, style: Theme.of(context).textTheme.titleMedium),
                     CustomTextFormField(
                       inputLabel: "Username",
                       textEditingController: usernameCont,
@@ -79,22 +76,16 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                       key: loginButton,
                       buttonText: 'Login',
                       onPressed: () {
-                        if (_formKey.currentState!.validate() &&
-                            !blockLoginRequests) {
+                        if (_formKey.currentState!.validate() && !blockLoginRequests) {
                           blockLoginRequests = true;
-                          (loginButton.currentState as FormSubmitButtonState)
-                              .setLoading(true);
-                          ApiRequestManager.login(
-                                  usernameCont.text, passwordCont.text)
-                              .then((val) {
+                          (loginButton.currentState as FormSubmitButtonState).setLoading(true);
+                          ApiRequestManager.login(usernameCont.text, passwordCont.text).then((val) {
                             if (val["STATUS"]) {
-                              SecureStorage.setUserData(
-                                  json.encode(val["DATA"]));
+                              SecureStorage.setUserData(json.encode(val["DATA"]));
                               _navigate();
                             } else
                               error(val.keys.length > 0);
-                            (loginButton.currentState as FormSubmitButtonState)
-                                .setLoading(false);
+                            (loginButton.currentState as FormSubmitButtonState).setLoading(false);
                             blockLoginRequests = false;
                           });
                         }
@@ -109,8 +100,7 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                       onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  RegisterScreen(usernameCont.text))),
+                              builder: (context) => RegisterScreen(usernameCont.text))),
                       type: FormSubmitButtonType.RED_OUTLINE,
                     ),
                   ],

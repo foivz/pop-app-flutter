@@ -12,6 +12,6 @@ class User {
 
   User(this.firstName, this.lastName, this.username, this.email, this.password);
 
-  User.full(this.firstName, this.lastName, this.username, this.email,
-      this.password, this.role, this.storeName);
+  User.full(this.firstName, this.lastName, this.username, this.email, this.password, this.role,
+      this.storeName);
 }

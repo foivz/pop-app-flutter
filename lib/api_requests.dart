@@ -13,15 +13,7 @@ List<Map<String, String>> routes = [
   {"route": "trgovine", "method": "POST"},
 ];
 
-enum Routes {
-  login,
-  registracija,
-  proizvodi,
-  paketi,
-  novcanik,
-  racuni,
-  trgovine
-}
+enum Routes { login, registracija, proizvodi, paketi, novcanik, racuni, trgovine }
 
 class ApiRequestManager {
   static const String root = "https://cortex.foi.hr/pop/api/v1/";
