@@ -6,6 +6,7 @@ import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
 import 'package:pop_app/login_screen/company_selection.dart';
 import 'package:pop_app/register_screen/register.dart';
+import 'package:pop_app/role_selection/role_selection_screen.dart';
 import 'package:pop_app/screentransitions.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/myconstants.dart';
@@ -124,7 +125,13 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
 
   _navigate() {
     Navigator.of(context).push(PageRouteBuilder(
-      pageBuilder: (c, a, s) => const CompanySelectionScreen(),
+      pageBuilder: (c, a, s) => CompanySelectionScreen((company) {
+        Navigator.of(context).push(PageRouteBuilder(
+          // TODO: Show company selection and role selection ONLY if API says user has not yet selected a company!!!
+          pageBuilder: (c, a, s) => const RoleSelectionScreen(),
+          transitionsBuilder: ScreenTransitions.slideLeft,
+        ));
+      }),
       transitionsBuilder: ScreenTransitions.slideLeft,
     ));
   }

@@ -6,7 +6,8 @@ import 'package:pop_app/role_selection/role_selection_screen.dart';
 import 'package:pop_app/screentransitions.dart';
 
 class CompanySelectionScreen extends StatefulWidget {
-  const CompanySelectionScreen({super.key});
+  final Function(String company) onCompanySelected;
+  const CompanySelectionScreen(this.onCompanySelected, {super.key});
 
   @override
   State<CompanySelectionScreen> createState() => _CompanySelectionScreenState();
@@ -33,10 +34,11 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
                 Future.delayed(const Duration(seconds: 1), () => _lockSnackbar = false);
               }
             } else {
-              Navigator.of(context).push(PageRouteBuilder(
-                pageBuilder: (c, a, s) => const RoleSelectionScreen(),
-                transitionsBuilder: ScreenTransitions.slideLeft,
-              ));
+              var state = selectedCompany?.currentState;
+
+              if (state != null) {
+                widget.onCompanySelected((state as CompanyDataContainer).companyName);
+              }
             }
           },
           child: const Icon(Icons.check),
