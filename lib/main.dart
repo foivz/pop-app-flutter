@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:pop_app/login_screen/login_screen.dart';
-import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/themes.dart';
+
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,21 +15,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pop app',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        appBarTheme: AppBarTheme(
-          color: MyConstants.red,
-          titleTextStyle: TextStyle(
-            color: Colors.white,
-            fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
-          ),
-        ),
-        colorScheme: ColorScheme.fromSeed(
-          primary: MyConstants.red,
-          seedColor: MyConstants.red,
-        ),
-        useMaterial3: true,
-      ),
-      home: const LoginHomepage(),
+      theme: lightTheme(context),
+      home: const BaseLoginScreen(),
     );
   }
 }
