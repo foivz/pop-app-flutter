@@ -133,7 +133,7 @@ class FirstRegisterScreen extends StatelessWidget {
 class SecondRegisterScreen extends StatelessWidget {
   final RegisterScreen widget;
   SecondRegisterScreen(this.widget, {super.key});
-  var emailFieldKey = GlobalKey<FormFieldState>();
+  final emailFieldKey = GlobalKey<FormFieldState>();
 
   String? validateEmail(value) {
     if (value == null || value.isEmpty || !value.contains('@')) {
