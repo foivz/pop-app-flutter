@@ -13,8 +13,7 @@ class RegisterScreen extends StatefulWidget {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController repeatedPasswordController =
-      TextEditingController();
+  final TextEditingController repeatedPasswordController = TextEditingController();
   final TextEditingController storeNameController = TextEditingController();
   final User user = User.empty();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -64,8 +63,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   _animatedSwitcher() {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 200),
-      transitionBuilder:
-          ScreenTransitions.navAnimH(_currentStep > _previousCurrentStep),
+      transitionBuilder: ScreenTransitions.navAnimH(_currentStep > _previousCurrentStep),
       reverseDuration: const Duration(milliseconds: 0),
       child: _registerScreens[_currentStep],
     );
@@ -82,8 +80,7 @@ class RegisterScreenState extends State<RegisterScreen> {
             context: context,
             builder: (BuildContext context) => AlertDialog(
               title: const Text('Quit registration?'),
-              content: const Text(
-                  'You are registered. However, the process is not done yet. '
+              content: const Text('You are registered. However, the process is not done yet. '
                   'You might have to complete additional steps later. Exit registration anyway?'),
               actions: <Widget>[
                 TextButton(
