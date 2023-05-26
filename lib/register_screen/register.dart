@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/role_selection/role_selection_screen.dart';
 import 'package:pop_app/role_selection/role_selection_widget.dart';
 import 'package:pop_app/screentransitions.dart';
 
@@ -54,11 +55,9 @@ class RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
 
-    var roleSelectionWidget = RoleSelectWidget(key: _roleSelectionWidgetKey);
-
     _registerScreens.add(FirstRegisterScreen(widget));
     _registerScreens.add(SecondRegisterScreen(widget));
-    _registerScreens.add(roleSelectionWidget);
+    _registerScreens.add(ThirdRegisterScreen(widget));
   }
 
   _animatedSwitcher() {
@@ -187,6 +186,22 @@ class SecondRegisterScreen extends StatelessWidget {
             type: FormSubmitButtonType.RED_FILL,
           )
         ],
+      ),
+    );
+  }
+}
+
+class ThirdRegisterScreen extends StatelessWidget {
+  final RegisterScreen widget;
+  const ThirdRegisterScreen(this.widget, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: widget._formKey,
+      child: RoleSelectionScreen(
+        key: RegisterScreen.of(context)?._roleSelectionWidgetKey,
+        showAppBar: false,
       ),
     );
   }

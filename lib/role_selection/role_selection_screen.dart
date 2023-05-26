@@ -3,7 +3,8 @@ import 'package:pop_app/role_selection/role_selection_widget.dart';
 import 'package:flutter/material.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
-  const RoleSelectionScreen({super.key});
+  final bool showAppBar;
+  const RoleSelectionScreen({super.key, this.showAppBar = true});
 
   @override
   State<RoleSelectionScreen> createState() => _RoleSelectionScreenState();
@@ -11,19 +12,28 @@ class RoleSelectionScreen extends StatefulWidget {
 
 class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   bool _lockSnackbar = false;
+
+  bool shouldShowAppBar() {
+    return widget.showAppBar;
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     GlobalKey roleSelectWidgetKey = GlobalKey();
     return Scaffold(
-      appBar: AppBar(title: const Text("Role selection")),
+      appBar: shouldShowAppBar()
+          ? AppBar(title: const Text("Role selection"))
+          : null,
       body: Container(
         margin: EdgeInsets.only(bottom: isPortrait ? 60 : 0),
         child: RoleSelectWidget(key: roleSelectWidgetKey),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          var roleSelect = roleSelectWidgetKey.currentState as RoleSelectWidgetState;
+          var roleSelect =
+              roleSelectWidgetKey.currentState as RoleSelectWidgetState;
           String selectedOption = roleSelect.selectedOption;
           if (selectedOption == '') {
             if (!_lockSnackbar) {
@@ -33,7 +43,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 content: Text("You must select a role."),
                 duration: Duration(seconds: 1),
               ));
-              Future.delayed(const Duration(seconds: 1), () => _lockSnackbar = false);
+              Future.delayed(
+                  const Duration(seconds: 1), () => _lockSnackbar = false);
             }
           } else {
             showAboutDialog(context: context);
