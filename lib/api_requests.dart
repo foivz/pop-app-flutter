@@ -1,6 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:pop_app/secure_storage.dart';
+
 List<Map<String, String>> routes = [
   {"route": "login", "method": "POST"},
   {"route": "registracija", "method": "POST"},
@@ -31,7 +33,9 @@ class ApiRequestManager {
     try {
       var tokenData = responseData["DATA"]["Token"];
       token = tokenData;
-    } catch (e) {}
+    } catch (e) {
+      SecureStorage.setUserData(json.encode("{}"));
+    }
     return responseData;
   }
 }

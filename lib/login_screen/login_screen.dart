@@ -25,6 +25,13 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool blockLoginRequests = false;
 
+  @override
+  void initState() {
+    super.initState();
+    SecureStorage.getUsername().then((val) => setState(() => usernameCont.text = val));
+    SecureStorage.getPassword().then((val) => setState(() => passwordCont.text = val));
+  }
+
   String message = "";
   void error(bool showError, {String errorMessage = "Username or password not valid."}) {
     showError ? setState(() => message = errorMessage) : message = "";
@@ -80,6 +87,8 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                           ApiRequestManager.login(usernameCont.text, passwordCont.text).then((val) {
                             if (val["STATUS"]) {
                               SecureStorage.setUserData(json.encode(val["DATA"]));
+                              SecureStorage.setUsername(usernameCont.text);
+                              SecureStorage.setPassword(passwordCont.text);
                               _navigate();
                             } else
                               error(val.keys.length > 0);
