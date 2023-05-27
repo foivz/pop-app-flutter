@@ -35,7 +35,9 @@ class _FourthRegisterScreenState extends State<FourthRegisterScreen> {
       });
     } else {
       Message.error(context).show("An error occured while getting the list of available stores.");
-      storeFetchingFailed = true;
+      setState(() {
+        storeFetchingFailed = true;
+      });
     }
   }
 
