@@ -63,7 +63,7 @@ class ApiRequestManager {
     return responseData;
   }
 
-  static Future<dynamic?> getAllStores(User user) async {
+  static Future<dynamic> getAllStores(User user) async {
     var fm = {
       "Token": _token,
       "KorisnickoIme": user.username,
