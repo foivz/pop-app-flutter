@@ -48,7 +48,7 @@ class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
 
     failedLoginMessage = null;
 
-    widget.widget.user.registered = responseData["STATUS"];
+    widget.widget.user.registered = responseData["STATUSMESSAGE"] == "Registration successful";
 
     if (widget.widget.user.registered == false) {
       String responseMessage = responseData["STATUSMESSAGE"].toString();
