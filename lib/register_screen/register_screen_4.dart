@@ -4,10 +4,14 @@ import 'package:pop_app/login_screen/company_selection.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/models/store.dart';
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 import 'package:pop_app/register_screen/register.dart';
 import 'package:pop_app/reusable_components/message.dart';
 
+/// This screen has a lot of work to do.
+/// First, for buyers, it fetches all stores.
+/// Then, selected store needs to get assigned to both types of users.
 class FourthRegisterScreen extends StatefulWidget {
   final RegisterScreen widget;
   const FourthRegisterScreen(this.widget, {super.key});
@@ -19,6 +23,7 @@ class FourthRegisterScreen extends StatefulWidget {
 class _FourthRegisterScreenState extends State<FourthRegisterScreen> {
   bool areStoresFetched = false;
   bool storeFetchingFailed = false;
+  Store? selectedStoreObject;
   List<Store> fetchedStores = List.empty(growable: true);
 
   void fetchStores() async {
@@ -41,9 +46,35 @@ class _FourthRegisterScreenState extends State<FourthRegisterScreen> {
     }
   }
 
+  void _createStoreAndProceed() async {
+    selectedStoreObject = await ApiRequestManager.createStore(
+        widget.widget.user, widget.widget.storeNameController.text);
+    _proceed();
+  }
+
+  void _assignStoreAndProceed(Store selectedStore) async {
+    if (await ApiRequestManager.assignStore(widget.widget.user, selectedStore)) {
+      selectedStoreObject = selectedStore;
+    } else {
+      selectedStoreObject = null;
+    }
+    _proceed();
+  }
+
+  void _proceed() {
+    if (selectedStoreObject != null) {
+      widget.widget.user.store = selectedStoreObject!;
+      RegisterScreen.of(context)?.showNextRegisterScreen();
+    } else {
+      Message.error(context).show("Oh no!\n"
+          "Something went wrong and the store could not be assigned to you.\n"
+          "Try again later.");
+    }
+  }
+
   @override
   void initState() {
-    if (widget.widget.user.role == "buyer") {
+    if (widget.widget.user.getRole()?.roleName == "buyer") {
       fetchStores();
     }
     super.initState();
@@ -51,7 +82,7 @@ class _FourthRegisterScreenState extends State<FourthRegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.widget.user.role == "seller"
+    return widget.widget.user.getRole()?.roleName == "seller"
         ? Form(
             key: widget.widget.formKey,
             child: Column(
@@ -68,8 +99,7 @@ class _FourthRegisterScreenState extends State<FourthRegisterScreen> {
                   buttonText: 'Next',
                   onPressed: () {
                     if (widget.widget.formKey.currentState!.validate()) {
-                      widget.widget.user.storeName = widget.widget.storeNameController.text;
-                      RegisterScreen.of(context)?.showNextRegisterScreen();
+                      _createStoreAndProceed();
                     }
                   },
                   type: FormSubmitButtonType.RED_FILL,
@@ -79,8 +109,7 @@ class _FourthRegisterScreenState extends State<FourthRegisterScreen> {
           )
         : areStoresFetched
             ? CompanySelectionScreen((company) async {
-                widget.widget.user.storeName = widget.widget.storeNameController.text;
-                RegisterScreen.of(context)?.showNextRegisterScreen();
+                _assignStoreAndProceed(company);
               }, fetchedStores, showAppBar: false)
             : !storeFetchingFailed
                 ? const Center(child: CircularProgressIndicator())

@@ -7,7 +7,7 @@ import 'package:pop_app/role_selection/role_selection_screen.dart';
 import 'package:pop_app/screentransitions.dart';
 
 class CompanySelectionScreen extends StatefulWidget {
-  final Function(String company) onCompanySelected;
+  final Function(Store company) onCompanySelected;
   final bool showAppBar;
   final List<Store> stores;
   const CompanySelectionScreen(this.onCompanySelected, this.stores,
@@ -41,7 +41,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
               var state = selectedCompany?.currentState;
 
               if (state != null) {
-                widget.onCompanySelected((state as CompanyDataContainerState).widget.companyName);
+                widget.onCompanySelected((state as CompanyDataContainerState).widget.store);
               }
             }
           },
@@ -55,8 +55,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
                 GlobalKey companyKey = GlobalKey();
                 companies.add(CompanyDataContainer(
                   key: companyKey,
-                  companyName: store.storeName,
-                  employeeCount: store.employeeCount,
+                  store: store,
                   onTapCallback: () {
                     state(o) => (((o.key as GlobalKey).currentState) as CompanyDataContainerState);
                     companies.where((company) => state(company).isSelected).forEach((company) {

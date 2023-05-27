@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:pop_app/models/store.dart';
 import 'dart:convert';
 import 'package:pop_app/models/user.dart';
 
@@ -11,9 +12,10 @@ List<Map<String, String>> routes = [
   {"route": "novcanik", "method": "POST"},
   {"route": "racuni", "method": "POST"},
   {"route": "trgovine", "method": "POST"},
+  {"route": "korisnici", "method": "POST"},
 ];
 
-enum Routes { login, registracija, proizvodi, paketi, novcanik, racuni, trgovine }
+enum Routes { login, registracija, proizvodi, paketi, novcanik, racuni, trgovine, korisnici }
 
 class ApiRequestManager {
   static const String root = "https://cortex.foi.hr/pop/api/v1/";
@@ -83,6 +85,79 @@ class ApiRequestManager {
     });
 
     return responseData;
+  }
+
+  static Future<Store> createStore(User user, String storeName) async {
+    var fm = {
+      "Token": _token,
+      "KorisnickoIme": user.username,
+      "CREATESTORE": "True",
+      "NazivTrgovine": storeName
+    };
+
+    dynamic responseData;
+
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(
+        body: fm,
+        route(Routes.trgovine),
+      );
+      String body = response.body;
+
+      return body;
+    });
+
+    return Store(responseData["DATA"]["Id_Trgovine"], responseData["DATA"]["NazivTrgovine"], 0, 0);
+  }
+
+  static Future<bool> assignStore(User user, Store store) async {
+    var fm = {
+      "Token": _token,
+      "KorisnickoIme": user.username,
+      "ASSIGNSTORESELF": "True",
+      "Id_Trgovine": store.storeId.toString()
+    };
+
+    dynamic responseData;
+
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(
+        body: fm,
+        route(Routes.trgovine),
+      );
+      String body = response.body;
+
+      return body;
+    });
+
+    return (responseData["STATUSMESSAGE"] == "STORE ASSIGNED");
+  }
+
+  static Future<bool> assignRole(User user) async {
+    if (user.getRole() == null) {
+      return false;
+    }
+
+    var fm = {
+      "Token": _token,
+      "KorisnickoIme": user.username,
+      "SETOWNROLE": "True",
+      "RoleId": user.getRole()!.roleId.toString()
+    };
+
+    dynamic responseData;
+
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(
+        body: fm,
+        route(Routes.korisnici),
+      );
+      String body = response.body;
+
+      return body;
+    });
+
+    return (responseData["STATUSMESSAGE"] == "OWN ROLE SET");
   }
 
   /// Wraps whatever fetching logic into a token check.

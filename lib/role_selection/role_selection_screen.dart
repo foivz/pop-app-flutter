@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   final bool showAppBar;
+  final void Function(UserRole selectedRole)? onSelectedCallback;
   const RoleSelectionScreen({super.key, this.onSelectedCallback, this.showAppBar = true});
 
   @override
@@ -44,7 +45,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             }
           } else {
             if (widget.onSelectedCallback != null) {
-              widget.onSelectedCallback!.call(roleSelect.selectedOption);
+              widget.onSelectedCallback!.call(User.roles
+                  .firstWhere((element) => element.roleName == roleSelect.selectedOption));
             } else {
               showAboutDialog(context: context);
             }
