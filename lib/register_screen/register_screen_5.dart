@@ -12,17 +12,18 @@ class FifthRegisterScreen extends StatelessWidget {
         onPressed: () => Navigator.pop(context),
         child: const Icon(Icons.check),
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(8.0),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Center(
           child: Card(
+            color: Colors.greenAccent.shade100,
             child: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Text(
                 "A professor has to confirm your registration.\n\n"
                 "After your account is confirmed, you will gain access to the rest of the application.",
                 style: TextStyle(
-                    color: MyConstants.red, fontSize: 16, fontFamily: "RobotoMono-Regular"),
+                    color: Colors.green.shade900, fontSize: 20, fontFamily: "RobotoMono-Regular"),
               ),
             ),
           ),
