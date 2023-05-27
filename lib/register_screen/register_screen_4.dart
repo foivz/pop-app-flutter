@@ -79,7 +79,7 @@ class _FourthRegisterScreenState extends State<FourthRegisterScreen> {
             ? CompanySelectionScreen((company) async {
                 widget.widget.user.storeName = widget.widget.storeNameController.text;
                 RegisterScreen.of(context)?.showNextRegisterScreen();
-              }, fetchedStores!, showAppBar: false)
+              }, fetchedStores, showAppBar: false)
             : !storeFetchingFailed
                 ? const Center(child: CircularProgressIndicator())
                 : const Card(
