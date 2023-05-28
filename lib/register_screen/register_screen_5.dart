@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pop_app/myconstants.dart';
 
 /// On this screen the user is already registered with their store assigned to them.
 class FifthRegisterScreen extends StatelessWidget {

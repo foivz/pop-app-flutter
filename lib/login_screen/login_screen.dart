@@ -1,22 +1,19 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
-import 'dart:convert';
-
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
-import 'package:pop_app/login_screen/linewithtext_widget.dart';
-import 'package:pop_app/login_screen/company_selection.dart';
-import 'package:pop_app/models/store.dart';
-import 'package:pop_app/models/user.dart';
-import 'package:pop_app/register_screen/register.dart';
-import 'package:pop_app/register_screen/store_fetcher_mixin.dart';
-import 'package:pop_app/reusable_components/message.dart';
 import 'package:pop_app/role_selection/role_selection_screen.dart';
+import 'package:pop_app/register_screen/store_fetcher_mixin.dart';
+import 'package:pop_app/login_screen/linewithtext_widget.dart';
+import 'package:pop_app/reusable_components/message.dart';
+import 'package:pop_app/register_screen/register.dart';
 import 'package:pop_app/screentransitions.dart';
+import 'package:pop_app/secure_storage.dart';
 import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
-import 'package:pop_app/secure_storage.dart';
+import 'dart:convert';
 
 class BaseLoginScreen extends StatefulWidget {
   const BaseLoginScreen({super.key});
@@ -159,12 +156,20 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   }
 
   _navigateToStoreSelection() {
-    fetchStores(loggedUser!);
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (c, a, s) => Scaffold(
-            body: Center(child: storeSelection(loggedUser!, GlobalKey(), TextEditingController()))),
-        transitionsBuilder: ScreenTransitions.slideLeft,
+    fetchStores(loggedUser!).then(
+      (value) => Navigator.of(context).push(
+        PageRouteBuilder(
+          pageBuilder: (c, a, s) => Scaffold(
+            body: Center(
+              child: storeSelection(
+                loggedUser!,
+                GlobalKey(),
+                TextEditingController(),
+              ),
+            ),
+          ),
+          transitionsBuilder: ScreenTransitions.slideLeft,
+        ),
       ),
     );
   }
@@ -179,6 +184,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
 
   @override
   void onStoreFetched() {
+    setState(() {});
     if (selectedStoreObject != null) {
       loggedUser!.store = selectedStoreObject!;
       _navigateToMainScreen();

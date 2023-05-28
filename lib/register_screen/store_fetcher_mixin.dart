@@ -6,7 +6,6 @@ import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
-import 'package:pop_app/reusable_components/message.dart';
 
 abstract class StoreFetcher<T extends StatefulWidget> extends State<T> {
   void onStoreFetched();
@@ -30,26 +29,22 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
       selectedStoreObject = null;
     }
     onStoreFetched();
+    setState(() {});
   }
 
-  void fetchStores(User user) async {
+  Future fetchStores(User user) async {
     var stores = await ApiRequestManager.getAllStores(user);
-
-    if ((stores?["DATA"] != null) && context.mounted) {
-      for (var store in stores["DATA"]) {
-        fetchedStores.add(Store(int.parse(store["Id_Trgovine"]), store["NazivTrgovine"],
-            int.parse(store["StanjeRacuna"]), store["BrojZaposlenika"]));
+    setState(() {
+      if ((stores?["DATA"] != null)) {
+        fetchedStores.clear();
+        for (var store in stores["DATA"]) {
+          fetchedStores.add(Store(int.parse(store["Id_Trgovine"]), store["NazivTrgovine"],
+              int.parse(store["StanjeRacuna"]), store["BrojZaposlenika"]));
+        }
       }
-
-      setState(() {
-        areStoresFetched = true;
-      });
-    } else {
-      Message.error(context).show("An error occured while getting the list of available stores.");
-      setState(() {
-        storeFetchingFailed = true;
-      });
-    }
+      areStoresFetched = true;
+    });
+    return stores;
   }
 
   Widget storeSelection(
@@ -79,21 +74,10 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
               ],
             ),
           )
-        : areStoresFetched
-            ? CompanySelectionScreen((company) async {
-                _assignStoreAndProceed(user, company);
-              }, fetchedStores, showAppBar: false)
-            : !storeFetchingFailed
-                ? const Center(child: CircularProgressIndicator())
-                : const Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(
-                        "Whoopsy! You weren't able to read the list of stores. Try to log in and finish the registration from there.",
-                        style: TextStyle(
-                            color: MyConstants.red, fontSize: 16, fontFamily: "RobotoMono-Regular"),
-                      ),
-                    ),
-                  );
+        : CompanySelectionScreen(
+            onCompanySelected: (company) async => _assignStoreAndProceed(user, company),
+            stores: fetchedStores,
+            showAppBar: false,
+          );
   }
 }
