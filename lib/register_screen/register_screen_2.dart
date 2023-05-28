@@ -85,6 +85,7 @@ class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
               fieldKey: emailFieldKey,
               inputLabel: "Email address",
               textEditingController: widget.widget.emailController,
+              textInputType: TextInputType.emailAddress,
               validateCallback: validateEmail,
               onUpdateCallback: () => emailFieldKey.currentState?.validate(),
             ),

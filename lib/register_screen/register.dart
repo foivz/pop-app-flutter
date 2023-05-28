@@ -100,12 +100,14 @@ class RegisterScreenState extends State<RegisterScreen> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
+                    quitEarly = false;
                     Navigator.pop(context);
                   },
                   child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () {
+                    quitEarly = true;
                     Navigator.pop(context);
                   },
                   child: const Text('Quit registration'),
