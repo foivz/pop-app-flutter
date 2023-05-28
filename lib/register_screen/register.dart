@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:pop_app/models/user.dart';
 import 'package:pop_app/register_screen/register_screen_1.dart';
 import 'package:pop_app/register_screen/register_screen_2.dart';
 import 'package:pop_app/register_screen/register_screen_3.dart';
 import 'package:pop_app/register_screen/register_screen_4.dart';
 import 'package:pop_app/register_screen/register_screen_5.dart';
 import 'package:pop_app/screentransitions.dart';
+import 'package:pop_app/models/user.dart';
+
+import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
   final TextEditingController firstNameController = TextEditingController();
@@ -15,6 +16,8 @@ class RegisterScreen extends StatefulWidget {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController repeatedPasswordController = TextEditingController();
   final TextEditingController storeNameController = TextEditingController();
+
+  final String initialUsername;
   final User user = User.empty();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -26,9 +29,7 @@ class RegisterScreen extends StatefulWidget {
     }
   }
 
-  RegisterScreen(String initialUsername, {super.key}) {
-    firstNameController.text = initialUsername;
-  }
+  RegisterScreen({super.key, required this.initialUsername});
 
   @override
   State<RegisterScreen> createState() => RegisterScreenState();
@@ -52,7 +53,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-
+    widget.firstNameController.text = widget.initialUsername;
     _registerScreens.add(FirstRegisterScreen(widget));
     _registerScreens.add(SecondRegisterScreen(widget));
     _registerScreens.add(ThirdRegisterScreen(widget));
@@ -80,22 +81,34 @@ class RegisterScreenState extends State<RegisterScreen> {
             context: context,
             builder: (BuildContext context) => AlertDialog(
               title: const Text('Quit registration?'),
-              content: const Text('You are registered. However, the process is not done yet. '
-                  'You might have to complete additional steps later. Exit registration anyway?'),
+              content: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'You are registered. '
+                          'However, there are still some steps you need to complete. '
+                          'If you quit now, you will have to complete them later.',
+                      style: Theme.of(context).dialogTheme.contentTextStyle,
+                    ),
+                    TextSpan(
+                      text: '\n\nQuit registration anyway?',
+                      style: Theme.of(context).dialogTheme.contentTextStyle,
+                    ),
+                  ],
+                ),
+              ),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    quitEarly = false;
                     Navigator.pop(context);
                   },
                   child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () {
-                    quitEarly = true;
                     Navigator.pop(context);
                   },
-                  child: const Text('Exit registration'),
+                  child: const Text('Quit registration'),
                 ),
               ],
             ),
@@ -115,9 +128,7 @@ class RegisterScreenState extends State<RegisterScreen> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          title: const Text('Register yourself'),
-        ),
+        appBar: AppBar(title: const Text('Register yourself')),
         body: Center(child: _animatedSwitcher()),
       ),
     );

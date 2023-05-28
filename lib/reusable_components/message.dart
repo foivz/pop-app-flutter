@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pop_app/myconstants.dart';
 
 class Message {
   late Color _color;
@@ -8,8 +9,8 @@ class Message {
 
   Message.info(BuildContext context) {
     _context = context;
-    _color = Colors.blue.shade50;
-    _textColor = Colors.black;
+    _textColor = Colors.white;
+    _color = MyConstants.accentColor2;
     _textAlign = TextAlign.center;
   }
 
@@ -25,15 +26,17 @@ class Message {
         backgroundColor: Colors.transparent,
         elevation: 0,
         content: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-                color: _color,
-                borderRadius: const BorderRadius.all(Radius.circular(20))),
-            child: Text(
-              displayText,
-              textAlign: _textAlign,
-              style: TextStyle(color: _textColor),
-            )),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _color,
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+          ),
+          child: Text(
+            displayText,
+            textAlign: _textAlign,
+            style: TextStyle(color: _textColor, fontWeight: FontWeight.w500),
+          ),
+        ),
       ),
     );
   }
