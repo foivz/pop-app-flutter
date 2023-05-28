@@ -22,6 +22,10 @@ class User {
 
   User.empty();
 
+  User.loginInfo(this.username, this.password) {
+    User("", "", username, "", password);
+  }
+
   User(this.firstName, this.lastName, this.username, this.email, this.password);
 
   User.full(this.firstName, this.lastName, this.username, this.email, this.password, UserRole role,
