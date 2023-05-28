@@ -1,12 +1,19 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
+import 'dart:convert';
+
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
 import 'package:pop_app/login_screen/company_selection.dart';
+import 'package:pop_app/models/store.dart';
+import 'package:pop_app/register_screen/register.dart';
+import 'package:pop_app/role_selection/role_selection_screen.dart';
 import 'package:pop_app/screentransitions.dart';
+import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/secure_storage.dart';
 
 class BaseLoginScreen extends StatefulWidget {
   const BaseLoginScreen({super.key});
@@ -15,17 +22,22 @@ class BaseLoginScreen extends StatefulWidget {
 }
 
 class _BaseLoginScreenState extends State<BaseLoginScreen> {
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController usernameCont = TextEditingController();
+  TextEditingController passwordCont = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool blockLoginRequests = false;
+
+  String message = "";
+  void error(bool showError, {String errorMessage = "Username or password not valid."}) {
+    showError ? setState(() => message = errorMessage) : message = "";
+  }
 
   @override
   Widget build(BuildContext context) {
+    GlobalKey loginButton = GlobalKey();
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 10,
-      ),
+      appBar: MyConstants.appBarAsTopBorder,
       body: SingleChildScrollView(
         child: Column(children: [
           Padding(
@@ -48,25 +60,36 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                 child: Column(
                   children: [
                     const Center(), // centers the widgets after it, do not remove
+                    Text(message, style: Theme.of(context).textTheme.titleMedium),
                     CustomTextFormField(
                       inputLabel: "Username",
-                      textEditingController: usernameController,
+                      textEditingController: usernameCont,
                       autoFocus: true,
                     ),
                     const SizedBox(height: MyConstants.formInputSpacer),
                     CustomTextFormField(
                       inputLabel: "Password",
-                      textEditingController: passwordController,
+                      textEditingController: passwordCont,
                       obscureText: true,
                     ),
                     const SizedBox(height: MyConstants.formInputSpacer * 3),
                     FormSubmitButton(
+                      key: loginButton,
                       buttonText: 'Login',
                       onPressed: () {
-                        Navigator.of(context).push(PageRouteBuilder(
-                          pageBuilder: (c, a, s) => const CompanySelectionScreen(),
-                          transitionsBuilder: ScreenTransitions.slideLeft,
-                        ));
+                        if (_formKey.currentState!.validate() && !blockLoginRequests) {
+                          blockLoginRequests = true;
+                          (loginButton.currentState as FormSubmitButtonState).setLoading(true);
+                          ApiRequestManager.login(usernameCont.text, passwordCont.text).then((val) {
+                            if (val["STATUS"]) {
+                              SecureStorage.setUserData(json.encode(val["DATA"]));
+                              _navigate();
+                            } else
+                              error(val.keys.length > 0);
+                            (loginButton.currentState as FormSubmitButtonState).setLoading(false);
+                            blockLoginRequests = false;
+                          });
+                        }
                       },
                       type: FormSubmitButtonType.RED_FILL,
                     ),
@@ -75,9 +98,12 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                     const SizedBox(height: MyConstants.formInputSpacer / 2),
                     FormSubmitButton(
                       buttonText: 'Register',
-                      onPressed: () {
-                        print("Willing to register as user ${usernameController.text}");
-                      },
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegisterScreen(initialUsername: usernameCont.text),
+                        ),
+                      ),
                       type: FormSubmitButtonType.RED_OUTLINE,
                     ),
                   ],
@@ -88,5 +114,19 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
         ]),
       ),
     );
+  }
+
+  _navigate() {
+    Navigator.of(context).push(PageRouteBuilder(
+      pageBuilder: (c, a, s) => CompanySelectionScreen((company) {
+        Navigator.of(context).push(PageRouteBuilder(
+          // TODO: Show company selection and role selection ONLY if API says user has not yet selected a company!!!
+          pageBuilder: (c, a, s) => const RoleSelectionScreen(),
+          transitionsBuilder: ScreenTransitions.slideLeft,
+        ));
+        // TODO: Load actual data here, to be done on a seperate issue for fixing the login.
+      }, List.from([Store(1, "test", 0, 0)])),
+      transitionsBuilder: ScreenTransitions.slideLeft,
+    ));
   }
 }
