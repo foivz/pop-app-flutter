@@ -5,6 +5,12 @@ import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
 import 'package:pop_app/login_screen/company_selection.dart';
+import 'package:pop_app/models/store.dart';
+import 'package:pop_app/models/user.dart';
+import 'package:pop_app/register_screen/register.dart';
+import 'package:pop_app/register_screen/store_fetcher_mixin.dart';
+import 'package:pop_app/reusable_components/message.dart';
+import 'package:pop_app/role_selection/role_selection_screen.dart';
 import 'package:pop_app/screentransitions.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/myconstants.dart';
@@ -18,9 +24,10 @@ class BaseLoginScreen extends StatefulWidget {
   State<BaseLoginScreen> createState() => _BaseLoginScreenState();
 }
 
-class _BaseLoginScreenState extends State<BaseLoginScreen> {
+class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetcherMixin {
   TextEditingController usernameCont = TextEditingController();
   TextEditingController passwordCont = TextEditingController();
+  User? loggedUser;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool blockLoginRequests = false;
@@ -84,14 +91,26 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                         if (_formKey.currentState!.validate() && !blockLoginRequests) {
                           blockLoginRequests = true;
                           (loginButton.currentState as FormSubmitButtonState).setLoading(true);
-                          ApiRequestManager.login(usernameCont.text, passwordCont.text).then((val) {
+                          String username = usernameCont.text;
+                          String password = passwordCont.text;
+                          ApiRequestManager.login(username, password).then((val) {
+                            loggedUser = User.loginInfo(username, password);
+
                             if (val["STATUS"]) {
+                              // TODO: Think about using the User class for storing all user info.
                               SecureStorage.setUserData(json.encode(val["DATA"]));
-                              SecureStorage.setUsername(usernameCont.text);
-                              SecureStorage.setPassword(passwordCont.text);
-                              _navigate();
-                            } else
+                              SecureStorage.setUsername(username);
+                              SecureStorage.setPassword(password);
+                              _navigateToMainScreen();
+                            } else if (val["STATUSMESSAGE"] == "USER NEEDS STORE") {
+                              _navigateToRoleSelection();
+                            } else if (val["STATUSMESSAGE"] ==
+                                "This user hasn't been confirmed yet. Please contact your admin.") {
+                              Message.info(context).show(
+                                  "Account awaiting confirmation.\nPlease be patient and try again later.");
+                            } else {
                               error(val.keys.length > 0);
+                            }
                             (loginButton.currentState as FormSubmitButtonState).setLoading(false);
                             blockLoginRequests = false;
                           });
@@ -104,9 +123,10 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
                     const SizedBox(height: MyConstants.formInputSpacer / 2),
                     FormSubmitButton(
                       buttonText: 'Register',
-                      onPressed: () {
-                        print("Willing to register as user ${usernameCont.text}");
-                      },
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisterScreen(usernameCont.text))),
                       type: FormSubmitButtonType.RED_OUTLINE,
                     ),
                   ],
@@ -119,10 +139,53 @@ class _BaseLoginScreenState extends State<BaseLoginScreen> {
     );
   }
 
-  _navigate() {
+  _navigateToRoleSelection() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (c, a, s) => RoleSelectionScreen(
+          onSelectedCallback: (selectedRole) async {
+            loggedUser!.setRole(selectedRole);
+            if (await ApiRequestManager.assignRole(loggedUser!)) {
+              _navigateToStoreSelection();
+            } else if (context.mounted) {
+              Message.error(context).show("Whoospy! Role couldn't be selected!"
+                  "Try to login again later or register using a different username and email.");
+            }
+          },
+        ),
+        transitionsBuilder: ScreenTransitions.slideLeft,
+      ),
+    );
+  }
+
+  _navigateToStoreSelection() {
+    fetchStores(loggedUser!);
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (c, a, s) => Scaffold(
+            body: Center(child: storeSelection(loggedUser!, GlobalKey(), TextEditingController()))),
+        transitionsBuilder: ScreenTransitions.slideLeft,
+      ),
+    );
+  }
+
+  // TODO: Implement navigation to main screen instead of Placeholder!
+  _navigateToMainScreen() {
     Navigator.of(context).push(PageRouteBuilder(
-      pageBuilder: (c, a, s) => const CompanySelectionScreen(),
+      pageBuilder: (c, a, s) => const Placeholder(),
       transitionsBuilder: ScreenTransitions.slideLeft,
     ));
+  }
+
+  @override
+  void onStoreFetched() {
+    if (selectedStoreObject != null) {
+      loggedUser!.store = selectedStoreObject!;
+      _navigateToMainScreen();
+    } else {
+      Message.error(context).show("Oh no!\n"
+          "Something went wrong and the store could not be assigned to you.\n"
+          "Try again later.");
+    }
   }
 }

@@ -2,11 +2,16 @@
 import 'package:pop_app/login_screen/company_data_container_widget.dart';
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/models/store.dart';
 import 'package:pop_app/role_selection/role_selection_screen.dart';
 import 'package:pop_app/screentransitions.dart';
 
 class CompanySelectionScreen extends StatefulWidget {
-  const CompanySelectionScreen({super.key});
+  final Function(Store company) onCompanySelected;
+  final bool showAppBar;
+  final List<Store> stores;
+  const CompanySelectionScreen(this.onCompanySelected, this.stores,
+      {super.key, this.showAppBar = true});
 
   @override
   State<CompanySelectionScreen> createState() => _CompanySelectionScreenState();
@@ -19,7 +24,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: const Text("Company selection")),
+        appBar: widget.showAppBar ? AppBar(title: const Text("Company selection")) : null,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (selectedCompany == null) {
@@ -33,10 +38,11 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
                 Future.delayed(const Duration(seconds: 1), () => _lockSnackbar = false);
               }
             } else {
-              Navigator.of(context).push(PageRouteBuilder(
-                pageBuilder: (c, a, s) => const RoleSelectionScreen(),
-                transitionsBuilder: ScreenTransitions.slideLeft,
-              ));
+              var state = selectedCompany?.currentState;
+
+              if (state != null) {
+                widget.onCompanySelected((state as CompanyDataContainerState).widget.store);
+              }
             }
           },
           child: const Icon(Icons.check),
@@ -45,12 +51,11 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
           builder: (context, snapshot) {
             List<Widget> companies = [];
             if (snapshot.hasData) {
-              (snapshot.data as Map).forEach((key, value) {
+              for (var store in (snapshot.data as List<Store>)) {
                 GlobalKey companyKey = GlobalKey();
                 companies.add(CompanyDataContainer(
                   key: companyKey,
-                  companyName: key,
-                  employeeCount: value,
+                  store: store,
                   onTapCallback: () {
                     state(o) => (((o.key as GlobalKey).currentState) as CompanyDataContainerState);
                     companies.where((company) => state(company).isSelected).forEach((company) {
@@ -60,7 +65,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
                     selectedCompany = companyKey;
                   },
                 ));
-              });
+              }
               return Scrollbar(
                 child: SingleChildScrollView(
                   child: Container(
@@ -72,13 +77,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
             } else
               return const Center(child: CircularProgressIndicator());
           },
-          // TODO: define future to load data: "future: asyncFunc()" and remove initialData
-          initialData: const {
-            "Company1 d.o.o.": 2,
-            "Company2 d.o.o.": 1,
-            "Company3 d.o.o.": 3,
-            "Company4 d.o.o.": 1
-          },
+          initialData: widget.stores,
         ),
       ),
     );
