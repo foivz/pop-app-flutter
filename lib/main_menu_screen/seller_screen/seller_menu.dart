@@ -25,30 +25,28 @@ class _SellerMenuState extends State<SellerMenu> {
 
   Widget _buildButton(String imagePath, String title) {
     double width = 128;
-
-    return Container(
-      color: MyConstants.accentColor,
-      padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.all(5),
-      child: InkWell(
-        onTap: () {},
-        child: Stack(
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: ElevatedButton(
+        style: const ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(MyConstants.accentColor),
+          shape: MaterialStatePropertyAll<OutlinedBorder>(
+            RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+          ),
+        ),
+        onPressed: () {},
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: Image.asset(
-                imagePath,
-                width: width - 16,
-                color: Colors.white,
-              ),
+            Image.asset(
+              imagePath,
+              width: width - 16,
+              color: Colors.white,
             ),
             const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                title.toUpperCase(),
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
-              ),
+            Text(
+              title.toUpperCase(),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
             ),
           ],
         ),

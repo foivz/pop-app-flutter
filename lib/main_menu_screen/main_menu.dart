@@ -1,6 +1,7 @@
-import 'package:pop_app/main_menu_screen/drawer.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/seller_menu.dart';
+
 import 'package:flutter/material.dart';
+import 'package:pop_app/profile_screen/profile.dart';
 
 enum UserRole { buyer, seller }
 
@@ -19,16 +20,19 @@ class MainMenuScreen extends StatelessWidget {
         title: Text("Welcome, ${role.name}!"),
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(icon: const Icon(Icons.person), onPressed: () {}),
           IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                (mainMenuKey.currentState as ScaffoldState).openEndDrawer();
-              }),
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+            },
+          ),
         ],
       ),
       body: role == UserRole.seller ? sellerMenu : buyerMenu,
-      endDrawer: const MainMenuDrawer(),
     );
   }
 }
