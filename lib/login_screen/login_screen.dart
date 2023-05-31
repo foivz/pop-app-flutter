@@ -121,9 +121,11 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                     FormSubmitButton(
                       buttonText: 'Register',
                       onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RegisterScreen(usernameCont.text))),
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegisterScreen(initialUsername: usernameCont.text),
+                        ),
+                      ),
                       type: FormSubmitButtonType.RED_OUTLINE,
                     ),
                   ],

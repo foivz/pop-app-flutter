@@ -1,9 +1,10 @@
 # pop_app
 
 ## ENG
-Application for the course Entrepreneurial venture.
+Application for the course Entrepreneurial Venture.
 
-The application enables cooperation between buyers and sellers on the virtual market. The seller has a store and the items he sells, and the customers buy the items with available funds.
+The application enables cooperation between buyers and sellers in a virtual market.  
+The seller has a store and the items he sells, and the customers buy the items with their available funds.
 
 The application is a complete rebuild of the obsolete Android application from the private repository github.com/AIR-FOI-HR/AIR1903.
 
@@ -16,4 +17,4 @@ Aplikacija je restauracija zastarjele Android aplikacije s privatnog repozitorij
 
 ## About the project
 
-This project is a Flutter application designed to run on Android and iOS mobile devices. It was built by Joshua Lee Fletcher (student, 3rd year) and Mislav Matijević (teaching assistant) on Faculty of organization and informatics, University of Zagreb.
+This project is a Flutter application designed to run on Android and iOS mobile devices. It was built by Joshua Lee Fletcher (student, 3rd year) and Mislav Matijević (teaching assistant) of the Faculty of Organization and Informatics, University of Zagreb.

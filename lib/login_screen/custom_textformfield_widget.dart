@@ -14,6 +14,7 @@ class CustomTextFormField extends StatefulWidget {
   final String? Function(String?)? validateCallback;
   final Function()? onUpdateCallback;
   final GlobalKey<FormFieldState>? fieldKey;
+  final TextInputType? textInputType;
   final TextInputAction textInputAction;
 
   const CustomTextFormField({
@@ -27,6 +28,7 @@ class CustomTextFormField extends StatefulWidget {
     this.submitCallback,
     this.validateCallback,
     this.onUpdateCallback,
+    this.textInputType,
     this.textInputAction = TextInputAction.done,
   });
 
@@ -45,6 +47,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       padding: widget.padding,
       child: Stack(children: [
         TextFormField(
+          keyboardType: widget.textInputType,
           key: widget.fieldKey,
           autofocus: widget.autoFocus,
           obscureText: widget.obscureText,
