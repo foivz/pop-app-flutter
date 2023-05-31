@@ -3,6 +3,8 @@ import 'package:pop_app/models/store.dart';
 import 'dart:convert';
 import 'package:pop_app/models/user.dart';
 
+import 'package:pop_app/secure_storage.dart';
+
 List<Map<String, String>> routes = [
   {"route": "login", "method": "POST"},
   {"route": "registracija", "method": "POST"},
@@ -41,7 +43,9 @@ class ApiRequestManager {
     try {
       var tokenData = responseData["DATA"]["Token"];
       _token = tokenData;
-    } catch (e) {}
+    } catch (e) {
+      SecureStorage.setUserData(json.encode("{}"));
+    }
   }
 
   static Future register(User user) async {

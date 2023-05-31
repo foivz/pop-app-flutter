@@ -1,17 +1,20 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:pop_app/login_screen/company_data_container_widget.dart';
+import 'package:pop_app/models/store.dart';
 
 import 'package:flutter/material.dart';
-import 'package:pop_app/models/store.dart';
-import 'package:pop_app/role_selection/role_selection_screen.dart';
-import 'package:pop_app/screentransitions.dart';
+import 'package:pop_app/reusable_components/message.dart';
 
 class CompanySelectionScreen extends StatefulWidget {
   final Function(Store company) onCompanySelected;
   final bool showAppBar;
   final List<Store> stores;
-  const CompanySelectionScreen(this.onCompanySelected, this.stores,
-      {super.key, this.showAppBar = true});
+  const CompanySelectionScreen({
+    super.key,
+    required this.onCompanySelected,
+    required this.stores,
+    this.showAppBar = true,
+  });
 
   @override
   State<CompanySelectionScreen> createState() => _CompanySelectionScreenState();
@@ -30,11 +33,7 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
             if (selectedCompany == null) {
               if (!_lockSnackbar) {
                 _lockSnackbar = true;
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  dismissDirection: DismissDirection.down,
-                  content: Text("You must select a company."),
-                  duration: Duration(seconds: 1),
-                ));
+                Message.error(context).show("You must select a company to continue.");
                 Future.delayed(const Duration(seconds: 1), () => _lockSnackbar = false);
               }
             } else {
@@ -50,32 +49,29 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
         body: FutureBuilder(
           builder: (context, snapshot) {
             List<Widget> companies = [];
-            if (snapshot.hasData) {
-              for (var store in (snapshot.data as List<Store>)) {
-                GlobalKey companyKey = GlobalKey();
-                companies.add(CompanyDataContainer(
-                  key: companyKey,
-                  store: store,
-                  onTapCallback: () {
-                    state(o) => (((o.key as GlobalKey).currentState) as CompanyDataContainerState);
-                    companies.where((company) => state(company).isSelected).forEach((company) {
-                      state(company).select();
-                    });
-                    (companyKey.currentState as CompanyDataContainerState).select();
-                    selectedCompany = companyKey;
-                  },
-                ));
-              }
-              return Scrollbar(
-                child: SingleChildScrollView(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 15),
-                    child: Column(children: companies),
-                  ),
+            for (var store in (snapshot.data as List<Store>)) {
+              GlobalKey companyKey = GlobalKey();
+              companies.add(CompanyDataContainer(
+                key: companyKey,
+                store: store,
+                onTapCallback: () {
+                  state(o) => (((o.key as GlobalKey).currentState) as CompanyDataContainerState);
+                  companies.where((company) => state(company).isSelected).forEach((company) {
+                    state(company).select();
+                  });
+                  (companyKey.currentState as CompanyDataContainerState).select();
+                  selectedCompany = companyKey;
+                },
+              ));
+            }
+            return Scrollbar(
+              child: SingleChildScrollView(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 15),
+                  child: Column(children: companies),
                 ),
-              );
-            } else
-              return const Center(child: CircularProgressIndicator());
+              ),
+            );
           },
           initialData: widget.stores,
         ),

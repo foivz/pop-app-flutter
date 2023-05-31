@@ -13,7 +13,7 @@ ThemeData lightTheme(context) {
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: MyConstants.red,
       foregroundColor: Colors.white,
-      splashColor: MyConstants.accentColor.withOpacity(1),
+      splashColor: MyConstants.accentColor,
     ),
     appBarTheme: AppBarTheme(
       systemOverlayStyle: const SystemUiOverlayStyle(

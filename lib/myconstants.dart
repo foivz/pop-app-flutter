@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/material.dart';
-
 class MyConstants {
   static const Color red = Color.fromRGBO(225, 25, 60, 1);
   static const Color textfieldBackground = Color(0xffefefef);
