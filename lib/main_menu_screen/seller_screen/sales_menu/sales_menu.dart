@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/tab.dart';
 
 class SalesMenuScreen extends StatefulWidget {
@@ -42,7 +43,7 @@ class _SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProv
               controller: _tabController,
               children: const [
                 ProductsTab(),
-                Placeholder(),
+                PackagesTab(),
               ],
             ),
           ),

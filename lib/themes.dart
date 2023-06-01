@@ -10,7 +10,7 @@ ThemeData lightTheme(context) {
       titleTextStyle: Theme.of(context).textTheme.headlineMedium!.copyWith(color: MyConstants.red),
       iconColor: MyConstants.red,
     ),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: MyConstants.red,
       foregroundColor: Colors.white,
       splashColor: MyConstants.accentColor,

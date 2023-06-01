@@ -97,6 +97,8 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                             if (val["STATUS"]) {
                               // TODO: Think about using the User class for storing all user info.
                               SecureStorage.setUserData(json.encode(val["DATA"]));
+                              if (val["DATA"]["Naziv_Uloge"] == "Prodavac")
+                                role = UserRoleType.seller;
                               SecureStorage.setUsername(username);
                               SecureStorage.setPassword(password);
                               _navigateToMainScreen();
