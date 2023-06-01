@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
-import 'package:pop_app/myconstants.dart';
-import 'package:pop_app/register_screen/register.dart';
 import 'package:pop_app/reusable_components/message.dart';
+import 'package:pop_app/register_screen/register.dart';
+import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/myconstants.dart';
+
+import 'package:flutter/material.dart';
 
 class SecondRegisterScreen extends StatefulWidget {
   final RegisterScreen widget;
