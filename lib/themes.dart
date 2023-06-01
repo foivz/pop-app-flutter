@@ -1,6 +1,7 @@
+import 'package:pop_app/myconstants.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pop_app/myconstants.dart';
 
 ThemeData lightTheme(context) {
   return ThemeData(

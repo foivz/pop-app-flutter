@@ -67,10 +67,10 @@ class CompanyDataContainerState extends State<CompanyDataContainer>
                 child: ScaleTransition(
                   scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
                   child: Icon(
-                    Icons.verified,
                     color: isSelected
                         ? MyConstants.accentColor
                         : Colors.grey, // Change color based on isSelected value
+                    Icons.verified,
                   ),
                 ),
               ),

@@ -44,7 +44,7 @@ class FormSubmitButtonState extends State<FormSubmitButton> {
 
   @override
   Widget build(BuildContext context) {
-    double squareSize = widget.height > widget.width ? widget.width - 20 : widget.height - 20;
+    // double squareSize = widget.height > widget.width ? widget.width - 20 : widget.height - 20;
     return ElevatedButton(
       style: _style(),
       onPressed: widget.onPressed,

@@ -12,10 +12,17 @@ class RoleSelectWidget extends StatefulWidget {
 class RoleSelectWidgetState extends State<RoleSelectWidget> with SingleTickerProviderStateMixin {
   late AnimationController _animCont;
   String selectedOption = 'buyer';
+
   @override
   void initState() {
     super.initState();
     _animCont = AnimationController(vsync: this, duration: Duration.zero)..forward();
+  }
+
+  @override
+  void dispose() {
+    _animCont.dispose();
+    super.dispose();
   }
 
   @override

@@ -33,7 +33,7 @@ class ProductsTab extends StatelessWidget {
         currency: "HRK",
         description: "Desc",
         image: "Img",
-        price: 122.00,
+        price: 16.00,
         title: "Lemonade",
       ),
     );
