@@ -100,11 +100,18 @@ class _ProductCardState extends State<ProductCard>
               turns: Tween(begin: 0.0, end: 1.0).animate(_animCont),
               child: ScaleTransition(
                 scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
-                child: Icon(
-                  color: isSelected
-                      ? MyConstants.red
-                      : Colors.grey, // Change color based on isSelected value
-                  Icons.check_circle_outline,
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isSelected ? MyConstants.red : Colors.grey,
+                      width: 3,
+                    ),
+                  ),
+                  child: Icon(
+                    color: isSelected ? MyConstants.red : Colors.grey,
+                    Icons.attach_money,
+                  ),
                 ),
               ),
             ),
