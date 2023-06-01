@@ -1,6 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
+import 'package:pop_app/main_menu_screen/main_menu.dart';
 import 'package:pop_app/role_selection/role_selection_screen.dart';
 import 'package:pop_app/register_screen/store_fetcher_mixin.dart';
 import 'package:pop_app/login_screen/linewithtext_widget.dart';
@@ -138,16 +139,18 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
     );
   }
 
+  UserRoleType role = UserRoleType.buyer;
   _navigateToRoleSelection() {
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (c, a, s) => RoleSelectionScreen(
           onSelectedCallback: (selectedRole) async {
             loggedUser!.setRole(selectedRole);
+            if (selectedRole.roleName == "seller") role = UserRoleType.seller;
             if (await ApiRequestManager.assignRole(loggedUser!)) {
               _navigateToStoreSelection();
             } else if (context.mounted) {
-              Message.error(context).show("Whoospy! Role couldn't be selected!"
+              Message.error(context).show("Role couldn't be selected!"
                   "Try to login again later or register using a different username and email.");
             }
           },
@@ -179,7 +182,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   // TODO: Implement navigation to main screen instead of Placeholder!
   _navigateToMainScreen() {
     Navigator.of(context).push(PageRouteBuilder(
-      pageBuilder: (c, a, s) => const Placeholder(),
+      pageBuilder: (c, a, s) => MainMenuScreen(role: role),
       transitionsBuilder: ScreenTransitions.slideLeft,
     ));
   }

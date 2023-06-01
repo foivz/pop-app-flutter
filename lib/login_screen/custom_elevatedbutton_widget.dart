@@ -10,6 +10,8 @@ class FormSubmitButton extends StatefulWidget {
   final double width, height;
   final double? fontSize;
   final String buttonText;
+  final Widget? leading;
+  final MainAxisAlignment mainAxisAlignment;
   final void Function() onPressed;
 
   const FormSubmitButton({
@@ -17,6 +19,8 @@ class FormSubmitButton extends StatefulWidget {
     this.type = FormSubmitButtonType.RED_FILL,
     this.width = MyConstants.textFieldWidth,
     this.height = MyConstants.submitButtonHeight,
+    this.leading,
+    this.mainAxisAlignment = MainAxisAlignment.center,
     this.fontSize,
     required this.buttonText,
     required this.onPressed,
@@ -44,19 +48,16 @@ class FormSubmitButtonState extends State<FormSubmitButton> {
     return ElevatedButton(
       style: _style(),
       onPressed: widget.onPressed,
-      child: loading
-          ? SizedBox(
-              height: squareSize,
-              width: squareSize,
-              child: const CircularProgressIndicator(),
-            )
-          : Text(
-              widget.buttonText,
-              style: TextStyle(
-                color: _isRedFill() ? Colors.white : MyConstants.red,
-                fontSize: widget.fontSize ?? Theme.of(context).textTheme.titleLarge!.fontSize,
-              ),
-            ),
+      child: Row(mainAxisAlignment: widget.mainAxisAlignment, children: [
+        if (widget.leading != null) widget.leading!,
+        Text(
+          widget.buttonText,
+          style: TextStyle(
+            color: _isRedFill() ? Colors.white : MyConstants.red,
+            fontSize: widget.fontSize ?? Theme.of(context).textTheme.titleLarge!.fontSize,
+          ),
+        ),
+      ]),
     );
   }
 
