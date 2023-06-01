@@ -36,7 +36,6 @@ class FirstRegisterScreen extends StatelessWidget {
                 RegisterScreen.of(context)?.showNextRegisterScreen();
               }
             },
-            type: FormSubmitButtonType.RED_FILL,
           )
         ],
       ),

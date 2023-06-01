@@ -116,7 +116,6 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                           });
                         }
                       },
-                      type: FormSubmitButtonType.RED_FILL,
                     ),
                     const SizedBox(height: MyConstants.formInputSpacer / 2),
                     const LineWithText(lineText: 'or'),
@@ -129,7 +128,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                           builder: (context) => RegisterScreen(initialUsername: usernameCont.text),
                         ),
                       ),
-                      type: FormSubmitButtonType.RED_OUTLINE,
+                      type: FormSubmitButtonStyle.OUTLINE,
                     ),
                   ],
                 ),

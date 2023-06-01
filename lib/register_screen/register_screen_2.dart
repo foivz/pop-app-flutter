@@ -123,7 +123,6 @@ class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
                   }
                 }
               },
-              type: FormSubmitButtonType.RED_FILL,
             )
           ],
         ),

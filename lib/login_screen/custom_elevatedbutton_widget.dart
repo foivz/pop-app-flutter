@@ -3,10 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:pop_app/myconstants.dart';
 
-enum FormSubmitButtonType { RED_FILL, RED_OUTLINE }
+enum FormSubmitButtonStyle { FILL, OUTLINE }
 
 class FormSubmitButton extends StatefulWidget {
-  final FormSubmitButtonType type;
+  final FormSubmitButtonStyle type;
+  final Color color;
+  final Color highlightColor;
   final double width, height;
   final double? fontSize;
   final String buttonText;
@@ -16,7 +18,9 @@ class FormSubmitButton extends StatefulWidget {
 
   const FormSubmitButton({
     super.key,
-    this.type = FormSubmitButtonType.RED_FILL,
+    this.type = FormSubmitButtonStyle.FILL,
+    this.color = MyConstants.red,
+    this.highlightColor = MyConstants.accentColor,
     this.width = MyConstants.textFieldWidth,
     this.height = MyConstants.submitButtonHeight,
     this.leading,
@@ -53,7 +57,7 @@ class FormSubmitButtonState extends State<FormSubmitButton> {
         Text(
           widget.buttonText,
           style: TextStyle(
-            color: _isRedFill() ? Colors.white : MyConstants.red,
+            color: _isFill() ? Colors.white : widget.color,
             fontSize: widget.fontSize ?? Theme.of(context).textTheme.titleLarge!.fontSize,
           ),
         ),
@@ -61,20 +65,22 @@ class FormSubmitButtonState extends State<FormSubmitButton> {
     );
   }
 
-  bool _isRedFill() => widget.type == FormSubmitButtonType.RED_FILL;
+  bool _isFill() => widget.type == FormSubmitButtonStyle.FILL;
 
   ButtonStyle _style() {
     var size = MaterialStateProperty.all<Size>(Size(widget.width, widget.height));
     var acc = MaterialStateProperty.all<Color>(
-        enabled ? MyConstants.accentColor : MyConstants.accentColor.withOpacity(0.3));
-    if (_isRedFill())
+      enabled ? widget.highlightColor : widget.highlightColor.withOpacity(0.3),
+    );
+    if (_isFill())
       return ButtonStyle(
         fixedSize: size,
         shape: MaterialStateProperty.all<OutlinedBorder>(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         ),
         backgroundColor: MaterialStateProperty.all<Color>(
-            enabled ? MyConstants.red : MyConstants.red.withOpacity(0.3)),
+          enabled ? widget.color : widget.color.withOpacity(0.3),
+        ),
         overlayColor: acc,
       );
     else
@@ -83,7 +89,7 @@ class FormSubmitButtonState extends State<FormSubmitButton> {
         shape: MaterialStateProperty.all<OutlinedBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
-            side: const BorderSide(color: MyConstants.red, width: 3),
+            side: BorderSide(color: widget.color, width: 3),
           ),
         ),
         backgroundColor: MaterialStateProperty.all<Color>(Colors.white),

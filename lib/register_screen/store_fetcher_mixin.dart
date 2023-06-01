@@ -69,7 +69,6 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
                       _createStoreAndProceed(user, storeNameController.text);
                     }
                   },
-                  type: FormSubmitButtonType.RED_FILL,
                 )
               ],
             ),
