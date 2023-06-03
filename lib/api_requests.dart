@@ -164,6 +164,45 @@ class ApiRequestManager {
     return (responseData["STATUSMESSAGE"] == "OWN ROLE SET");
   }
 
+  static Future<double> getBalance(User user) async {
+    if (user.getRole() == null) {
+      throw Exception("Can't get balance: user's role not set!");
+    }
+
+    final roleMap = {
+      "buyer": "GETCLIENT",
+      "seller": "GETSTORE",
+    };
+
+    var fm = {
+      "Token": _token,
+      "KorisnickoIme": user.username,
+      roleMap[user.getRole()!.roleName]: "True",
+    };
+
+    dynamic responseData;
+
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(
+        body: fm,
+        route(Routes.novcanik),
+      );
+      String body = response.body;
+
+      return body;
+    });
+
+    double fetchedBalance;
+
+    try {
+      fetchedBalance = double.parse(responseData["DATA"]);
+    } catch (e) {
+      throw Exception("Can't get balance: ${responseData["STATUSMESSAGE"]}!");
+    }
+
+    return fetchedBalance;
+  }
+
   /// Wraps whatever fetching logic into a token check.
   /// If the server reports token is invalid, this method attempts login once.
   /// If the new token is still invalid, method returns null instead of response.
