@@ -1,4 +1,5 @@
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
+import 'package:pop_app/main_menu_screen/wallet_screen/wallet_screen.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
@@ -21,7 +22,9 @@ class _SellerMenuState extends State<SellerMenu> {
           Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SalesMenuScreen()));
         }),
         _buildButton('assets/icons/view-icon.png', 'Invoices', () {}),
-        _buildButton('assets/icons/wallet-icon.png', 'Wallet', () {}),
+        _buildButton('assets/icons/wallet-icon.png', 'Wallet', () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WalletScreen()));
+        }),
         _buildButton('assets/icons/settings-icon.png', 'Settings', () {}),
       ],
     );
