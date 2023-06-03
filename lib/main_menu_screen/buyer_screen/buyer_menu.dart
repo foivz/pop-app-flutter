@@ -1,4 +1,4 @@
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
+import 'package:pop_app/main_menu_screen/buyer_screen/buying_dialog/buying_dialog.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ class _BuyerMenuState extends State<BuyerMenu> {
       shrinkWrap: true,
       children: [
         _buildButton('assets/icons/sell-icon.png', 'Buy', () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SalesMenuScreen()));
+          showDialog(context: context, builder: (context) => const BuyerDialog());
         }),
         _buildButton('assets/icons/view-icon.png', 'Invoices', () {}),
         _buildButton('assets/icons/wallet-icon.png', 'Wallet', () {}),
