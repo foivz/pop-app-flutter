@@ -1,0 +1,885 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "POP",
+    "dateExported": "2023-05-23T14:01:02.915Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "95bdec5f-9614-47cc-a654-6b13f55eb051",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Login User",
+            "url": "https://cortex.foi.hr/pop/api/v1/login.php",
+            "method": "POST",
+            "sortNum": 2500,
+            "created": "2023-05-23T13:02:29.141Z",
+            "modified": "2023-05-23T13:06:48.585Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "Lozinka",
+                        "value": "test123"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "31db1cd6-e82f-4ba4-bb17-8965b23b72ff",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Register User",
+            "url": "https://cortex.foi.hr/pop/api/v1/registracija.php",
+            "method": "POST",
+            "sortNum": 3750,
+            "created": "2023-05-23T12:44:09.149Z",
+            "modified": "2023-05-23T13:06:46.142Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Ime",
+                        "value": "Test User"
+                    },
+                    {
+                        "name": "Prezime",
+                        "value": "Tester"
+                    },
+                    {
+                        "name": "Lozinka",
+                        "value": "test123"
+                    },
+                    {
+                        "name": "Email",
+                        "value": "test23@foi.hr"
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "f09687e7-a006-4d35-91cd-b33157039c14",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Get Products For Seller",
+            "url": "https://cortex.foi.hr/pop/api/v1/proizvodi.php",
+            "method": "GET",
+            "sortNum": 5000,
+            "created": "2023-05-23T13:06:09.345Z",
+            "modified": "2023-05-23T13:08:35.701Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Readall",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Token",
+                        "value": "FMoxpF8ei3zqEQobmQWNCAKKj8XoxgipQKgGrISSZT7gQlnq7sSeRqAcoxCeEzIsUhvywjUeP3LsT78W7IoRlguNiTo9xRYKyFJmqCdWVwsAoylFqvTuH1A07Oeaj7muXjSELe618ZQx15ik02SZLeq3vd1xHoPU4/sL/wNiMIs="
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "00f349ea-7a03-43f9-9e94-f9bfa0591f5d",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Get Products For Buyer",
+            "url": "https://cortex.foi.hr/pop/api/v1/proizvodi.php",
+            "method": "GET",
+            "sortNum": 15000,
+            "created": "2023-05-23T13:08:48.311Z",
+            "modified": "2023-05-23T13:08:59.579Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "ReadallBuyer",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Token",
+                        "value": "FMoxpF8ei3zqEQobmQWNCAKKj8XoxgipQKgGrISSZT7gQlnq7sSeRqAcoxCeEzIsUhvywjUeP3LsT78W7IoRlguNiTo9xRYKyFJmqCdWVwsAoylFqvTuH1A07Oeaj7muXjSELe618ZQx15ik02SZLeq3vd1xHoPU4/sL/wNiMIs="
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "63c7b7d3-5e83-4125-a358-d76ba4e6c1c8",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Add New Product Without Image",
+            "url": "https://cortex.foi.hr/pop/api/v1/proizvodi.php",
+            "method": "POST",
+            "sortNum": 25000,
+            "created": "2023-05-23T13:09:07.640Z",
+            "modified": "2023-05-23T13:15:26.695Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "ReadallBuyer",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Token",
+                        "value": "FMoxpF8ei3zqEQobmQWNCAKKj8XoxgipQKgGrISSZT7gQlnq7sSeRqAcoxCeEzIsUhvywjUeP3LsT78W7IoRlguNiTo9xRYKyFJmqCdWVwsAoylFqvTuH1A07Oeaj7muXjSELe618ZQx15ik02SZLeq3vd1xHoPU4/sL/wNiMIs="
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "edc992e7-1e03-4392-b5a2-995f9f4d028d",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Edit Product Without Image",
+            "url": "https://cortex.foi.hr/pop/api/v1/proizvodi.php",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2023-05-23T13:30:27.988Z",
+            "modified": "2023-05-23T13:30:27.988Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "ReadallBuyer",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Token",
+                        "value": "FMoxpF8ei3zqEQobmQWNCAKKj8XoxgipQKgGrISSZT7gQlnq7sSeRqAcoxCeEzIsUhvywjUeP3LsT78W7IoRlguNiTo9xRYKyFJmqCdWVwsAoylFqvTuH1A07Oeaj7muXjSELe618ZQx15ik02SZLeq3vd1xHoPU4/sL/wNiMIs="
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "501fea05-4947-497d-b057-c7cdb140217b",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Delete Product",
+            "url": "https://cortex.foi.hr/pop/api/v1/proizvodi.php",
+            "method": "POST",
+            "sortNum": 45000,
+            "created": "2023-05-23T13:30:25.798Z",
+            "modified": "2023-05-23T13:32:59.104Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Id",
+                        "value": ""
+                    },
+                    {
+                        "name": "Token",
+                        "value": "FMoxpF8ei3zqEQobmQWNCAKKj8XoxgipQKgGrISSZT7gQlnq7sSeRqAcoxCeEzIsUhvywjUeP3LsT78W7IoRlguNiTo9xRYKyFJmqCdWVwsAoylFqvTuH1A07Oeaj7muXjSELe618ZQx15ik02SZLeq3vd1xHoPU4/sL/wNiMIs="
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "80e71b38-1706-4fc5-a00b-390692c69265",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Add Package",
+            "url": "https://cortex.foi.hr/pop/api/v1/paketi.php",
+            "method": "POST",
+            "sortNum": 55000,
+            "created": "2023-05-23T13:33:39.549Z",
+            "modified": "2023-05-23T13:38:58.196Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "ADD",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Naziv ",
+                        "value": ""
+                    },
+                    {
+                        "name": "Opis",
+                        "value": ""
+                    },
+                    {
+                        "name": "Popust ",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme ",
+                        "value": ""
+                    },
+                    {
+                        "name": "KolicinaPaketa",
+                        "value": ""
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "f70e7dcf-90b1-428c-b42a-6d0d5b87e8aa",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Get All Packages",
+            "url": "https://cortex.foi.hr/pop/api/v1/paketi.php",
+            "method": "POST",
+            "sortNum": 65000,
+            "created": "2023-05-23T13:36:10.467Z",
+            "modified": "2023-05-23T13:38:52.668Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": "/sL/wNiMIs="
+                    },
+                    {
+                        "name": "GET",
+                        "value": "True"
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "5b1b26d1-d3d8-4a40-b0b5-ee83065b3e49",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Get All Packages For Buyer",
+            "url": "https://cortex.foi.hr/pop/api/v1/paketi.php",
+            "method": "POST",
+            "sortNum": 75000,
+            "created": "2023-05-23T13:37:20.320Z",
+            "modified": "2023-05-23T13:38:49.629Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "ReadallBuyer",
+                        "value": ""
+                    },
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "GET",
+                        "value": "True"
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "68b78c96-f947-417f-8139-8b77b64cc028",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Delete Package",
+            "url": "https://cortex.foi.hr/pop/api/v1/paketi.php",
+            "method": "POST",
+            "sortNum": 85000,
+            "created": "2023-05-23T13:38:25.818Z",
+            "modified": "2023-05-23T13:39:03.776Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Id",
+                        "value": ""
+                    },
+                    {
+                        "name": "Token",
+                        "value": "FMoxpF8ei3zqEQobmQWNCAKKj8XoxgipQKgGrISSZT7gQlnq7sSeRqAcoxCeEzIsUhvywjUeP3LsT78W7IoRlguNiTo9xRYKyFJmqCdWVwsAoylFqvTuH1A07Oeaj7muXjSELe618ZQx15ik02SZLeq3vd1xHoPU4/sL/wNiMIs="
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "55258ee2-65f8-4242-ba95-98a4083bd3da",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Update Package",
+            "url": "https://cortex.foi.hr/pop/api/v1/paketi.php",
+            "method": "POST",
+            "sortNum": 95000,
+            "created": "2023-05-23T13:39:56.685Z",
+            "modified": "2023-05-23T13:39:56.685Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Id",
+                        "value": ""
+                    },
+                    {
+                        "name": "Token",
+                        "value": "FMoxpF8ei3zqEQobmQWNCAKKj8XoxgipQKgGrISSZT7gQlnq7sSeRqAcoxCeEzIsUhvywjUeP3LsT78W7IoRlguNiTo9xRYKyFJmqCdWVwsAoylFqvTuH1A07Oeaj7muXjSELe618ZQx15ik02SZLeq3vd1xHoPU4/sL/wNiMIs="
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "08aea361-8f66-41cf-a45b-4914c541381d",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Get One Package",
+            "url": "https://cortex.foi.hr/pop/api/v1/paketi.php",
+            "method": "POST",
+            "sortNum": 105000,
+            "created": "2023-05-23T13:42:07.395Z",
+            "modified": "2023-05-23T13:42:24.365Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Id",
+                        "value": ""
+                    },
+                    {
+                        "name": "Token",
+                        "value": "FMoxpF8ei3zqEQobmQWNCAKKj8XoxgipQKgGrISSZT7gQlnq7sSeRqAcoxCeEzIsUhvywjUeP3LsT78W7IoRlguNiTo9xRYKyFJmqCdWVwsAoylFqvTuH1A07Oeaj7muXjSELe618ZQx15ik02SZLeq3vd1xHoPU4/sL/wNiMIs="
+                    },
+                    {
+                        "name": "GETONE",
+                        "value": "True"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "8decf5fd-79a3-4c38-ad8b-aa2dbedbdfb3",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Add To Package",
+            "url": "https://cortex.foi.hr/pop/api/v1/paketi.php",
+            "method": "POST",
+            "sortNum": 115000,
+            "created": "2023-05-23T13:42:45.164Z",
+            "modified": "2023-05-23T13:42:45.164Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Id",
+                        "value": ""
+                    },
+                    {
+                        "name": "Token",
+                        "value": "FMoxpF8ei3zqEQobmQWNCAKKj8XoxgipQKgGrISSZT7gQlnq7sSeRqAcoxCeEzIsUhvywjUeP3LsT78W7IoRlguNiTo9xRYKyFJmqCdWVwsAoylFqvTuH1A07Oeaj7muXjSELe618ZQx15ik02SZLeq3vd1xHoPU4/sL/wNiMIs="
+                    },
+                    {
+                        "name": "GETONE",
+                        "value": "True"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "71b4b652-605e-4443-aff8-a8dc74e56193",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Get Wallet Balance Client",
+            "url": "https://cortex.foi.hr/pop/api/v1/novcanik.php",
+            "method": "POST",
+            "sortNum": 125000,
+            "created": "2023-05-23T13:43:37.419Z",
+            "modified": "2023-05-23T13:45:05.576Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "GETCLIENT",
+                        "value": "True"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "8ea4091f-b7c6-4cab-98e1-422d3a89b579",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Get Wallet Balance Store",
+            "url": "https://cortex.foi.hr/pop/api/v1/novcanik.php",
+            "method": "POST",
+            "sortNum": 135000,
+            "created": "2023-05-23T13:45:16.808Z",
+            "modified": "2023-05-23T13:45:37.489Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "GETSTORE",
+                        "value": "True"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "368ad62f-e7d7-4299-a387-26a37bc7e31e",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Get All Invoices",
+            "url": "https://cortex.foi.hr/pop/api/v1/racuni.php",
+            "method": "POST",
+            "sortNum": 145000,
+            "created": "2023-05-23T13:45:40.766Z",
+            "modified": "2023-05-23T13:46:03.115Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "Readall",
+                        "value": "True"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "6847ae57-9ba9-4139-99c8-b70b73c26a5e",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Get One Invoice",
+            "url": "https://cortex.foi.hr/pop/api/v1/racuni.php",
+            "method": "POST",
+            "sortNum": 155000,
+            "created": "2023-05-23T13:46:10.828Z",
+            "modified": "2023-05-23T13:46:39.800Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "Readone",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Id_Racuna",
+                        "value": ""
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "59597450-582b-484d-b296-787823a48fda",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Generate Invoice",
+            "url": "https://cortex.foi.hr/pop/api/v1/racuni.php",
+            "method": "POST",
+            "sortNum": 165000,
+            "created": "2023-05-23T13:46:45.794Z",
+            "modified": "2023-05-23T13:46:45.794Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "Readone",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Id_Racuna",
+                        "value": ""
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "56444092-ff8f-4273-8651-f7f2fde6cd15",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Finalize Invoice",
+            "url": "https://cortex.foi.hr/pop/api/v1/racuni.php",
+            "method": "POST",
+            "sortNum": 175000,
+            "created": "2023-05-23T13:47:42.712Z",
+            "modified": "2023-05-23T13:47:42.712Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "Readone",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Id_Racuna",
+                        "value": ""
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "379504f8-884d-411d-92a9-0e317132a924",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Delete Invoice",
+            "url": "https://cortex.foi.hr/pop/api/v1/racuni.php",
+            "method": "POST",
+            "sortNum": 185000,
+            "created": "2023-05-23T13:48:34.871Z",
+            "modified": "2023-05-23T13:48:34.871Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "Readone",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Id_Racuna",
+                        "value": ""
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "f6e1ddb7-c959-4ea9-928f-ac162ac1df76",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Create a Store",
+            "url": "https://cortex.foi.hr/pop/api/v1/trgovine.php",
+            "method": "POST",
+            "sortNum": 195000,
+            "created": "2023-05-23T13:48:59.290Z",
+            "modified": "2023-05-23T13:49:09.715Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "Readone",
+                        "value": "True"
+                    },
+                    {
+                        "name": "Id_Racuna",
+                        "value": ""
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "2ca36a64-2482-4d65-9344-231c783fbda8",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Get All Stores",
+            "url": "https://cortex.foi.hr/pop/api/v1/trgovine.php",
+            "method": "POST",
+            "sortNum": 205000,
+            "created": "2023-05-23T13:49:29.401Z",
+            "modified": "2023-05-23T13:50:01.836Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "Readall",
+                        "value": "True"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "c8b24feb-e609-45d5-aa98-0288526ae825",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Assign a Store",
+            "url": "https://cortex.foi.hr/pop/api/v1/trgovine.php",
+            "method": "POST",
+            "sortNum": 215000,
+            "created": "2023-05-23T13:50:04.670Z",
+            "modified": "2023-05-23T13:50:20.189Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "ASSIGNSTORESELF",
+                        "value": "True"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "f8b21acc-a03c-4fca-ae11-26946a3e6db6",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Set Role",
+            "url": "https://cortex.foi.hr/pop/api/v1/trgovine.php",
+            "method": "POST",
+            "sortNum": 225000,
+            "created": "2023-05-23T13:50:34.156Z",
+            "modified": "2023-05-23T13:50:34.156Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "ASSIGNSTORESELF",
+                        "value": "True"
+                    }
+                ]
+            },
+            "tests": []
+        },
+        {
+            "_id": "342ee45d-df8e-43c1-b989-726108a72758",
+            "colId": "f16e06f1-09af-456e-b833-5926a33d283d",
+            "containerId": "",
+            "name": "Finalize Invoice Code",
+            "url": "https://cortex.foi.hr/pop/api/v1/trgovine.php",
+            "method": "POST",
+            "sortNum": 235000,
+            "created": "2023-05-23T13:50:56.567Z",
+            "modified": "2023-05-23T13:50:56.567Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "Token",
+                        "value": ""
+                    },
+                    {
+                        "name": "KorisnickoIme",
+                        "value": "test_user23"
+                    },
+                    {
+                        "name": "ASSIGNSTORESELF",
+                        "value": "True"
+                    }
+                ]
+            },
+            "tests": []
+        }
+    ]
+}

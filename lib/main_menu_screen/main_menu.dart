@@ -3,10 +3,10 @@ import 'package:pop_app/main_menu_screen/seller_screen/seller_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:pop_app/profile_screen/profile.dart';
 
-enum UserRole { buyer, seller }
+enum UserRoleType { buyer, seller }
 
 class MainMenuScreen extends StatelessWidget {
-  final UserRole role;
+  final UserRoleType role;
   const MainMenuScreen({super.key, required this.role});
 
   @override
@@ -32,7 +32,7 @@ class MainMenuScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: role == UserRole.seller ? sellerMenu : buyerMenu,
+      body: role == UserRoleType.seller ? sellerMenu : buyerMenu,
     );
   }
 }

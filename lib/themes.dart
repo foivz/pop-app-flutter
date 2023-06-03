@@ -4,10 +4,16 @@ import 'package:pop_app/myconstants.dart';
 
 ThemeData lightTheme(context) {
   return ThemeData(
+    dialogTheme: DialogTheme(
+      surfaceTintColor: Colors.transparent,
+      contentTextStyle: Theme.of(context).textTheme.titleMedium,
+      titleTextStyle: Theme.of(context).textTheme.headlineMedium!.copyWith(color: MyConstants.red),
+      iconColor: MyConstants.red,
+    ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: MyConstants.red,
       foregroundColor: Colors.white,
-      splashColor: MyConstants.accentColor.withOpacity(1),
+      splashColor: MyConstants.accentColor,
     ),
     appBarTheme: AppBarTheme(
       systemOverlayStyle: const SystemUiOverlayStyle(
