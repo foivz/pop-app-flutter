@@ -8,6 +8,7 @@ class BuyerDialog extends StatelessWidget {
     return AlertDialog(
       title: const Text('Payment method'),
       content: const Text('Choose payment method:'),
+      surfaceTintColor: Colors.white,
       actions: <Widget>[
         TextButton(
           child: const Text('QR Code'),
