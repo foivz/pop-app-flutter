@@ -1,9 +1,9 @@
-import 'package:http/http.dart' as http;
-import 'package:pop_app/models/store.dart';
-import 'dart:convert';
-import 'package:pop_app/models/user.dart';
-
 import 'package:pop_app/secure_storage.dart';
+import 'package:pop_app/models/store.dart';
+import 'package:pop_app/models/user.dart';
+import 'package:http/http.dart' as http;
+
+import 'dart:convert';
 
 List<Map<String, String>> routes = [
   {"route": "login", "method": "POST"},
@@ -79,12 +79,8 @@ class ApiRequestManager {
     dynamic responseData;
 
     responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(
-        body: fm,
-        route(Routes.trgovine),
-      );
+      http.Response response = await http.post(body: fm, route(Routes.trgovine));
       String body = response.body;
-
       return body;
     });
 

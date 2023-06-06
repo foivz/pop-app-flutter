@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/tab.dart';
+
+import 'package:flutter/material.dart';
 
 class SalesMenuScreen extends StatefulWidget {
   const SalesMenuScreen({super.key});
@@ -38,18 +39,17 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(title: const Text("Entrepreneurial Venture")), // TODO: load shop name instead
-      body: tabs(),
-      floatingActionButton: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: FloatingActionButton(onPressed: () {}, child: const Icon(Icons.add)),
-        ),
-        FloatingActionButton(
+      appBar: AppBar(title: const Text("Entrepreneurial Venture"), actions: [
+        IconButton(
           onPressed: () {},
-          child: const Icon(Icons.attach_money),
+          icon: const Icon(Icons.add),
         ),
-      ]),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.attach_money),
+        ),
+      ]), // TODO: load shop name instead
+      body: tabs(),
     );
   }
 

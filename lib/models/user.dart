@@ -27,6 +27,7 @@ class User {
   }
 
   User(this.firstName, this.lastName, this.username, this.email, this.password);
+  User.withUsername({required this.username});
 
   User.full(this.firstName, this.lastName, this.username, this.email, this.password, UserRole role,
       this.store) {
