@@ -32,9 +32,7 @@ class User {
 
   User.empty();
 
-  User.loginInfo(this.username, this.password) {
-    User("", "", username, "", password);
-  }
+  User.loginInfo({required this.username, required this.password});
 
   User(this.firstName, this.lastName, this.username, this.email, this.password);
   User.withUsername({required this.username});

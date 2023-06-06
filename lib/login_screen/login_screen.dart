@@ -91,7 +91,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                           String username = usernameCont.text;
                           String password = passwordCont.text;
                           ApiRequestManager.login(username, password).then((val) {
-                            loggedUser = User.loginInfo(username, password);
+                            loggedUser = User.loginInfo(username: username, password: password);
 
                             if (val["STATUS"]) {
                               // TODO: Think about using the User class for storing all user info.
@@ -181,7 +181,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   // TODO: Implement navigation to main screen instead of Placeholder!
   _navigateToMainScreen() {
     Navigator.of(context).push(PageRouteBuilder(
-      pageBuilder: (c, a, s) => MainMenuScreen(role: role),
+      pageBuilder: (c, a, s) => MainMenuScreen(role: role, username: loggedUser!.username),
       transitionsBuilder: ScreenTransitions.slideLeft,
     ));
   }
