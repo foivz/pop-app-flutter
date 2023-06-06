@@ -30,6 +30,7 @@ class ProductsTab extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
       },
       initialData: const ProductData(
+        // TODO: replace with future
         currency: "HRK",
         description: "Desc",
         image: "Img",

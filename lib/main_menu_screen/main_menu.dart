@@ -12,6 +12,14 @@ class MainMenuScreen extends StatelessWidget {
   final String username;
   const MainMenuScreen({super.key, required this.role, required this.username});
 
+  static MainMenuScreen? of(BuildContext context) {
+    try {
+      return context.findAncestorWidgetOfExactType<MainMenuScreen>();
+    } catch (err) {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const SellerMenu sellerMenu = SellerMenu();

@@ -1,7 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class SellerMenu extends StatefulWidget {
@@ -23,7 +24,11 @@ class _SellerMenuState extends State<SellerMenu> {
       shrinkWrap: true,
       children: [
         _buildButton('assets/icons/sell-icon.png', 'Sell', () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SalesMenuScreen()));
+          User.loggedIn.then((user) {
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+              return SalesMenuScreen(user: user);
+            }));
+          });
         }),
         _buildButton('assets/icons/view-icon.png', 'Invoices', () {}),
         _buildButton('assets/icons/wallet-icon.png', 'Wallet', () {}),

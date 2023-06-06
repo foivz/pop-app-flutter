@@ -2,9 +2,11 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/t
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/tab.dart';
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/models/user.dart';
 
 class SalesMenuScreen extends StatefulWidget {
-  const SalesMenuScreen({super.key});
+  final User? user;
+  const SalesMenuScreen({super.key, this.user});
 
   static SalesMenuScreenState? of(BuildContext context) {
     try {

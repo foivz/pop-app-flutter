@@ -10,6 +10,7 @@ class User {
   late String email;
   late String password;
   late Store store;
+  late double balance;
   UserRole? _role;
   bool registered = false;
 
@@ -20,7 +21,12 @@ class User {
     SecureStorage.setPassword(password);
   }
 
-  static get loggedIn async => json.decode(await SecureStorage.getUserData());
+  static get loggedIn async {
+    return User(
+      username: await SecureStorage.getUsername(),
+      password: await SecureStorage.getPassword(),
+    );
+  }
 
   UserRole? getRole() => _role;
 
@@ -34,7 +40,15 @@ class User {
 
   User.loginInfo({required this.username, required this.password});
 
-  User(this.firstName, this.lastName, this.username, this.email, this.password);
+  User({
+    this.firstName = "",
+    this.lastName = "",
+    this.username = "",
+    this.email = "",
+    this.password = "",
+    this.balance = 0.0,
+  });
+
   User.withUsername({required this.username});
 
   User.full(this.firstName, this.lastName, this.username, this.email, this.password, UserRole role,

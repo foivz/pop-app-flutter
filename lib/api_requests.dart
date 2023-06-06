@@ -189,4 +189,22 @@ class ApiRequestManager {
   static bool _isTokenValid(responseData) {
     return responseData["STATUSMESSAGE"] != "OLD TOKEN";
   }
+
+  static Future<List> getAllPackages(User user) async {
+    var fm = {
+      "Token": _token,
+      "KorisnickoIme": "jfletcher",
+      "Readall": "True",
+    };
+
+    dynamic responseData;
+
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(body: fm, route(Routes.paketi));
+      print("${response.statusCode} ${response.request} ${response.body}");
+      return response.body;
+    });
+
+    return [responseData];
+  }
 }

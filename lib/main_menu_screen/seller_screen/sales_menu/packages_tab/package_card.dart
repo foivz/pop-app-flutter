@@ -63,10 +63,8 @@ class _PackageCardState extends State<PackageCard>
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(children: [
-                Image.asset(
-                  'assets/icons/view-icon.png',
-                  color: Colors.black.withOpacity(0.5),
-                  colorBlendMode: BlendMode.colorBurn,
+                Image.network(
+                  'https://cortex.foi.hr/pop/img/32/e2be5f700ee843c53a5fefdafe9e2f81c55c75fb151e76dd27572eb3a2378cd7.webp',
                   height: 128,
                   width: width * 0.2,
                 ),
@@ -78,7 +76,7 @@ class _PackageCardState extends State<PackageCard>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${widget.packageData.title} x${widget.packageData.count}",
+                        widget.packageData.title /*x${widget.packageData.count}*/,
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(height: 1.75),
                       ),
                       Text(widget.packageData.description, overflow: TextOverflow.fade),
@@ -86,7 +84,7 @@ class _PackageCardState extends State<PackageCard>
                   ),
                 ),
                 Text(
-                  "${widget.packageData.price} ${widget.packageData.currency}",
+                  widget.packageData.price.toString(),
                   style: const TextStyle(color: MyConstants.accentColor),
                 ),
               ]),
