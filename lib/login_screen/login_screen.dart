@@ -14,7 +14,6 @@ import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
-import 'dart:convert';
 
 class BaseLoginScreen extends StatefulWidget {
   const BaseLoginScreen({super.key});
@@ -96,11 +95,10 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
 
                             if (val["STATUS"]) {
                               // TODO: Think about using the User class for storing all user info.
-                              SecureStorage.setUserData(json.encode(val["DATA"]));
+                              User.storeUserData(val["DATA"], username, password);
                               if (val["DATA"]["Naziv_Uloge"] == "Prodavac")
                                 role = UserRoleType.seller;
-                              SecureStorage.setUsername(username);
-                              SecureStorage.setPassword(password);
+                              print(val["DATA"]["Token"]);
                               _navigateToMainScreen();
                             } else if (val["STATUSMESSAGE"] == "USER NEEDS STORE") {
                               _navigateToRoleSelection();

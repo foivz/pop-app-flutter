@@ -39,6 +39,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
+      // TODO: load shop name instead
       appBar: AppBar(title: const Text("Entrepreneurial Venture"), actions: [
         IconButton(
           onPressed: () {},
@@ -48,7 +49,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
           onPressed: () {},
           icon: const Icon(Icons.attach_money),
         ),
-      ]), // TODO: load shop name instead
+      ]),
       body: tabs(),
     );
   }

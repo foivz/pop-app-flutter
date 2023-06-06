@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:pop_app/models/store.dart';
+import 'package:pop_app/secure_storage.dart';
 
 class User {
   late String firstName;
@@ -11,6 +14,13 @@ class User {
   bool registered = false;
 
   static final List<UserRole> roles = List.from([UserRole(3, "seller"), UserRole(1, "buyer")]);
+  static void storeUserData(userData, username, password) {
+    SecureStorage.setUserData(json.encode(userData));
+    SecureStorage.setUsername(username);
+    SecureStorage.setPassword(password);
+  }
+
+  static get loggedIn async => json.decode(await SecureStorage.getUserData());
 
   UserRole? getRole() => _role;
 

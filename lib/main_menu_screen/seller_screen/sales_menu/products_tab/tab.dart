@@ -21,7 +21,7 @@ class ProductsTab extends StatelessWidget {
               endIndent: 3,
               thickness: 0, // linked to vertical symmetric padding above
             ),
-            padding: EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
             itemBuilder: (context, index) {
               return ProductCard(index: index, productdata: snapshot.data as ProductData);
             },
