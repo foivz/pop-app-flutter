@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Pop app',
       debugShowCheckedModeBanner: false,
       theme: lightTheme(context),
-      home: const MainMenuScreen(role: UserRole.seller),
+      home: const MainMenuScreen(role: UserRole.buyer),
     );
   }
 }
