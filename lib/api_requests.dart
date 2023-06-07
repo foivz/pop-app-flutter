@@ -193,8 +193,8 @@ class ApiRequestManager {
   static Future<List> getAllPackages(User user) async {
     var fm = {
       "Token": _token,
-      "KorisnickoIme": "jfletcher",
-      "Readall": "True",
+      "KorisnickoIme": user.username,
+      "GET": "True",
     };
 
     dynamic responseData;
