@@ -1,4 +1,5 @@
 // ignore_for_file: constant_identifier_names, curly_braces_in_flow_control_structures, unused_field
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/myconstants.dart';
@@ -13,7 +14,7 @@ class _FormContent {
   static const int nameLengthLimit = 25;
   static String nameHint(StoreContentType type) => "${type.name} name";
   static const int descriptionLengthLimit = 150;
-  static String descriptionHint(StoreContentType type) => "${type.name} description";
+  static String descHint(StoreContentType type) => "${type.name} description";
   static String priceHint(StoreContentType type) => "${type.name} price";
   static String quantityHint() => "Quantity";
   static Icon imagePlaceholder() {
@@ -37,7 +38,7 @@ class _CreateStoreContentState extends State<CreateStoreContent>
   final GlobalKey<FormState> _packageFormKey = GlobalKey<FormState>();
 
   TextEditingController nameCont = TextEditingController();
-  TextEditingController descriptionCont = TextEditingController();
+  TextEditingController descCont = TextEditingController();
   TextEditingController priceCont = TextEditingController();
   TextEditingController quantityCont = TextEditingController();
   // final ImagePicker _imagePicker = ImagePicker();
@@ -80,43 +81,53 @@ class _CreateStoreContentState extends State<CreateStoreContent>
         child: SingleChildScrollView(
           child: Form(
             key: type == StoreContentType.Product ? _productFormKey : _packageFormKey,
-            child: Column(
-              children: [
-                CustomTextFormField(
-                  inputLabel: _FormContent.nameHint(type),
-                  textEditingController: nameCont,
-                ),
-                const SizedBox(height: MyConstants.formInputSpacer),
-                CustomTextFormField(
-                  inputLabel: _FormContent.descriptionHint(type),
-                  textEditingController: descriptionCont,
-                ),
-                const SizedBox(height: MyConstants.formInputSpacer),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CustomTextFormField(
-                      textFieldWidth: MyConstants.textFieldWidth * 0.6,
-                      inputLabel: _FormContent.priceHint(type),
-                      textEditingController: priceCont,
-                    ),
-                    const SizedBox(width: MyConstants.textFieldWidth * 0.05),
-                    CustomTextFormField(
-                      textFieldWidth: MyConstants.textFieldWidth * 0.35,
-                      inputLabel: _FormContent.quantityHint(),
-                      textEditingController: quantityCont,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: MyConstants.formInputSpacer),
-                const SizedBox(height: MyConstants.formInputSpacer),
-                _buildImageInput(type),
-              ],
-            ),
+            child: Column(children: _genFormInputs(type)),
           ),
         ),
       ),
     );
+  }
+
+  List<Widget> _genFormInputs(StoreContentType type) {
+    return <Widget>[
+      CustomTextFormField(
+        inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.nameLengthLimit)],
+        inputLabel: _FormContent.nameHint(type),
+        textEditingController: nameCont,
+      ),
+      const SizedBox(height: MyConstants.formInputSpacer),
+      CustomTextFormField(
+        inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.descriptionLengthLimit)],
+        inputLabel: _FormContent.descHint(type),
+        textEditingController: descCont,
+      ),
+      const SizedBox(height: MyConstants.formInputSpacer),
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CustomTextFormField(
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+            ],
+            textFieldWidth: MyConstants.textFieldWidth * 0.6,
+            inputLabel: _FormContent.priceHint(type),
+            textEditingController: priceCont,
+          ),
+          const SizedBox(width: MyConstants.textFieldWidth * 0.05),
+          CustomTextFormField(
+            keyboardType: const TextInputType.numberWithOptions(signed: true),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            textFieldWidth: MyConstants.textFieldWidth * 0.35,
+            inputLabel: _FormContent.quantityHint(),
+            textEditingController: quantityCont,
+          ),
+        ],
+      ),
+      const SizedBox(height: MyConstants.formInputSpacer),
+      const SizedBox(height: MyConstants.formInputSpacer),
+      _buildImageInput(type),
+    ];
   }
 
   File? _imageFile;

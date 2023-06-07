@@ -1,5 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'package:flutter/services.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 class CustomTextFormField extends StatefulWidget {
   final String inputLabel;
   final TextEditingController textEditingController;
+  final List<TextInputFormatter>? inputFormatters;
   final bool obscureText;
   final EdgeInsets padding;
   final bool autoFocus;
@@ -15,7 +17,7 @@ class CustomTextFormField extends StatefulWidget {
   final String? Function(String?)? validateCallback;
   final Function()? onUpdateCallback;
   final GlobalKey<FormFieldState>? fieldKey;
-  final TextInputType? textInputType;
+  final TextInputType? keyboardType;
   final TextInputAction textInputAction;
 
   const CustomTextFormField({
@@ -24,13 +26,14 @@ class CustomTextFormField extends StatefulWidget {
     this.obscureText = false,
     required this.inputLabel,
     required this.textEditingController,
+    this.inputFormatters,
     this.padding = const EdgeInsets.fromLTRB(10, 0, 10, 10),
     this.autoFocus = false,
     this.textFieldWidth = MyConstants.textFieldWidth,
     this.submitCallback,
     this.validateCallback,
     this.onUpdateCallback,
-    this.textInputType,
+    this.keyboardType,
     this.textInputAction = TextInputAction.done,
   });
 
@@ -49,8 +52,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       padding: widget.padding,
       child: Stack(children: [
         TextFormField(
-          keyboardType: widget.textInputType,
           key: widget.fieldKey,
+          inputFormatters: widget.inputFormatters,
+          keyboardType: widget.keyboardType,
           autofocus: widget.autoFocus,
           obscureText: widget.obscureText,
           decoration: InputDecoration(
