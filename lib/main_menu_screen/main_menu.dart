@@ -1,3 +1,4 @@
+import 'package:pop_app/main_menu_screen/buyer_screen/buyer_menu.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/seller_menu.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/myconstants.dart';
@@ -23,7 +24,7 @@ class MainMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const SellerMenu sellerMenu = SellerMenu();
-    const Widget buyerMenu = Placeholder();
+    const Widget buyerMenu = BuyerMenu();
     GlobalKey mainMenuKey = GlobalKey();
     bool isBottomSheetActive = false;
     return Scaffold(
