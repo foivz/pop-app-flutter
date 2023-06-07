@@ -1,3 +1,4 @@
+import 'package:pop_app/models/invoice.dart';
 import 'package:pop_app/secure_storage.dart';
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/models/user.dart';
@@ -180,6 +181,32 @@ class ApiRequestManager {
     }
 
     return fetchedBalance;
+  }
+
+  static Future<List<Invoice>> getAllInvoices() async {
+    User user = await User.loggedIn;
+
+    var fm = {
+      "Token": _token,
+      "KorisnickoIme": user.username,
+      "Readall": "True",
+    };
+
+    dynamic responseData;
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(body: fm, route(Routes.racuni));
+      return response.bodyBytes;
+    });
+
+    List<Invoice> invoices = List<Invoice>.empty(growable: true);
+
+    if (responseData["DATA"] != null) {
+      for (var invoice in responseData["DATA"]) {
+        invoices.add(Invoice.fromDynamicMap(invoice));
+      }
+    }
+
+    return invoices;
   }
 
   /// Wraps whatever fetching logic into a token check.
