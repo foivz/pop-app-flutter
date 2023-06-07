@@ -167,9 +167,8 @@ class ApiRequestManager {
         body: fm,
         route(Routes.novcanik),
       );
-      String body = response.body;
 
-      return body;
+      return response.bodyBytes;
     });
 
     double fetchedBalance;
