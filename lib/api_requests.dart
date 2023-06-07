@@ -184,7 +184,7 @@ class ApiRequestManager {
   }
 
   static Future<List> getAllProducts(User user) async {
-    var fm = {"Token": _token, "KorisnickoIme": user.username, "GET": "True"};
+    var fm = {"Readall": "True", "Token": _token, "KorisnickoIme": user.username};
     dynamic responseData;
     responseData = await _executeWithToken(user, () async {
       http.Response response = await http.post(body: fm, route(Routes.proizvodi));

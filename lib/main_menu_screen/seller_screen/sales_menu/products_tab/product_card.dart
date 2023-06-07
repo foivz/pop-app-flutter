@@ -62,10 +62,8 @@ class _ProductCardState extends State<ProductCard>
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(children: [
-                Image.asset(
-                  'assets/icons/view-icon.png',
-                  color: Colors.black.withOpacity(0.5),
-                  colorBlendMode: BlendMode.colorBurn,
+                Image.network(
+                  widget.productdata.image,
                   height: 128,
                   width: width * 0.2,
                 ),
@@ -85,7 +83,7 @@ class _ProductCardState extends State<ProductCard>
                   ),
                 ),
                 Text(
-                  "${widget.productdata.price} ${widget.productdata.currency}",
+                  "${widget.productdata.price}",
                   style: const TextStyle(color: MyConstants.accentColor),
                 ),
               ]),
