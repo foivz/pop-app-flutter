@@ -1,5 +1,5 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
+import 'package:pop_app/invoice_details_screen/invoice_details_screen.dart';
 import 'package:pop_app/models/invoice.dart';
 import 'package:pop_app/myconstants.dart';
 
@@ -24,8 +24,11 @@ class _InvoiceCardState extends State<InvoiceCard>
     return Stack(
       children: [
         InkWell(
-          // TODO: open invoice details
-          onTap: () => {},
+          onTap: () => {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => InvoiceDetailsScreen(widget.invoice)),
+            )
+          },
           splashColor: MyConstants.red,
           focusColor: MyConstants.red.withOpacity(0.4),
           borderRadius: BorderRadius.circular(16),
