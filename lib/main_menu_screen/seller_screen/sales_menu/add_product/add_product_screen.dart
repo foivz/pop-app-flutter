@@ -1,7 +1,10 @@
 // ignore_for_file: constant_identifier_names, curly_braces_in_flow_control_structures, unused_field
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/myconstants.dart';
 
 // import 'package:image_picker/image_picker.dart';
@@ -92,12 +95,14 @@ class _CreateStoreContentState extends State<CreateStoreContent>
     return <Widget>[
       CustomTextFormField(
         inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.nameLengthLimit)],
+        maxLength: _FormContent.nameLengthLimit,
         inputLabel: _FormContent.nameHint(type),
         textEditingController: nameCont,
       ),
       const SizedBox(height: MyConstants.formInputSpacer),
       CustomTextFormField(
         inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.descriptionLengthLimit)],
+        maxLength: _FormContent.descriptionLengthLimit,
         inputLabel: _FormContent.descHint(type),
         textEditingController: descCont,
       ),
@@ -107,9 +112,7 @@ class _CreateStoreContentState extends State<CreateStoreContent>
         children: [
           CustomTextFormField(
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-            ],
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
             textFieldWidth: MyConstants.textFieldWidth * 0.6,
             inputLabel: _FormContent.priceHint(type),
             textEditingController: priceCont,
@@ -125,8 +128,19 @@ class _CreateStoreContentState extends State<CreateStoreContent>
         ],
       ),
       const SizedBox(height: MyConstants.formInputSpacer),
-      const SizedBox(height: MyConstants.formInputSpacer),
       _buildImageInput(type),
+      FormSubmitButton(
+        buttonText: "Add product",
+        onPressed: () => ApiRequestManager.addProductToStore(
+          ProductData(
+            title: nameCont.text,
+            description: descCont.text,
+            price: double.parse(priceCont.text),
+            amount: int.parse(quantityCont.text),
+            imageFile: _imageFile,
+          ),
+        ),
+      ),
     ];
   }
 
@@ -204,11 +218,19 @@ class _CreateStoreContentState extends State<CreateStoreContent>
                 Navigator.pop(context);
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.cancel, color: Colors.white),
+              title: const Text('Clear photo', style: TextStyle(color: Colors.white)),
+              enabled: _imageFile != null,
+              tileColor: _imageFile == null ? Colors.black.withOpacity(0.4) : null,
+              onTap: () {
+                setState(() => _imageFile = null);
+                Navigator.pop(context);
+              },
+            ),
           ],
         );
       },
     );
   }
 }
-
-typedef OnPickImageCallback = void Function();

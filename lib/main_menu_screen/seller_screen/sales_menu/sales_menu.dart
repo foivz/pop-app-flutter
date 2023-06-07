@@ -53,7 +53,8 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
     );
   }
 
-  void _addStoreContent() {
+  void _addStoreContent() async {
+    if (_tabController.indexIsChanging) _tabController.index = 1;
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return CreateStoreContent();
     }));

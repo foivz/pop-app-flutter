@@ -57,7 +57,7 @@ abstract class PackageDataApiInterface {
         description: product["Opis"],
         price: double.parse(product["Cijena"]),
         currency: product["Naziv"],
-        image: product["Slika"],
+        imagePath: product["Slika"],
         amount: int.parse(product["Kolicina"]),
       ));
     }

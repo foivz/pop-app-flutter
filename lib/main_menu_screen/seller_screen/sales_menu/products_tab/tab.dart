@@ -30,7 +30,7 @@ class ProductsTab extends StatelessWidget {
             itemBuilder: (context, index) {
               return ProductCard(
                 index: index,
-                productdata: products[index],
+                product: products[index],
               );
             },
           );

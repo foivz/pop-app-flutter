@@ -2,6 +2,7 @@
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
 import 'package:pop_app/myconstants.dart';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 class PackageCard extends StatefulWidget {
@@ -21,6 +22,7 @@ class _PackageCardState extends State<PackageCard>
   bool isSelected = false;
 
   void select() {
+    HapticFeedback.selectionClick();
     setState(() {
       isSelected = !isSelected;
       if (isSelected)

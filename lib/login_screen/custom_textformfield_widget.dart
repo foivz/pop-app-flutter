@@ -13,6 +13,7 @@ class CustomTextFormField extends StatefulWidget {
   final EdgeInsets padding;
   final bool autoFocus;
   final double textFieldWidth;
+  final int? maxLength;
   final Function(String value)? submitCallback;
   final String? Function(String?)? validateCallback;
   final Function()? onUpdateCallback;
@@ -23,6 +24,7 @@ class CustomTextFormField extends StatefulWidget {
   const CustomTextFormField({
     super.key,
     this.fieldKey,
+    this.maxLength,
     this.obscureText = false,
     required this.inputLabel,
     required this.textEditingController,
@@ -53,6 +55,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       child: Stack(children: [
         TextFormField(
           key: widget.fieldKey,
+          maxLength: widget.maxLength,
           inputFormatters: widget.inputFormatters,
           keyboardType: widget.keyboardType,
           autofocus: widget.autoFocus,

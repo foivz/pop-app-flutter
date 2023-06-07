@@ -1,8 +1,9 @@
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/secure_storage.dart';
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/models/user.dart';
-import 'package:http/http.dart' as http;
 
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 List<Map<String, String>> routes = [
@@ -229,5 +230,31 @@ class ApiRequestManager {
       return response.bodyBytes;
     });
     return [responseData];
+  }
+
+  static Future<void> addProductToStore(ProductData product) async {
+    User user = await SecureStorage.getUser();
+    dynamic responseData;
+    responseData = await _executeWithToken(user, () async {
+      http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
+      req.fields.addAll({
+        "Token": _token ?? "",
+        "Naziv": product.title,
+        "Opis": product.description,
+        "Cijena": product.price.toString(),
+        "Kolicina": product.amount.toString(),
+        "KorisnickoIme": await SecureStorage.getUsername(),
+      });
+      req.files.add(http.MultipartFile.fromBytes('Slika', await product.imageFile!.readAsBytes()));
+      var response = await req.send();
+      // Request successful
+      if (response.statusCode == 200)
+        print('Form submitted successfully');
+      // Request failed
+      else
+        print('Form submission failed');
+      return response;
+    });
+    return responseData;
   }
 }
