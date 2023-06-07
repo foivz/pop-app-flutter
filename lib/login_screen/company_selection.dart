@@ -1,10 +1,20 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:pop_app/login_screen/company_data_container_widget.dart';
+import 'package:pop_app/models/store.dart';
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/reusable_components/message.dart';
 
 class CompanySelectionScreen extends StatefulWidget {
-  const CompanySelectionScreen({super.key});
+  final Function(Store company) onCompanySelected;
+  final bool showAppBar;
+  final List<Store> stores;
+  const CompanySelectionScreen({
+    super.key,
+    required this.onCompanySelected,
+    required this.stores,
+    this.showAppBar = true,
+  });
 
   @override
   State<CompanySelectionScreen> createState() => _CompanySelectionScreenState();
@@ -17,21 +27,21 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: const Text("Company selection")),
+        appBar: widget.showAppBar ? AppBar(title: const Text("Company selection")) : null,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (selectedCompany == null) {
               if (!_lockSnackbar) {
                 _lockSnackbar = true;
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  dismissDirection: DismissDirection.down,
-                  content: Text("You must select a company."),
-                  duration: Duration(seconds: 1),
-                ));
+                Message.error(context).show("You must select a company to continue.");
                 Future.delayed(const Duration(seconds: 1), () => _lockSnackbar = false);
               }
             } else {
-              showAboutDialog(context: context);
+              var state = selectedCompany?.currentState;
+
+              if (state != null) {
+                widget.onCompanySelected((state as CompanyDataContainerState).widget.store);
+              }
             }
           },
           child: const Icon(Icons.check),
@@ -39,41 +49,31 @@ class _CompanySelectionScreenState extends State<CompanySelectionScreen> {
         body: FutureBuilder(
           builder: (context, snapshot) {
             List<Widget> companies = [];
-            if (snapshot.hasData) {
-              (snapshot.data as Map).forEach((key, value) {
-                GlobalKey companyKey = GlobalKey();
-                companies.add(CompanyDataContainer(
-                  key: companyKey,
-                  companyName: key,
-                  employeeCount: value,
-                  onTapCallback: () {
-                    state(o) => (((o.key as GlobalKey).currentState) as CompanyDataContainerState);
-                    companies.where((company) => state(company).isSelected).forEach((company) {
-                      state(company).select();
-                    });
-                    (companyKey.currentState as CompanyDataContainerState).select();
-                    selectedCompany = companyKey;
-                  },
-                ));
-              });
-              return Scrollbar(
-                child: SingleChildScrollView(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 15),
-                    child: Column(children: companies),
-                  ),
+            for (var store in (snapshot.data as List<Store>)) {
+              GlobalKey companyKey = GlobalKey();
+              companies.add(CompanyDataContainer(
+                key: companyKey,
+                store: store,
+                onTapCallback: () {
+                  state(o) => (((o.key as GlobalKey).currentState) as CompanyDataContainerState);
+                  companies.where((company) => state(company).isSelected).forEach((company) {
+                    state(company).select();
+                  });
+                  (companyKey.currentState as CompanyDataContainerState).select();
+                  selectedCompany = companyKey;
+                },
+              ));
+            }
+            return Scrollbar(
+              child: SingleChildScrollView(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 15),
+                  child: Column(children: companies),
                 ),
-              );
-            } else
-              return const Center(child: CircularProgressIndicator());
+              ),
+            );
           },
-          // TODO: define future to load data: "future: asyncFunc()" and remove initialData
-          initialData: const {
-            "Company1 d.o.o.": 2,
-            "Company2 d.o.o.": 1,
-            "Company3 d.o.o.": 3,
-            "Company4 d.o.o.": 1
-          },
+          initialData: widget.stores,
         ),
       ),
     );

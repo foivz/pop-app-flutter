@@ -11,16 +11,24 @@ class CustomTextFormField extends StatefulWidget {
   final EdgeInsets padding;
   final bool autoFocus;
   final Function(String value)? submitCallback;
+  final String? Function(String?)? validateCallback;
+  final Function()? onUpdateCallback;
+  final GlobalKey<FormFieldState>? fieldKey;
+  final TextInputType? textInputType;
   final TextInputAction textInputAction;
 
   const CustomTextFormField({
     super.key,
+    this.fieldKey,
     this.obscureText = false,
     required this.inputLabel,
     required this.textEditingController,
     this.padding = const EdgeInsets.fromLTRB(10, 0, 10, 10),
     this.autoFocus = false,
     this.submitCallback,
+    this.validateCallback,
+    this.onUpdateCallback,
+    this.textInputType,
     this.textInputAction = TextInputAction.done,
   });
 
@@ -39,6 +47,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       padding: widget.padding,
       child: Stack(children: [
         TextFormField(
+          keyboardType: widget.textInputType,
+          key: widget.fieldKey,
           autofocus: widget.autoFocus,
           obscureText: widget.obscureText,
           decoration: InputDecoration(
@@ -67,13 +77,17 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           ),
           textInputAction: widget.textInputAction,
           controller: widget.textEditingController,
-          validator: (value) {
-            return value == null || value.isEmpty
-                ? 'Please enter a valid ${widget.inputLabel.toLowerCase()}'
-                : null;
-          },
+          validator: widget.validateCallback ??
+              (value) {
+                return value == null || value.isEmpty
+                    ? 'Please enter a valid ${widget.inputLabel.toLowerCase()}'
+                    : null;
+              },
           onTap: () => setState(() => isFocused = true),
-          onChanged: (_) => setState(() => isFocused = true),
+          onChanged: (_) {
+            widget.onUpdateCallback?.call();
+            setState(() => isFocused = true);
+          },
         ),
       ]),
     );

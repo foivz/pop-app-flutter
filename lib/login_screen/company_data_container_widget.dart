@@ -1,17 +1,16 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/models/store.dart';
 import 'package:pop_app/myconstants.dart';
 
 class CompanyDataContainer extends StatefulWidget {
-  final String companyName;
-  final int employeeCount;
+  final Store store;
   final void Function() onTapCallback;
 
   const CompanyDataContainer({
     super.key,
-    required this.companyName,
-    required this.employeeCount,
+    required this.store,
     required this.onTapCallback,
   });
 
@@ -59,7 +58,7 @@ class CompanyDataContainerState extends State<CompanyDataContainer>
           width: MediaQuery.of(context).size.width,
           decoration: _border(),
           child: Stack(children: [
-            Text("${widget.companyName} - ${widget.employeeCount} employees"),
+            Text("${widget.store.storeName} - ${widget.store.employeeCount} employees"),
             Align(
               alignment: Alignment.centerRight,
               heightFactor: 0.8,
@@ -68,10 +67,10 @@ class CompanyDataContainerState extends State<CompanyDataContainer>
                 child: ScaleTransition(
                   scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
                   child: Icon(
-                    Icons.verified,
                     color: isSelected
                         ? MyConstants.accentColor
                         : Colors.grey, // Change color based on isSelected value
+                    Icons.verified,
                   ),
                 ),
               ),

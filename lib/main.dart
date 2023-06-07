@@ -1,4 +1,4 @@
-import 'package:pop_app/main_menu_screen/main_menu.dart';
+import 'package:pop_app/login_screen/login_screen.dart';
 import 'package:pop_app/themes.dart';
 
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Pop app',
       debugShowCheckedModeBanner: false,
       theme: lightTheme(context),
-      home: const MainMenuScreen(role: UserRole.buyer),
+      home: const BaseLoginScreen(),
     );
   }
 }

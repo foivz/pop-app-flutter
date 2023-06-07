@@ -9,21 +9,22 @@ class ScreenTransitions {
   static const zero = Offset.zero;
 
   /// Horizontal navigation animations
-  static Widget Function(Widget anim, Animation<double> c) navAnimH(bool direction) =>
+  static Widget Function(Widget anim, Animation<double> c) navAnimH(
+          bool direction) =>
       direction ? ScreenTransitions.navLeft : ScreenTransitions.navRight;
 
   /// Vertical navigation animations
   static Widget Function(Widget anim, Animation c) navAnimV(bool direction) =>
       direction ? ScreenTransitions.navUp : ScreenTransitions.navDown;
 
-  static SlideTransition navLeft(child, a) =>
-      SlideTransition(position: tween(fromRight, zero).animate(a), child: child);
+  static SlideTransition navLeft(child, a) => SlideTransition(
+      position: tween(fromRight, zero).animate(a), child: child);
 
   static SlideTransition navRight(child, a) =>
       SlideTransition(position: tween(fromLeft, zero).animate(a), child: child);
 
-  static SlideTransition navUp(child, a) =>
-      SlideTransition(position: tween(fromBottom, zero).animate(a), child: child);
+  static SlideTransition navUp(child, a) => SlideTransition(
+      position: tween(fromBottom, zero).animate(a), child: child);
 
   static SlideTransition navDown(child, a) =>
       SlideTransition(position: tween(fromTop, zero).animate(a), child: child);
