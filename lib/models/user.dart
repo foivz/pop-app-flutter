@@ -38,6 +38,7 @@ class User {
 
   User.empty();
 
+  User.username({required this.username});
   User.loginInfo({required this.username, required this.password});
 
   User({
