@@ -50,6 +50,7 @@ abstract class PackageDataApiInterface {
 
   static List<ProductData> productsFromApi(dynamic productList) {
     List<ProductData> products = List.empty(growable: true);
+    if (productList == null) return products;
     for (var product in productList) {
       products.add(ProductData(
         title: product["Naziv"],

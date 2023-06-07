@@ -5,6 +5,10 @@ import 'package:flutter/services.dart';
 
 ThemeData lightTheme(context) {
   return ThemeData(
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: MyConstants.red,
+      dragHandleColor: Colors.white,
+    ),
     dialogTheme: DialogTheme(
       surfaceTintColor: Colors.transparent,
       contentTextStyle: Theme.of(context).textTheme.titleMedium,

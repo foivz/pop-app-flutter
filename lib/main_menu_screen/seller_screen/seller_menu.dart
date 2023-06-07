@@ -57,11 +57,7 @@ class _SellerMenuState extends State<SellerMenu> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                imagePath,
-                width: _iconSize - 16,
-                color: Colors.white,
-              ),
+              Image.asset(imagePath, width: _iconSize - 16, color: Colors.white),
               const SizedBox(height: 8),
               Text(
                 title.toUpperCase(),

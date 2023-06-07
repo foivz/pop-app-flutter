@@ -10,6 +10,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool obscureText;
   final EdgeInsets padding;
   final bool autoFocus;
+  final double textFieldWidth;
   final Function(String value)? submitCallback;
   final String? Function(String?)? validateCallback;
   final Function()? onUpdateCallback;
@@ -25,6 +26,7 @@ class CustomTextFormField extends StatefulWidget {
     required this.textEditingController,
     this.padding = const EdgeInsets.fromLTRB(10, 0, 10, 10),
     this.autoFocus = false,
+    this.textFieldWidth = MyConstants.textFieldWidth,
     this.submitCallback,
     this.validateCallback,
     this.onUpdateCallback,
@@ -43,7 +45,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return Container(
       alignment: Alignment.topLeft,
       color: MyConstants.textfieldBackground,
-      width: MyConstants.textFieldWidth,
+      width: widget.textFieldWidth,
       padding: widget.padding,
       child: Stack(children: [
         TextFormField(
