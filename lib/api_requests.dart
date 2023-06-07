@@ -201,7 +201,6 @@ class ApiRequestManager {
 
     responseData = await _executeWithToken(user, () async {
       http.Response response = await http.post(body: fm, route(Routes.paketi));
-      print("${response.statusCode} ${response.request} ${response.body}");
       return response.body;
     });
 
