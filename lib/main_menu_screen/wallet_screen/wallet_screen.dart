@@ -26,7 +26,7 @@ class _WalletScreenState extends State<WalletScreen> {
   void _fetchAndShowBalance() async {
     // TODO: Think about using the User class for storing all user info.
     var decodedUserInfo = json.decode(await SecureStorage.getUserData());
-    User user = User.username(decodedUserInfo["KorisnickoIme"]);
+    User user = User.username(username: decodedUserInfo["KorisnickoIme"]);
     user.setRole(
         User.roles.firstWhere((role) => role.roleId == int.parse(decodedUserInfo["Id_Uloge"])));
 
