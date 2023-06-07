@@ -30,12 +30,14 @@ class ApiRequestManager {
 
   static Future login(String username, String password) async {
     var fm = {"KorisnickoIme": username, "Lozinka": password};
+
     http.Response response = await http.post(
       body: fm,
       route(Routes.login),
     );
     var responseData = json.decode(response.body);
     _updateTokenData(responseData);
+
     return responseData;
   }
 
@@ -63,7 +65,6 @@ class ApiRequestManager {
     );
 
     var responseData = json.decode(response.body);
-
     _updateTokenData(responseData);
 
     return responseData;
@@ -77,11 +78,9 @@ class ApiRequestManager {
     };
 
     dynamic responseData;
-
     responseData = await _executeWithToken(user, () async {
       http.Response response = await http.post(body: fm, route(Routes.trgovine));
-      String body = response.body;
-      return body;
+      return response.bodyBytes;
     });
 
     return responseData;
@@ -98,13 +97,8 @@ class ApiRequestManager {
     dynamic responseData;
 
     responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(
-        body: fm,
-        route(Routes.trgovine),
-      );
-      String body = response.body;
-
-      return body;
+      http.Response response = await http.post(body: fm, route(Routes.trgovine));
+      return response.bodyBytes;
     });
 
     return Store(responseData["DATA"]["Id_Trgovine"], responseData["DATA"]["NazivTrgovine"], 0, 0);
@@ -121,12 +115,8 @@ class ApiRequestManager {
     dynamic responseData;
 
     responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(
-        body: fm,
-        route(Routes.trgovine),
-      );
-      String body = response.body;
-
+      http.Response response = await http.post(body: fm, route(Routes.trgovine));
+      dynamic body = response.bodyBytes;
       return body;
     });
 
@@ -146,15 +136,9 @@ class ApiRequestManager {
     };
 
     dynamic responseData;
-
     responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(
-        body: fm,
-        route(Routes.korisnici),
-      );
-      String body = response.body;
-
-      return body;
+      http.Response response = await http.post(body: fm, route(Routes.korisnici));
+      return response.bodyBytes;
     });
 
     return (responseData["STATUSMESSAGE"] == "OWN ROLE SET");
@@ -164,15 +148,14 @@ class ApiRequestManager {
   /// If the server reports token is invalid, this method attempts login once.
   /// If the new token is still invalid, method returns null instead of response.
   /// [requestCallback] should return a response body!
-  static Future<dynamic> _executeWithToken(
-      User user, Future<String> Function() requestCallback) async {
+  static Future<dynamic> _executeWithToken(User user, dynamic requestCallback) async {
     int attempts = 0;
 
     dynamic responseData;
     bool isTokenValid = false;
     do {
-      String body = await requestCallback();
-      responseData = jsonDecode(body);
+      dynamic body = await requestCallback();
+      responseData = jsonDecode(utf8.decode(body));
       isTokenValid = _isTokenValid(responseData);
       if (!isTokenValid) {
         login(user.username, user.password);
@@ -191,19 +174,22 @@ class ApiRequestManager {
   }
 
   static Future<List> getAllPackages(User user) async {
-    var fm = {
-      "Token": _token,
-      "KorisnickoIme": user.username,
-      "GET": "True",
-    };
-
+    var fm = {"Token": _token, "KorisnickoIme": user.username, "GET": "True"};
     dynamic responseData;
-
     responseData = await _executeWithToken(user, () async {
       http.Response response = await http.post(body: fm, route(Routes.paketi));
-      return response.body;
+      return response.bodyBytes;
     });
+    return [responseData];
+  }
 
+  static Future<List> getAllProducts(User user) async {
+    var fm = {"Token": _token, "KorisnickoIme": user.username, "GET": "True"};
+    dynamic responseData;
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(body: fm, route(Routes.proizvodi));
+      return response.bodyBytes;
+    });
     return [responseData];
   }
 }

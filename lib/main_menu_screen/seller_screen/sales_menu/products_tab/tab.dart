@@ -1,8 +1,10 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
+import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_card.dart';
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 
 class ProductsTab extends StatelessWidget {
   const ProductsTab({super.key});
@@ -29,14 +31,7 @@ class ProductsTab extends StatelessWidget {
         else
           return const Center(child: CircularProgressIndicator());
       },
-      initialData: const ProductData(
-        // TODO: replace with future
-        currency: "HRK",
-        description: "Desc",
-        image: "Img",
-        price: 16.00,
-        title: "Lemonade",
-      ),
+      future: ApiRequestManager.getAllProducts(SalesMenuScreen.of(context)!.widget.user!),
     );
   }
 }
