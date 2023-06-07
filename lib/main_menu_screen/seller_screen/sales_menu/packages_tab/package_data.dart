@@ -48,7 +48,7 @@ abstract class PackageDataApiInterface {
     );
   }
 
-  static List<ProductData> productsFromApi(List<Map> productList) {
+  static List<ProductData> productsFromApi(dynamic productList) {
     List<ProductData> products = List.empty(growable: true);
     for (var product in productList) {
       products.add(ProductData(
