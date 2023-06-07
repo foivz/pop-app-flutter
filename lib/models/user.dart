@@ -22,6 +22,8 @@ class User {
 
   User.empty();
 
+  User.username(this.username);
+
   User.loginInfo(this.username, this.password) {
     User("", "", username, "", password);
   }
