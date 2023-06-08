@@ -1,4 +1,5 @@
 import 'package:pop_app/main_menu_screen/menu_screen_mixin.dart';
+import 'package:pop_app/main_menu_screen/invoices_screen/invoices_screen.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/models/user.dart';
 
