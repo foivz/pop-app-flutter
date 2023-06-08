@@ -1,5 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/package_data.dart';
 import 'package:pop_app/models/product_data.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_card.dart';
@@ -7,9 +8,16 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/p
 import 'package:flutter/material.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 
-class ProductsTab extends StatelessWidget {
-  const ProductsTab({super.key});
+import '../items_tab.dart';
 
+class ProductsTab extends StatefulWidget with ItemsTab {
+  ProductsTab({super.key});
+
+  @override
+  State<ProductsTab> createState() => _ProductsTabState();
+}
+
+class _ProductsTabState extends State<ProductsTab> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(

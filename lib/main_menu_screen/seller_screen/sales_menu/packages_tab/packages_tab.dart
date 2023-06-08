@@ -6,9 +6,16 @@ import 'package:pop_app/api_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 
-class PackagesTab extends StatelessWidget {
-  const PackagesTab({super.key});
+import '../items_tab.dart';
 
+class PackagesTab extends StatefulWidget with ItemsTab {
+  PackagesTab({super.key});
+
+  @override
+  State<PackagesTab> createState() => _PackagesTabState();
+}
+
+class _PackagesTabState extends State<PackagesTab> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
