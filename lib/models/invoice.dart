@@ -1,20 +1,20 @@
 import 'package:pop_app/models/invoice_item.dart';
 
 class Invoice {
-  String? id;
-  String? locationOfFinalization;
-  String? dateOfFinalization;
-  String? storeId;
-  String? storeName;
-  String? buyerId;
-  String? buyerFirstName;
-  String? buyerLastName;
-  String? username;
-  String? price;
-  String? discount;
-  String? discountAmount;
-  String? finalPrice;
-  List<InvoiceItem>? items;
+  late String id;
+  late String locationOfFinalization;
+  late String dateOfFinalization;
+  late String storeId;
+  late String storeName;
+  late String buyerId;
+  late String buyerFirstName;
+  late String buyerLastName;
+  late String username;
+  late String price;
+  late String discount;
+  late String discountAmount;
+  late String finalPrice;
+  late List<InvoiceItem> items;
 
   Invoice(
       {id,
@@ -50,7 +50,7 @@ class Invoice {
     if (json['Stavke'] != null) {
       items = <InvoiceItem>[];
       json['Stavke'].forEach((v) {
-        items!.add(InvoiceItem.fromDynamicMap(v));
+        items.add(InvoiceItem.fromDynamicMap(v));
       });
     }
   }

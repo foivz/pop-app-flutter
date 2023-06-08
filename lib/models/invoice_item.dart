@@ -1,24 +1,24 @@
 class InvoiceItem {
-  String? id;
-  String? name;
-  String? description;
-  String? itemUrl;
-  String? amount;
-  String? itemType;
-  String? price;
+  late String id;
+  late String name;
+  late String description;
+  late String itemUrl;
+  late String quantity;
+  late String itemType;
+  late String price;
 
   /// Price of the item multiplied by amount.
-  String? totalPrice;
+  late String totalPrice;
 
   InvoiceItem(
-      {this.id,
-      this.name,
-      this.description,
-      this.itemUrl,
-      this.amount,
-      this.itemType,
-      this.price,
-      this.totalPrice});
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.itemUrl,
+      required this.quantity,
+      required this.itemType,
+      required this.price,
+      required this.totalPrice});
 
   /// Intended for deserialized JSON.
   InvoiceItem.fromDynamicMap(Map<String, dynamic> json) {
@@ -26,7 +26,7 @@ class InvoiceItem {
     name = json['Naziv'];
     description = json['Opis'];
     itemUrl = json['Slika'];
-    amount = json['Kolicina'];
+    quantity = json['Kolicina'];
     itemType = json['ItemType'];
     price = json['Cijena'];
     totalPrice = json['CijenaStavke'];
