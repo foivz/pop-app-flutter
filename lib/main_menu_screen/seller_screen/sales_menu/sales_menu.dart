@@ -1,4 +1,3 @@
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/items_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/packages_tab.dart';
 
@@ -6,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sell_items_screen.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/user.dart';
+import 'package:pop_app/reusable_components/message.dart';
 
 class SalesMenuScreen extends StatefulWidget {
   final User? user;
@@ -23,20 +23,39 @@ class SalesMenuScreen extends StatefulWidget {
   State<SalesMenuScreen> createState() => SalesMenuScreenState();
 }
 
-class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProviderStateMixin {
+class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderStateMixin {
   late TabController _tabController;
-  ProductsTab productsTab = ProductsTab();
-  PackagesTab packagesTab = PackagesTab();
+  late final GlobalKey _sellIconKey = GlobalKey();
+  late AnimationController _animCont;
+  int _selectedItemsCount = 0;
+
+  void onSelectionStateChange(bool isSelected) {
+    setState(() {
+      isSelected ? _selectedItemsCount++ : _selectedItemsCount--;
+    });
+    if (_selectedItemsCount > 0) {
+      _animCont.forward();
+    } else {
+      _animCont.reverse();
+    }
+  }
+
+  late ProductsTab productsTab;
+  late PackagesTab packagesTab;
 
   @override
   void initState() {
+    productsTab = ProductsTab(onSelectionStateChange);
+    packagesTab = PackagesTab(onSelectionStateChange);
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _animCont = AnimationController(vsync: this, duration: const Duration(milliseconds: 150));
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _animCont.dispose();
     super.dispose();
   }
 
@@ -52,19 +71,34 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
           onPressed: () {},
           icon: const Icon(Icons.add),
         ),
-        IconButton(
-          onPressed: () {
-            List<Item> selectedItems = List.from(productsTab.selectedItems);
-            selectedItems.addAll(packagesTab.selectedItems);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SellItemsScreen(selectedItems),
-              ),
-            );
-          },
-          icon: const Icon(Icons.attach_money),
-        ),
+        RotationTransition(
+          turns: Tween(begin: 0.0, end: 1.0).animate(_animCont),
+          child: ScaleTransition(
+            scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
+            child: IconButton(
+              key: _sellIconKey,
+              style: ButtonStyle(iconSize: MaterialStateProperty.resolveWith((states) => 40)),
+              onPressed: () {
+                List<Item> selectedItems = List.from(productsTab.selectedItems);
+                selectedItems.addAll(packagesTab.selectedItems);
+
+                if (selectedItems.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SellItemsScreen(selectedItems),
+                    ),
+                  );
+                } else {
+                  Message.error(context).show(
+                    "You can't sell products until you select them. Select products to sell them.",
+                  );
+                }
+              },
+              icon: const Icon(Icons.attach_money),
+            ),
+          ),
+        )
       ]),
       body: tabs(),
     );

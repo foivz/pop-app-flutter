@@ -8,8 +8,8 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dar
 
 import '../items_tab.dart';
 
-class PackagesTab extends StatefulWidget with ItemsTab {
-  PackagesTab({super.key});
+class PackagesTab extends ItemsTab {
+  PackagesTab(onSelectionStateChange, {super.key}) : super(onSelectionStateChange);
 
   @override
   State<PackagesTab> createState() => _PackagesTabState();

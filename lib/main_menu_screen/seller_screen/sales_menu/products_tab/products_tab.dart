@@ -9,8 +9,8 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dar
 
 import '../items_tab.dart';
 
-class ProductsTab extends StatefulWidget with ItemsTab {
-  ProductsTab({super.key});
+class ProductsTab extends ItemsTab {
+  ProductsTab(onSelectionStateChange, {super.key}) : super(onSelectionStateChange);
 
   @override
   State<ProductsTab> createState() => _ProductsTabState();
