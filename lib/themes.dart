@@ -5,8 +5,12 @@ import 'package:flutter/services.dart';
 
 ThemeData lightTheme(context) {
   return ThemeData(
+    elevatedButtonTheme: const ElevatedButtonThemeData(
+      style: ButtonStyle(surfaceTintColor: MaterialStatePropertyAll<Color>(Colors.white)),
+    ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: MyConstants.red,
+      surfaceTintColor: Colors.white,
       dragHandleColor: Colors.white,
     ),
     dialogTheme: DialogTheme(

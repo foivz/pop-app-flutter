@@ -1,5 +1,7 @@
 // ignore_for_file: constant_identifier_names, curly_braces_in_flow_control_structures, unused_field
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_product/product_amount_card.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
@@ -13,6 +15,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:io';
+
+import 'package:pop_app/screentransitions.dart';
 
 enum StoreContentType { Product, Package }
 
@@ -70,6 +74,7 @@ class _CreateStoreContentState extends State<CreateStoreContent>
   final StoreContentType prod = StoreContentType.Product;
   final StoreContentType pack = StoreContentType.Package;
 
+  final GlobalKey<ProductsTabState> _productListKey = GlobalKey<ProductsTabState>();
   late TabController _tabController;
   @override
   void initState() {
@@ -80,6 +85,39 @@ class _CreateStoreContentState extends State<CreateStoreContent>
     formElements()[prod]![_FormElements.priceCont].text =
         "${(Random().nextDouble() * 100).round() + Random().nextInt(99) / 100}";
     formElements()[prod]![_FormElements.quantityCont].text = "${(Random().nextInt(10))}";
+    packageCreationForm = [
+      _genForm(StoreContentType.Package),
+      Scaffold(
+        backgroundColor: Colors.white,
+        body: ProductsTab(
+          user: widget.user,
+          wrapper: (index, product) => ProductCounterCard(index: index, product: product),
+        ),
+        bottomNavigationBar: BottomAppBar(
+          height: MyConstants.submitButtonHeight * 2 + MyConstants.formInputSpacer * 2,
+          color: Colors.white,
+          surfaceTintColor: Colors.white,
+          child: Center(
+            child: Column(
+              children: [
+                FormSubmitButton(
+                  key: _productListKey,
+                  buttonText: "Add products to package",
+                  color: MyConstants.accentColor2,
+                  onPressed: () {},
+                ),
+                const SizedBox(height: MyConstants.submitButtonHeight / 4),
+                FormSubmitButton(
+                  buttonText: "Back",
+                  type: FormSubmitButtonStyle.OUTLINE,
+                  onPressed: packageFormPrevious,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ];
   }
 
   @override
@@ -87,24 +125,38 @@ class _CreateStoreContentState extends State<CreateStoreContent>
     return Container(child: tabs());
   }
 
+  int _currentStep = 0, _previousCurrentStep = 0;
+  late List<Widget> packageCreationForm;
   Widget tabs() {
     return Column(children: [
-      TabBar(
-        padding: EdgeInsets.zero,
-        controller: _tabController,
-        tabs: const <Tab>[Tab(text: "Add product"), Tab(text: "Create package")],
+      Container(
+        color: Colors.white,
+        child: TabBar(
+          padding: EdgeInsets.zero,
+          controller: _tabController,
+          tabs: const <Tab>[Tab(text: "Add product"), Tab(text: "Create package")],
+        ),
       ),
       Expanded(
         child: TabBarView(
           controller: _tabController,
-          children: [_genForm(StoreContentType.Product), _genForm(StoreContentType.Package)],
+          children: [
+            _genForm(StoreContentType.Product),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: ScreenTransitions.navAnimV(_currentStep > _previousCurrentStep),
+              reverseDuration: const Duration(milliseconds: 0),
+              child: packageCreationForm[_currentStep],
+            ),
+          ],
         ),
       ),
     ]);
   }
 
   Widget _genForm(StoreContentType type) {
-    return Padding(
+    return Container(
+      color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Center(
         child: SizedBox(
@@ -186,11 +238,22 @@ class _CreateStoreContentState extends State<CreateStoreContent>
           },
         ),
       if (type == StoreContentType.Package)
-        FormSubmitButton(
-          buttonText: "Next",
-          onPressed: () {},
-        ),
+        FormSubmitButton(buttonText: "Next", onPressed: packageFormNext),
     ];
+  }
+
+  void packageFormNext() {
+    setState(() {
+      _previousCurrentStep = _currentStep;
+      _currentStep++;
+    });
+  }
+
+  void packageFormPrevious() {
+    setState(() {
+      _previousCurrentStep = _currentStep;
+      _currentStep--;
+    });
   }
 
   File? _imageFile;

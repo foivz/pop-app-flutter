@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 
 class ProductsTab extends StatefulWidget {
   final User user;
-  const ProductsTab({super.key, required this.user});
+  final Function(int index, ProductData product)? wrapper;
+  const ProductsTab({super.key, required this.user, this.wrapper});
 
   static ProductsTabState? of(BuildContext context) {
     try {
@@ -39,7 +40,10 @@ class ProductsTabState extends State<ProductsTab> {
             separatorBuilder: (_, __) => const Divider(indent: 3, endIndent: 3, thickness: 0),
             padding: const EdgeInsets.all(5),
             itemBuilder: (context, index) {
-              return ProductCard(index: index, product: products[index]);
+              if (widget.wrapper != null)
+                return widget.wrapper!(index, products[index]);
+              else
+                return ProductCard(index: index, product: products[index]);
             },
           );
         } else
