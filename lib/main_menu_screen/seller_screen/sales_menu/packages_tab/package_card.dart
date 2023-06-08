@@ -67,7 +67,7 @@ class _PackageCardState extends State<PackageCard>
               padding: const EdgeInsets.all(8.0),
               child: Row(children: [
                 Image.network(
-                  'https://cortex.foi.hr/pop/img/32/e2be5f700ee843c53a5fefdafe9e2f81c55c75fb151e76dd27572eb3a2378cd7.webp',
+                  widget.packageData.image,
                   height: 128,
                   width: width * 0.2,
                 ),
