@@ -41,7 +41,10 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                       const Text(
                         "No invoices",
                         style: TextStyle(
-                            color: MyConstants.red, fontSize: 50, fontWeight: FontWeight.bold),
+                          color: MyConstants.red,
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const Text(
                         "It's empty in here... 👀\nStart trading and then come back!",
@@ -51,9 +54,12 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                         ),
                       ),
                       BackButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith((states) => MyConstants.red))),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.resolveWith(
+                            (states) => MyConstants.red,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 );

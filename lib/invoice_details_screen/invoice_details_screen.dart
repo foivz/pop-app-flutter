@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:pop_app/models/invoice.dart';
 import 'package:pop_app/myconstants.dart';
 
@@ -86,21 +87,28 @@ class InvoiceDetailsScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  DataTable(
-                    columns: [
-                      DataColumn(label: getInvoiceItemsHeader("Item")),
-                      DataColumn(label: getInvoiceItemsHeader("Quantity")),
-                      DataColumn(label: getInvoiceItemsHeader("Price")),
-                      DataColumn(label: getInvoiceItemsHeader("Total")),
-                    ],
-                    rows: invoice.items
-                        .map((item) => DataRow(cells: <DataCell>[
-                              DataCell(Text(item.name)),
-                              DataCell(Text(item.quantity)),
-                              DataCell(Text(item.price)),
-                              DataCell(Text(item.totalPrice)),
-                            ]))
-                        .toList(),
+                  Scrollbar(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: [
+                          DataColumn(label: getInvoiceItemsHeader("Item")),
+                          DataColumn(label: getInvoiceItemsHeader("Quantity")),
+                          DataColumn(label: getInvoiceItemsHeader("Price")),
+                          DataColumn(label: getInvoiceItemsHeader("Total")),
+                        ],
+                        rows: invoice.items
+                            .map(
+                              (item) => DataRow(cells: <DataCell>[
+                                DataCell(Text(item.name)),
+                                DataCell(Text(item.quantity)),
+                                DataCell(Text(item.price)),
+                                DataCell(Text(item.totalPrice)),
+                              ]),
+                            )
+                            .toList(),
+                      ),
+                    ),
                   )
                 ],
               )
