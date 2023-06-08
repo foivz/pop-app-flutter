@@ -1,6 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_card.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
+import 'package:pop_app/models/package_data.dart';
 import 'package:pop_app/api_requests.dart';
 
 import 'package:flutter/material.dart';

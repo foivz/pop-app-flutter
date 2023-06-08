@@ -1,10 +1,8 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
+import 'package:pop_app/models/item.dart';
+import 'package:pop_app/models/product_data.dart';
 
-class PackageData implements PackageDataApiInterface {
-  final String title;
-  final String description;
-  final String image;
+class PackageData extends Item implements PackageDataApiInterface {
   final double discount;
   final double priceAfterDiscount;
   final List<ProductData> products;
@@ -13,14 +11,15 @@ class PackageData implements PackageDataApiInterface {
   get count => products.length;
   get itemCount => _itemCount();
 
-  const PackageData({
-    required this.title,
-    required this.description,
-    required this.image,
+  PackageData({
+    id,
+    required title,
+    required description,
+    required image,
     required this.products,
     required this.discount,
     required this.priceAfterDiscount,
-  });
+  }) : super(id: id, title: title, description: description, image: image);
 
   double _price() {
     double sum = 0.0;
@@ -39,6 +38,7 @@ abstract class PackageDataApiInterface {
   static PackageData fromAPI(dynamic data) {
     var dat = data.first;
     return PackageData(
+      id: dat["Id"],
       title: dat["Naziv"],
       description: dat["Opis"],
       discount: double.parse(dat["Popust"]),
@@ -52,6 +52,7 @@ abstract class PackageDataApiInterface {
     List<ProductData> products = List.empty(growable: true);
     for (var product in productList) {
       products.add(ProductData(
+        id: product["Id"],
         title: product["Naziv"],
         description: product["Opis"],
         price: double.parse(product["Cijena"]),
