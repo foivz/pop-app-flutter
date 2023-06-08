@@ -1,25 +1,34 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 
+import 'dart:io';
+
 class PackageData implements PackageDataApiInterface {
   final String title;
   final String description;
-  final String image;
+  final String? image;
+  final File? imageFile;
   final double discount;
-  final double priceAfterDiscount;
+  final double? priceAfterDiscount;
   final List<ProductData> products;
 
+  /// Calculates total price of products included.
   get price => _price();
+
+  /// Calculates count of products included.
   get count => products.length;
+
+  /// Calculates total item count based on all products included.
   get itemCount => _itemCount();
 
   const PackageData({
     required this.title,
     required this.description,
-    required this.image,
+    this.image,
+    this.imageFile,
     required this.products,
     required this.discount,
-    required this.priceAfterDiscount,
+    this.priceAfterDiscount,
   });
 
   double _price() {
@@ -37,20 +46,21 @@ class PackageData implements PackageDataApiInterface {
 
 abstract class PackageDataApiInterface {
   static PackageData fromAPI(dynamic data) {
-    var dat = data.first;
     return PackageData(
-      title: dat["Naziv"],
-      description: dat["Opis"],
-      discount: double.parse(dat["Popust"]),
-      priceAfterDiscount: double.parse(dat["CijenaStavkeNakonPopusta"]),
-      products: productsFromApi(dat["StavkePaketa"]),
-      image: dat["Slika"],
+      title: data["Naziv"],
+      description: data["Opis"],
+      discount: double.parse(data["Popust"]),
+      priceAfterDiscount: double.parse(data["CijenaStavkeNakonPopusta"]),
+      products: productsFromApi(data["StavkePaketa"] as List),
+      image: data["Slika"],
     );
   }
 
-  static List<ProductData> productsFromApi(dynamic productList) {
+  static List<ProductData> productsFromApi(List? productList) {
     List<ProductData> products = List.empty(growable: true);
-    if (productList == null) return products;
+    if (productList == null || productList.isEmpty) {
+      return products;
+    }
     for (var product in productList) {
       products.add(ProductData(
         title: product["Naziv"],

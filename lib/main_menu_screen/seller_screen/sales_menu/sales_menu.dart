@@ -1,8 +1,8 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_product/add_product_screen.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/tab.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_list_tab.dart';
 
 import 'package:flutter/material.dart';
 import 'package:pop_app/models/user.dart';
@@ -59,7 +59,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
                     child: Scaffold(body: CreateStoreContent(salesMenuKey: key, user: widget.user)),
                   );
                 },
-              )) setState(() {});
+              ) is bool) setState(() {});
             });
           },
           icon: const Icon(Icons.add),

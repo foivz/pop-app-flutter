@@ -24,7 +24,8 @@ class PackagesTab extends StatelessWidget {
             itemBuilder: (context, index) {
               return PackageCard(
                 index: index,
-                packageData: PackageDataApiInterface.fromAPI(snapshot.data!.last["DATA"]),
+                packageData:
+                    PackageDataApiInterface.fromAPI((snapshot.data!.last["DATA"] as List)[index]),
               );
             },
           );

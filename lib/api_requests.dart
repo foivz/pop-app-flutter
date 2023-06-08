@@ -1,5 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
 
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/secure_storage.dart';
 import 'package:pop_app/models/store.dart';
@@ -250,6 +251,34 @@ class ApiRequestManager {
           'Slika',
           filename: 'Slika',
           await product.imageFile!.readAsBytes(),
+        ),
+      );
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
+  }
+
+  static Future addPackageToStore(PackageData package) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
+    req.fields.addAll({
+      "Token": _token!,
+      "ADD": "True",
+      "Naziv": package.title,
+      "Opis": package.description,
+      "Popust": package.discount.toString(),
+      "KolicinaPaketa": package.itemCount.toString(),
+      "KorisnickoIme": await SecureStorage.getUsername(),
+    });
+    if (package.imageFile != null)
+      req.files.add(
+        http.MultipartFile.fromBytes(
+          'Slika',
+          filename: 'Slika',
+          await package.imageFile!.readAsBytes(),
         ),
       );
     http.StreamedResponse responseData;
