@@ -93,10 +93,15 @@ class _CreateStoreContentState extends State<CreateStoreContent>
           user: widget.user,
           wrapper: (index, product) => ProductCounterCard(index: index, product: product),
         ),
-        bottomNavigationBar: BottomAppBar(
-          height: MyConstants.submitButtonHeight * 2 + MyConstants.formInputSpacer * 2,
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
+        bottomNavigationBar: Container(
+          padding: const EdgeInsets.only(top: 30),
+          height: MyConstants.submitButtonHeight * 2 + MyConstants.formInputSpacer * 2 + 3,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
           child: Center(
             child: Column(
               children: [
@@ -234,6 +239,8 @@ class _CreateStoreContentState extends State<CreateStoreContent>
                 Message.error(context).show(
                   "Failed to add ${formElements()[type]![_FormElements.nameCont].text} to store.",
                 );
+            }).catchError((error) {
+              Message.error(context).show("Connection failure. Check your internet and try again.");
             });
           },
         ),

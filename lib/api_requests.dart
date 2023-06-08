@@ -252,8 +252,12 @@ class ApiRequestManager {
           await product.imageFile!.readAsBytes(),
         ),
       );
-    var responseData = await req.send();
-    // Request successful
-    return responseData;
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
   }
 }
