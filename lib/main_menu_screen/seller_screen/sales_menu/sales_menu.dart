@@ -50,6 +50,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
             WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
               if (await showModalBottomSheet(
                 showDragHandle: true,
+                isScrollControlled: true,
                 backgroundColor: Colors.white,
                 context: context,
                 builder: (context) {
