@@ -1,7 +1,10 @@
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/tab.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/items_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/packages_tab.dart';
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sell_items_screen.dart';
+import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/user.dart';
 
 class SalesMenuScreen extends StatefulWidget {
@@ -22,6 +25,8 @@ class SalesMenuScreen extends StatefulWidget {
 
 class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  ProductsTab productsTab = ProductsTab();
+  PackagesTab packagesTab = PackagesTab();
 
   @override
   void initState() {
@@ -48,7 +53,16 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
           icon: const Icon(Icons.add),
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            List<Item> selectedItems = List.from(productsTab.selectedItems);
+            selectedItems.addAll(packagesTab.selectedItems);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SellItemsScreen(selectedItems),
+              ),
+            );
+          },
           icon: const Icon(Icons.attach_money),
         ),
       ]),
@@ -70,9 +84,9 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
         Expanded(
           child: TabBarView(
             controller: _tabController,
-            children: const [
-              ProductsTab(),
-              PackagesTab(),
+            children: [
+              productsTab,
+              packagesTab,
             ],
           ),
         ),

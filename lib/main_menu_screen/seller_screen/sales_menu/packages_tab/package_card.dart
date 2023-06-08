@@ -7,10 +7,8 @@ import 'package:flutter/material.dart';
 class PackageCard extends StatefulWidget {
   final int index;
   final PackageData packageData;
-  final Function(bool isSelected, PackageData productData) onSelected;
-
-  const PackageCard(
-      {super.key, required this.index, required this.packageData, required this.onSelected});
+  final Function(bool isSelected, PackageData productData)? onSelected;
+  const PackageCard({super.key, required this.index, required this.packageData, this.onSelected});
 
   @override
   State<PackageCard> createState() => _PackageCardState();
@@ -23,14 +21,16 @@ class _PackageCardState extends State<PackageCard>
   bool isSelected = false;
 
   void select() {
-    setState(() {
-      isSelected = !isSelected;
-      widget.onSelected(isSelected, widget.packageData);
-      if (isSelected)
-        _animCont.forward();
-      else
-        _animCont.reverse();
-    });
+    if (widget.onSelected != null) {
+      setState(() {
+        isSelected = !isSelected;
+        widget.onSelected!.call(isSelected, widget.packageData);
+        if (isSelected)
+          _animCont.forward();
+        else
+          _animCont.reverse();
+      });
+    }
   }
 
   @override
