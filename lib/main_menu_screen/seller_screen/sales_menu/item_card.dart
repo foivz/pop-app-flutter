@@ -1,20 +1,20 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
-import 'package:pop_app/models/product_data.dart';
+import 'package:pop_app/models/item.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
 
-class ProductCard extends StatefulWidget {
+class ItemCard extends StatefulWidget {
   final int index;
-  final ProductData productdata;
-  final Function(bool isSelected, ProductData productData)? onSelected;
-  const ProductCard({super.key, required this.index, required this.productdata, this.onSelected});
+  final Item item;
+  final Function(bool isSelected, Item productData)? onSelected;
+  const ItemCard({super.key, required this.index, required this.item, this.onSelected});
 
   @override
-  State<ProductCard> createState() => _ProductCardState();
+  State<ItemCard> createState() => _ItemCardState();
 }
 
-class _ProductCardState extends State<ProductCard>
+class _ItemCardState extends State<ItemCard>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _animCont;
 
@@ -24,7 +24,7 @@ class _ProductCardState extends State<ProductCard>
     if (widget.onSelected != null) {
       setState(() {
         isSelected = !isSelected;
-        widget.onSelected!.call(isSelected, widget.productdata);
+        widget.onSelected!.call(isSelected, widget.item);
         if (isSelected)
           _animCont.forward();
         else
@@ -67,7 +67,7 @@ class _ProductCardState extends State<ProductCard>
               padding: const EdgeInsets.all(8.0),
               child: Row(children: [
                 Image.network(
-                  widget.productdata.image,
+                  widget.item.image,
                   height: 128,
                   width: width * 0.2,
                 ),
@@ -79,17 +79,20 @@ class _ProductCardState extends State<ProductCard>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.productdata.title,
+                        widget.item.title,
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(height: 1.75),
                       ),
-                      Text(widget.productdata.description, overflow: TextOverflow.fade),
+                      Text(widget.item.description, overflow: TextOverflow.fade),
                     ],
                   ),
                 ),
-                Text(
-                  "💸\n${widget.productdata.price}",
-                  style: const TextStyle(
-                      color: Colors.green, fontSize: 20, fontWeight: FontWeight.bold),
+                Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: Text(
+                    "💸\n${widget.item.getPrice()}",
+                    style: const TextStyle(
+                        color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ]),
             ),

@@ -7,7 +7,6 @@ class PackageData extends Item implements PackageDataApiInterface {
   final double priceAfterDiscount;
   final List<ProductData> products;
 
-  get price => _price();
   get count => products.length;
   get itemCount => _itemCount();
 
@@ -19,7 +18,15 @@ class PackageData extends Item implements PackageDataApiInterface {
     required this.products,
     required this.discount,
     required this.priceAfterDiscount,
-  }) : super(id: id, title: title, description: description, image: image);
+  }) : super(
+          id: id,
+          title: title,
+          description: description,
+          image: image,
+          price: 0,
+        ) {
+    price = _price();
+  }
 
   double _price() {
     double sum = 0.0;

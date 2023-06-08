@@ -1,7 +1,6 @@
 import 'package:pop_app/models/item.dart';
 
 class ProductData extends Item {
-  final double price;
   final String currency;
   final int amount;
 
@@ -10,8 +9,8 @@ class ProductData extends Item {
     required title,
     required description,
     required image,
-    required this.price,
+    required price,
     required this.currency,
     this.amount = 1,
-  }) : super(id: id, title: title, description: description, image: image);
+  }) : super(id: id, title: title, description: description, image: image, price: price);
 }
