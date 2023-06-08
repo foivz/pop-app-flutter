@@ -245,13 +245,15 @@ class ApiRequestManager {
       "KorisnickoIme": await SecureStorage.getUsername(),
     });
     if (product.imageFile != null)
-      req.files.add(http.MultipartFile.fromBytes('Slika', await product.imageFile!.readAsBytes()));
+      req.files.add(
+        http.MultipartFile.fromBytes(
+          'Slika',
+          filename: 'Slika',
+          await product.imageFile!.readAsBytes(),
+        ),
+      );
     var responseData = await req.send();
     // Request successful
-    if (responseData.statusCode == 200) {
-      print('Form submitted successfully');
-    } else // Request failed
-      print('Form submission failed');
     return responseData;
   }
 }
