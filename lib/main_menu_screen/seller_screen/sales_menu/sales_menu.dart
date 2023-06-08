@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:pop_app/models/user.dart';
 
 class SalesMenuScreen extends StatefulWidget {
-  final User? user;
-  const SalesMenuScreen({super.key, this.user});
+  final User user;
+  const SalesMenuScreen({super.key, required this.user});
 
   static SalesMenuScreenState? of(BuildContext context) {
     try {
@@ -29,6 +29,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
   @override
   void initState() {
     super.initState();
+    loadTabContents();
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -38,33 +39,53 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
     super.dispose();
   }
 
-  GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
+    GlobalKey<SalesMenuScreenState> key = GlobalKey<SalesMenuScreenState>();
     return Scaffold(
-      key: scaffoldKey,
-      // TODO: load shop name instead
+      key: key,
       appBar: AppBar(title: const Text("Entrepreneurial Venture"), actions: [
-        IconButton(onPressed: _addStoreContent, icon: const Icon(Icons.add)),
-        IconButton(onPressed: _addStoreContent, icon: const Icon(Icons.attach_money)),
+        IconButton(
+          onPressed: () {
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+              if (await showModalBottomSheet(
+                showDragHandle: true,
+                backgroundColor: Colors.white,
+                context: context,
+                builder: (context) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: CreateStoreContent(salesMenuKey: key, user: widget.user),
+                  );
+                },
+              )) setState(() {});
+            });
+          },
+          icon: const Icon(Icons.add),
+        ),
+        IconButton(
+          onPressed: () => setState(() {}),
+          icon: const Icon(Icons.attach_money),
+        ),
       ]),
       body: tabs(),
     );
   }
 
-  void _addStoreContent() async {
-    if (_tabController.indexIsChanging) _tabController.index = 1;
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return CreateStoreContent();
-    }));
+  List<Widget> tabContents = List.empty(growable: true);
+  void loadTabContents() {
+    setState(() {
+      tabContents = [
+        ProductsTab(user: widget.user),
+        PackagesTab(user: widget.user),
+      ];
+    });
   }
 
   Widget tabs() {
     return Column(
       children: [
         TabBar(
-          padding: EdgeInsets.zero,
           controller: _tabController,
           tabs: const <Tab>[
             Tab(text: "PRODUCTS"),
@@ -74,10 +95,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
         Expanded(
           child: TabBarView(
             controller: _tabController,
-            children: const [
-              ProductsTab(),
-              PackagesTab(),
-            ],
+            children: tabContents,
           ),
         ),
       ],

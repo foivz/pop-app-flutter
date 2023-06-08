@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
+
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/secure_storage.dart';
 import 'package:pop_app/models/store.dart';
@@ -42,15 +44,6 @@ class ApiRequestManager {
     return responseData;
   }
 
-  static void _updateTokenData(responseData) {
-    try {
-      var tokenData = responseData["DATA"]["Token"];
-      _token = tokenData;
-    } catch (e) {
-      SecureStorage.setUserData(json.encode("{}"));
-    }
-  }
-
   static Future register(User user) async {
     var fm = {
       "Ime": user.firstName,
@@ -67,6 +60,40 @@ class ApiRequestManager {
 
     var responseData = json.decode(response.body);
     _updateTokenData(responseData);
+
+    return responseData;
+  }
+
+  static void _updateTokenData(responseData) {
+    try {
+      var tokenData = responseData["DATA"]["Token"];
+      _token = tokenData;
+    } catch (e) {
+      SecureStorage.setUserData(json.encode("{}"));
+    }
+  }
+
+  /// Wraps whatever fetching logic into a token check.
+  /// If the server reports token is invalid, this method attempts login once.
+  /// If the new token is still invalid, method returns null instead of response.
+  /// [requestCallback] should return a response body!
+  static Future<dynamic> _executeWithToken(User user, dynamic requestCallback) async {
+    int attempts = 0;
+
+    dynamic responseData;
+    bool isTokenValid = false;
+    do {
+      dynamic body = await requestCallback();
+      responseData = jsonDecode(utf8.decode(body));
+      isTokenValid = _isTokenValid(responseData);
+      if (!isTokenValid) {
+        login(user.username, user.password);
+      }
+    } while (!isTokenValid && ++attempts != 2);
+
+    if (attempts == 2) {
+      responseData = null;
+    }
 
     return responseData;
   }
@@ -125,7 +152,7 @@ class ApiRequestManager {
   }
 
   static Future<bool> assignRole(User user) async {
-    if (user.getRole() == null) {
+    if (user.role == null) {
       return false;
     }
 
@@ -133,7 +160,7 @@ class ApiRequestManager {
       "Token": _token,
       "KorisnickoIme": user.username,
       "SETOWNROLE": "True",
-      "RoleId": user.getRole()!.roleId.toString()
+      "RoleId": user.role!.roleId.toString()
     };
 
     dynamic responseData;
@@ -146,7 +173,7 @@ class ApiRequestManager {
   }
 
   static Future<double> getBalance(User user) async {
-    if (user.getRole() == null) {
+    if (user.role == null) {
       throw Exception("Can't get balance: user's role not set!");
     }
 
@@ -158,7 +185,7 @@ class ApiRequestManager {
     var fm = {
       "Token": _token,
       "KorisnickoIme": user.username,
-      roleMap[user.getRole()!.roleName]: "True",
+      roleMap[user.role!.roleName]: "True",
     };
 
     dynamic responseData;
@@ -181,31 +208,6 @@ class ApiRequestManager {
     }
 
     return fetchedBalance;
-  }
-
-  /// Wraps whatever fetching logic into a token check.
-  /// If the server reports token is invalid, this method attempts login once.
-  /// If the new token is still invalid, method returns null instead of response.
-  /// [requestCallback] should return a response body!
-  static Future<dynamic> _executeWithToken(User user, dynamic requestCallback) async {
-    int attempts = 0;
-
-    dynamic responseData;
-    bool isTokenValid = false;
-    do {
-      dynamic body = await requestCallback();
-      responseData = jsonDecode(utf8.decode(body));
-      isTokenValid = _isTokenValid(responseData);
-      if (!isTokenValid) {
-        login(user.username, user.password);
-      }
-    } while (!isTokenValid && ++attempts != 2);
-
-    if (attempts == 2) {
-      responseData = null;
-    }
-
-    return responseData;
   }
 
   static bool _isTokenValid(responseData) {
@@ -232,29 +234,24 @@ class ApiRequestManager {
     return [responseData];
   }
 
-  static Future<void> addProductToStore(ProductData product) async {
-    User user = await SecureStorage.getUser();
-    dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
-      http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
-      req.fields.addAll({
-        "Token": _token ?? "",
-        "Naziv": product.title,
-        "Opis": product.description,
-        "Cijena": product.price.toString(),
-        "Kolicina": product.amount.toString(),
-        "KorisnickoIme": await SecureStorage.getUsername(),
-      });
-      req.files.add(http.MultipartFile.fromBytes('Slika', await product.imageFile!.readAsBytes()));
-      var response = await req.send();
-      // Request successful
-      if (response.statusCode == 200)
-        print('Form submitted successfully');
-      // Request failed
-      else
-        print('Form submission failed');
-      return response;
+  static Future addProductToStore(ProductData product) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
+    req.fields.addAll({
+      "Token": _token!,
+      "Naziv": product.title,
+      "Opis": product.description,
+      "Cijena": product.price.toString(),
+      "Kolicina": product.amount.toString(),
+      "KorisnickoIme": await SecureStorage.getUsername(),
     });
+    if (product.imageFile != null)
+      req.files.add(http.MultipartFile.fromBytes('Slika', await product.imageFile!.readAsBytes()));
+    var responseData = await req.send();
+    // Request successful
+    if (responseData.statusCode == 200) {
+      print('Form submitted successfully');
+    } else // Request failed
+      print('Form submission failed');
     return responseData;
   }
 }

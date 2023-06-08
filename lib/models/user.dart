@@ -28,7 +28,7 @@ class User {
     );
   }
 
-  UserRole? getRole() => _role;
+  get role => _role;
 
   void setRole(UserRole role) {
     if (roles.contains(role)) {

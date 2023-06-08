@@ -1,14 +1,17 @@
 // ignore_for_file: constant_identifier_names, curly_braces_in_flow_control_structures, unused_field
-import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
+import 'package:pop_app/reusable_components/message.dart';
+import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
-// import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'dart:io';
 
 enum StoreContentType { Product, Package }
@@ -30,35 +33,42 @@ class _FormContent {
 }
 
 class CreateStoreContent extends StatefulWidget {
-  const CreateStoreContent({super.key});
+  final GlobalKey<SalesMenuScreenState> salesMenuKey;
+  final User user;
+  const CreateStoreContent({super.key, required this.salesMenuKey, required this.user});
   @override
   State<CreateStoreContent> createState() => _CreateStoreContentState();
 }
 
 class _CreateStoreContentState extends State<CreateStoreContent>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, RouteAware {
   final GlobalKey<FormState> _productFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _packageFormKey = GlobalKey<FormState>();
 
-  TextEditingController nameCont = TextEditingController();
-  TextEditingController descCont = TextEditingController();
-  TextEditingController priceCont = TextEditingController();
-  TextEditingController quantityCont = TextEditingController();
-  // final ImagePicker _imagePicker = ImagePicker();
+  TextEditingController nameContProd = TextEditingController();
+  TextEditingController descContProd = TextEditingController();
+  TextEditingController priceContProd = TextEditingController();
+  TextEditingController quantityContProd = TextEditingController();
+
+  TextEditingController nameContPack = TextEditingController();
+  TextEditingController descContPack = TextEditingController();
+  TextEditingController priceContPack = TextEditingController();
+  TextEditingController quantityContPack = TextEditingController();
 
   late TabController _tabController;
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    nameContProd.text = "Mock name ${Random().nextInt(100)}";
+    descContProd.text = "Mock desc ${Random().nextInt(10000)}";
+    priceContProd.text = "${(Random().nextDouble() * 100).round() + Random().nextInt(99) / 100}";
+    quantityContProd.text = "${(Random().nextInt(10))}";
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Create store content")),
-      body: tabs(),
-    );
+    return Container(child: tabs());
   }
 
   Widget tabs() {
@@ -78,18 +88,23 @@ class _CreateStoreContentState extends State<CreateStoreContent>
   }
 
   Widget _genForm(StoreContentType type) {
-    return Center(
-      child: SizedBox(
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Form(
-            key: type == StoreContentType.Product ? _productFormKey : _packageFormKey,
-            child: Column(children: _genFormInputs(type)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Center(
+        child: SizedBox(
+          width: double.infinity,
+          child: SingleChildScrollView(
+            child: Form(
+              key: _isProd(type) ? _productFormKey : _packageFormKey,
+              child: Column(children: _genFormInputs(type)),
+            ),
           ),
         ),
       ),
     );
   }
+
+  bool _isProd(StoreContentType type) => type == StoreContentType.Product;
 
   List<Widget> _genFormInputs(StoreContentType type) {
     return <Widget>[
@@ -97,14 +112,14 @@ class _CreateStoreContentState extends State<CreateStoreContent>
         inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.nameLengthLimit)],
         maxLength: _FormContent.nameLengthLimit,
         inputLabel: _FormContent.nameHint(type),
-        textEditingController: nameCont,
+        textEditingController: nameContProd,
       ),
       const SizedBox(height: MyConstants.formInputSpacer),
       CustomTextFormField(
         inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.descriptionLengthLimit)],
         maxLength: _FormContent.descriptionLengthLimit,
         inputLabel: _FormContent.descHint(type),
-        textEditingController: descCont,
+        textEditingController: descContProd,
       ),
       const SizedBox(height: MyConstants.formInputSpacer),
       Row(
@@ -115,7 +130,7 @@ class _CreateStoreContentState extends State<CreateStoreContent>
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
             textFieldWidth: MyConstants.textFieldWidth * 0.6,
             inputLabel: _FormContent.priceHint(type),
-            textEditingController: priceCont,
+            textEditingController: priceContProd,
           ),
           const SizedBox(width: MyConstants.textFieldWidth * 0.05),
           CustomTextFormField(
@@ -123,24 +138,37 @@ class _CreateStoreContentState extends State<CreateStoreContent>
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             textFieldWidth: MyConstants.textFieldWidth * 0.35,
             inputLabel: _FormContent.quantityHint(),
-            textEditingController: quantityCont,
+            textEditingController: quantityContProd,
           ),
         ],
       ),
       const SizedBox(height: MyConstants.formInputSpacer),
       _buildImageInput(type),
-      FormSubmitButton(
-        buttonText: "Add product",
-        onPressed: () => ApiRequestManager.addProductToStore(
-          ProductData(
-            title: nameCont.text,
-            description: descCont.text,
-            price: double.parse(priceCont.text),
-            amount: int.parse(quantityCont.text),
-            imageFile: _imageFile,
-          ),
+      if (_isProd(type))
+        FormSubmitButton(
+          buttonText: "Add to store",
+          onPressed: () {
+            ProductData product = ProductData(
+              title: nameContProd.text,
+              description: descContProd.text,
+              price: double.parse(priceContProd.text),
+              amount: int.parse(quantityContProd.text),
+              imageFile: _imageFile,
+            );
+            ApiRequestManager.addProductToStore(product).then((response) {
+              if (response.statusCode == 200) {
+                Message.info(context).show("Added ${nameContProd.text} to store.");
+                Navigator.pop(context, true);
+              } else
+                Message.error(context).show("Failed to add ${nameContProd.text} to store.");
+            });
+          },
         ),
-      ),
+      if (type == StoreContentType.Package)
+        FormSubmitButton(
+          buttonText: "Next",
+          onPressed: () {},
+        ),
     ];
   }
 

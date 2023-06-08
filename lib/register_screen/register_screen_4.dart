@@ -29,7 +29,7 @@ class _FourthRegisterScreenState extends StoreFetcher<FourthRegisterScreen> with
 
   @override
   void initState() {
-    if (widget.widget.user.getRole()?.roleName == "buyer") {
+    if (widget.widget.user.role?.roleName == "buyer") {
       fetchStores(widget.widget.user);
     }
     super.initState();
