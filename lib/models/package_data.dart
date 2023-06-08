@@ -39,6 +39,17 @@ class PackageData extends Item implements PackageDataApiInterface {
     for (ProductData product in products) sum += product.amount;
     return sum;
   }
+
+  @override
+  int getMaxAvailableAmount() {
+    int maxAmount = 0;
+    for (ProductData product in products) {
+      if (maxAmount == 0 || maxAmount > product.amount) {
+        maxAmount = product.amount;
+      }
+    }
+    return maxAmount;
+  }
 }
 
 abstract class PackageDataApiInterface {

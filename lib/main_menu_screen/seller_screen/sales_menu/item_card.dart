@@ -133,7 +133,10 @@ class _ItemCardState extends State<ItemCard>
             ),
           ),
         ),
-        if (widget.onAmountChange != null) AmountSelector()
+        if (widget.onAmountChange != null)
+          AmountSelector((newAmount) {
+            widget.item.setSelectedAmount(newAmount);
+          })
       ],
     );
   }
@@ -143,7 +146,8 @@ class _ItemCardState extends State<ItemCard>
 }
 
 class AmountSelector extends StatefulWidget {
-  const AmountSelector({super.key});
+  final Function(int newAmount) onAmountChange;
+  const AmountSelector(this.onAmountChange, {super.key});
 
   @override
   State<AmountSelector> createState() => _AmountSelectorState();
@@ -157,6 +161,13 @@ class _AmountSelectorState extends State<AmountSelector> {
       setState(() {
         increment ? selectedAmount++ : selectedAmount--;
       });
+      try {
+        widget.onAmountChange(selectedAmount);
+      } on Exception {
+        setState(() {
+          selectedAmount--;
+        });
+      }
     }
   }
 

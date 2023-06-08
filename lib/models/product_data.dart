@@ -13,4 +13,7 @@ class ProductData extends Item {
     required this.currency,
     this.amount = 1,
   }) : super(id: id, title: title, description: description, image: image, price: price);
+
+  @override
+  int getMaxAvailableAmount() => amount;
 }
