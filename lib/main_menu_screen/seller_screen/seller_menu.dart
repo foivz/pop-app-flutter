@@ -1,3 +1,4 @@
+import 'package:pop_app/main_menu_screen/invoices_screen/invoices_screen.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/main_menu_screen/wallet_screen/wallet_screen.dart';
@@ -31,7 +32,9 @@ class _SellerMenuState extends State<SellerMenu> {
             }));
           });
         }),
-        _buildButton('assets/icons/view-icon.png', 'Invoices', () {}),
+        _buildButton('assets/icons/view-icon.png', 'Invoices', () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const InvoicesScreen()));
+        }),
         _buildButton('assets/icons/wallet-icon.png', 'Wallet', () {
           Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WalletScreen()));
         }),

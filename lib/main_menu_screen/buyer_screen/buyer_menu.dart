@@ -1,4 +1,5 @@
 import 'package:pop_app/main_menu_screen/buyer_screen/buying_dialog/buying_dialog.dart';
+import 'package:pop_app/main_menu_screen/invoices_screen/invoices_screen.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
@@ -20,7 +21,9 @@ class _BuyerMenuState extends State<BuyerMenu> {
         _buildButton('assets/icons/sell-icon.png', 'Buy', () {
           showDialog(context: context, builder: (context) => const BuyerDialog());
         }),
-        _buildButton('assets/icons/view-icon.png', 'Invoices', () {}),
+        _buildButton('assets/icons/view-icon.png', 'Invoices', () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const InvoicesScreen()));
+        }),
         _buildButton('assets/icons/wallet-icon.png', 'Wallet', () {}),
         _buildButton('assets/icons/settings-icon.png', 'Settings', () {}),
       ],
