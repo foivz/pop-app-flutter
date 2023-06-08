@@ -1,6 +1,5 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:pop_app/api_requests.dart';
-import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/package_data.dart';
 import 'package:pop_app/models/product_data.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_card.dart';
@@ -39,6 +38,7 @@ class _ProductsTabState extends State<ProductsTab> {
               return ProductCard(
                 index: index,
                 productdata: products[index],
+                onSelected: widget.handleItemSelection,
               );
             },
           );

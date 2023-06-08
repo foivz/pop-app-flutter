@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 class ProductCard extends StatefulWidget {
   final int index;
   final ProductData productdata;
-  const ProductCard({super.key, required this.index, required this.productdata});
+  final Function(bool isSelected, ProductData productData) onSelected;
+  const ProductCard(
+      {super.key, required this.index, required this.productdata, required this.onSelected});
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -22,6 +24,7 @@ class _ProductCardState extends State<ProductCard>
   void select() {
     setState(() {
       isSelected = !isSelected;
+      widget.onSelected(isSelected, widget.productdata);
       if (isSelected)
         _animCont.forward();
       else

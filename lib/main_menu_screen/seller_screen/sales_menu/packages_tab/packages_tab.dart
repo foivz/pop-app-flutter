@@ -31,6 +31,7 @@ class _PackagesTabState extends State<PackagesTab> {
               return PackageCard(
                 index: index,
                 packageData: PackageDataApiInterface.fromAPI(snapshot.data!.last["DATA"]),
+                onSelected: widget.handleItemSelection,
               );
             },
           );
