@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/invoices_screen/invoice_card.dart';
-import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
 class InvoicesScreen extends StatefulWidget {

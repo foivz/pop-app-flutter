@@ -20,7 +20,6 @@ class _InvoiceCardState extends State<InvoiceCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    double width = MediaQuery.of(context).size.width;
     return Stack(
       children: [
         InkWell(
