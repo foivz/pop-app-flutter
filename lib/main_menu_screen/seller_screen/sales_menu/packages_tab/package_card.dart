@@ -87,8 +87,9 @@ class _PackageCardState extends State<PackageCard>
                   ),
                 ),
                 Text(
-                  widget.packageData.price.toString(),
-                  style: const TextStyle(color: MyConstants.accentColor),
+                  "💸\n${widget.packageData.price}",
+                  style: const TextStyle(
+                      color: Colors.green, fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ]),
             ),

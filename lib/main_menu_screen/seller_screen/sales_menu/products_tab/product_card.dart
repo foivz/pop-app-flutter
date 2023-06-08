@@ -87,8 +87,9 @@ class _ProductCardState extends State<ProductCard>
                   ),
                 ),
                 Text(
-                  "${widget.productdata.price}",
-                  style: const TextStyle(color: MyConstants.accentColor),
+                  "💸\n${widget.productdata.price}",
+                  style: const TextStyle(
+                      color: Colors.green, fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ]),
             ),
