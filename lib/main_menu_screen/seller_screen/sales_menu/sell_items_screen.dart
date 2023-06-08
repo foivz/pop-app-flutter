@@ -27,7 +27,11 @@ class _SellItemsScreenState extends State<SellItemsScreen> {
         padding: const EdgeInsets.all(5),
         itemBuilder: (context, index) {
           Item currentItem = widget.selectedItems[index];
-          return ItemCard(index: index, item: currentItem);
+          return ItemCard(
+            index: index,
+            item: currentItem,
+            onAmountChange: (newAmount) {},
+          );
         },
       ),
     );

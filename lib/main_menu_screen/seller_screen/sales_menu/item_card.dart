@@ -8,7 +8,17 @@ class ItemCard extends StatefulWidget {
   final int index;
   final Item item;
   final Function(bool isSelected, Item productData)? onSelected;
-  const ItemCard({super.key, required this.index, required this.item, this.onSelected});
+
+  /// Only works if 'onAmountChange' callback is set.
+  final int amountSelected = 1;
+  final Function(int newAmount)? onAmountChange;
+  const ItemCard({
+    super.key,
+    required this.index,
+    required this.item,
+    this.onSelected,
+    this.onAmountChange,
+  });
 
   @override
   State<ItemCard> createState() => _ItemCardState();
@@ -123,10 +133,65 @@ class _ItemCardState extends State<ItemCard>
             ),
           ),
         ),
+        if (widget.onAmountChange != null) AmountSelector()
       ],
     );
   }
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class AmountSelector extends StatefulWidget {
+  const AmountSelector({super.key});
+
+  @override
+  State<AmountSelector> createState() => _AmountSelectorState();
+}
+
+class _AmountSelectorState extends State<AmountSelector> {
+  int selectedAmount = 1;
+
+  void changeAmount(bool increment) {
+    if (increment || selectedAmount != 1) {
+      setState(() {
+        increment ? selectedAmount++ : selectedAmount--;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 80),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            onPressed: () => changeAmount(false),
+            icon: const Icon(
+              Icons.remove_circle_sharp,
+              color: MyConstants.red,
+            ),
+            iconSize: 35,
+          ),
+          Text(
+            selectedAmount.toString(),
+            style: TextStyle(
+              fontSize: 25,
+              color: Colors.grey.shade800,
+            ),
+          ),
+          IconButton(
+            onPressed: () => changeAmount(true),
+            icon: const Icon(
+              Icons.add_circle_outlined,
+              color: MyConstants.red,
+            ),
+            iconSize: 35,
+          ),
+        ],
+      ),
+    );
+  }
 }
