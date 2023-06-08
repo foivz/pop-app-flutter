@@ -15,6 +15,9 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Finalized invoices"),
+        ),
         body: FutureBuilder(
           builder: (context, snapshot) {
             if (snapshot.hasData) {
