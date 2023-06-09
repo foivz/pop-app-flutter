@@ -221,8 +221,10 @@ class ApiRequestManager {
       "PopustRacuna": discount.toStringAsFixed(0),
     };
 
-    fm.addEntries(items.map((e) => MapEntry("Itemi[]", e.id)));
-    fm.addEntries(items.map((e) => MapEntry("Kolicine[]", e.getSelectedAmount().toString())));
+    for (int i = 0; i < items.length; i++) {
+      fm["Itemi[$i]"] = items[i].id;
+      fm["Kolicine[$i]"] = items[i].getSelectedAmount().toString();
+    }
 
     dynamic responseData;
     responseData = await _executeWithToken(user, () async {
