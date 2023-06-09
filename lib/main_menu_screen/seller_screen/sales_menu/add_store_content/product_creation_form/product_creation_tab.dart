@@ -100,7 +100,6 @@ class ProductCreationTabState extends State<ProductCreationTab>
           widget.product!.price.toString();
       (_product[ProductFormElements.quantityCont] as TextEditingController).text =
           widget.product!.amount.toString();
-
       loadImage();
     }
   }
@@ -121,8 +120,9 @@ class ProductCreationTabState extends State<ProductCreationTab>
   void loadImage() async {
     http.Response response = await http.get(Uri.parse(widget.product!.imagePath!));
     final Directory temp = await getTemporaryDirectory();
-    File file = await File("${temp.path}/productImageNet.png").create()
-      ..writeAsBytesSync(response.bodyBytes);
+    var timestamp = DateTime.now().millisecondsSinceEpoch;
+    File file = await File("${temp.path}/productImageNet$timestamp.png").create();
+    file.writeAsBytesSync(response.bodyBytes);
     productImage = file;
     setState(() {});
   }
