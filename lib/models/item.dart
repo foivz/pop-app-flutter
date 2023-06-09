@@ -6,7 +6,7 @@ abstract class Item {
   late double price;
 
   /// Amount selected for selling.
-  int _selectedAmount = 0;
+  int _selectedAmount = 1;
 
   int getMaxAvailableAmount();
 
