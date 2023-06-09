@@ -160,6 +160,40 @@ class _SellContentState extends State<SellContent> {
                 fontSize: 20,
               ),
             ),
+            Row(
+              children: [
+                IconButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith(
+                      (states) => MyConstants.accentColor2,
+                    ),
+                  ),
+                  iconSize: 40,
+                  icon: const Icon(
+                    Icons.start,
+                    color: MyConstants.accentColor,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Initiate Payment'),
+                        content: const Text('Confirm payment:'),
+                        surfaceTintColor: Colors.white,
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Generate QR Code for buyer'),
+                            onPressed: () {
+                              // TODO: Handle QR Code option
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            )
           ],
         ),
       ]),
