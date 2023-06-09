@@ -55,31 +55,33 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(flex: 4, child: _buildQrView(context)),
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    if (codeScanned)
-                      const CircularProgressIndicator()
-                    else
-                      const Text(
-                        "Scan a seller's QR code",
-                        style: TextStyle(color: MyConstants.red),
-                      ),
-                  ],
+      backgroundColor: MyConstants.red,
+      body: _buildQrView(context),
+      bottomSheet: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          color: MyConstants.red,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              if (codeScanned)
+                const CircularProgressIndicator()
+              else
+                const Text(
+                  "Scan a seller's QR code",
+                  style: TextStyle(color: Colors.white),
                 ),
-              ),
-            ),
-          )
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
