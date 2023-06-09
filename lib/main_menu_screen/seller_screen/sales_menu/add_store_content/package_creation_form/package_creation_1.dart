@@ -70,10 +70,12 @@ class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepA
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Center(
-      child: Form(
-        key: formElements()[StoreContentType.Package]![PackageFormElements.formKey],
-        child: Column(children: _genFormInputs()),
+    return SingleChildScrollView(
+      child: Center(
+        child: Form(
+          key: formElements()[StoreContentType.Package]![PackageFormElements.formKey],
+          child: Column(children: _genFormInputs()),
+        ),
       ),
     );
   }
