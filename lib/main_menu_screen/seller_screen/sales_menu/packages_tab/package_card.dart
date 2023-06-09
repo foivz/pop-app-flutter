@@ -106,7 +106,10 @@ class _PackageCardState extends State<PackageCard>
             imagePack() => packageEditTab.currentState!.packageImage;
             var form = (formElements()[StoreContentType.Package]![PackageFormElements.formKey]
                 as GlobalKey<FormState>);
-            form.currentState!.validate();
+            if (!form.currentState!.validate()) {
+              Message.error(context).show("Not all fields are filled.");
+              return;
+            }
             try {
               PackageData package = PackageData(
                 id: widget.package.id,
@@ -114,7 +117,9 @@ class _PackageCardState extends State<PackageCard>
                 title: formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text,
                 description:
                     formElements()[StoreContentType.Package]![PackageFormElements.descCont].text,
-                discount: widget.package.discount,
+                discount: double.parse(
+                    formElements()[StoreContentType.Package]![PackageFormElements.discountCont]
+                        .text),
                 imageFile: imagePack(),
               );
               ApiRequestManager.editPackage(package).then((response) {
@@ -122,12 +127,13 @@ class _PackageCardState extends State<PackageCard>
                   Message.info(context).show(
                     "Saved changes for ${formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text} to store.",
                   );
+                  SalesMenuScreen.of(context)!.loadTabContents();
                   Navigator.pop(context, true);
                 } else
                   Message.error(context).show(
                     "Failed to submit changes for ${formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text} to store.",
                   );
-              }).catchError((error) {
+              }).catchError((e) {
                 Message.error(context)
                     .show("Connection failure. Check your internet and try again.");
               });

@@ -188,7 +188,10 @@ class ProductCreationTabState extends State<ProductCreationTab>
             () {
               var form = (formElements()[StoreContentType.Product]![ProductFormElements.formKey]
                   as GlobalKey<FormState>);
-              form.currentState!.validate();
+              if (!form.currentState!.validate()) {
+                Message.error(context).show("Not all fields are filled.");
+                return;
+              }
               try {
                 ConstantProductData product = ConstantProductData(
                   -1,

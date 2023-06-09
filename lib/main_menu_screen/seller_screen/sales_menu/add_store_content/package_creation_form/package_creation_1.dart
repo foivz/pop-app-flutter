@@ -156,7 +156,11 @@ class PackageCreation1State extends State<PackageCreation1> with AutomaticKeepAl
             () {
               var form = (formElements()[StoreContentType.Package]![PackageFormElements.formKey]
                   as GlobalKey<FormState>);
-              form.currentState!.validate();
+
+              if (!form.currentState!.validate()) {
+                Message.error(context).show("Not all fields are filled.");
+                return;
+              }
               try {
                 ApiRequestManager.addPackageToStore(
                   PackageData(
@@ -178,7 +182,7 @@ class PackageCreation1State extends State<PackageCreation1> with AutomaticKeepAl
                       .show("Connection failure. Check your internet and try again.");
                 });
               } catch (e) {
-                Message.error(context).show("Not all fields are filled.");
+                Message.error(context).show("Not all fields are filled error.");
               }
             },
       ),

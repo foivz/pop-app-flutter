@@ -107,7 +107,10 @@ class _ProductCardState extends State<ProductCard>
             imageProd() => productEditTab.currentState!.productImage;
             var form = (formElements()[StoreContentType.Product]![ProductFormElements.formKey]
                 as GlobalKey<FormState>);
-            form.currentState!.validate();
+            if (!form.currentState!.validate()) {
+              Message.error(context).show("Not all fields are filled.");
+              return;
+            }
             try {
               ConstantProductData product = ConstantProductData(
                 widget.product.id,

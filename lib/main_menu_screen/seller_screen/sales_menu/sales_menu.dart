@@ -76,7 +76,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
   }
 
   List<Widget> tabContents = List.empty(growable: true);
-  void loadTabContents() {
+  bool loadTabContents() {
     setState(() => tabContents = [Container()]);
     setState(
       () => tabContents = [
@@ -84,6 +84,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
         PackagesTab(user: widget.user, salesMenuKey: thisMenuKey),
       ],
     );
+    return true;
   }
 
   Widget tabs() {
