@@ -209,6 +209,37 @@ class ApiRequestManager {
     return invoices;
   }
 
+  static Future<Invoice?> finalizeInvoice(String code) async {
+    User user = await User.loggedIn;
+
+    var fm = {
+      "Token": _token,
+      "KorisnickoIme": user.username,
+      "CONFIRMSALE": "True",
+      "Id_Racuna": code
+    };
+
+    dynamic responseData;
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(body: fm, route(Routes.racuni));
+      return response.bodyBytes;
+    });
+
+    Invoice? invoice;
+
+    if (responseData["STATUSMESSAGE"] == "MISSING AMOUNT") {
+      throw Exception("The seller can't sell this much to you!");
+    } else if (responseData["STATUSMESSAGE"] == "MISSING BALANCE") {
+      throw Exception("You don't have enough funds left to proceed!");
+    } else if (responseData["STATUSMESSAGE"] == "NO BUYING FROM OWN STORE") {
+      throw Exception("You can't buy from your own store!");
+    } else if (responseData["STATUSMESSAGE"] == "INVOICE FINALIZED") {
+      invoice = Invoice.fromDynamicMap(responseData["DATA"]);
+    }
+
+    return invoice;
+  }
+
   /// Wraps whatever fetching logic into a token check.
   /// If the server reports token is invalid, this method attempts login once.
   /// If the new token is still invalid, method returns null instead of response.

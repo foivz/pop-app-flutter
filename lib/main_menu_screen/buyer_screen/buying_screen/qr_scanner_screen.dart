@@ -2,6 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/invoice_details_screen/invoice_details_screen.dart';
+import 'package:pop_app/models/invoice.dart';
+import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/reusable_components/message.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRScannerScreen extends StatefulWidget {
@@ -12,7 +17,7 @@ class QRScannerScreen extends StatefulWidget {
 }
 
 class _QRScannerScreenState extends State<QRScannerScreen> {
-  Barcode? result;
+  bool codeScanned = false;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
@@ -27,6 +32,26 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     controller!.resumeCamera();
   }
 
+  void attemptToFinalizeInvoice(String readCode) async {
+    Invoice? invoice;
+    try {
+      invoice = await ApiRequestManager.finalizeInvoice(readCode);
+      if (context.mounted) {
+        if (invoice != null) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => InvoiceDetailsScreen(invoice!)),
+          );
+        } else {
+          Message.error(context).show("Something went wrong, try again.");
+        }
+      }
+    } on FormatException {
+      Message.error(context).show("You cannot proceed with this invoice.");
+    } catch (e) {
+      Message.error(context).show(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,78 +60,22 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
           Expanded(flex: 4, child: _buildQrView(context)),
           Expanded(
             flex: 1,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  if (result != null)
-                    Text('Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
-                  else
-                    const Text('Scan a code'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.all(8),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await controller?.toggleFlash();
-                              setState(() {});
-                            },
-                            child: FutureBuilder(
-                              future: controller?.getFlashStatus(),
-                              builder: (context, snapshot) {
-                                return Text('Flash: ${snapshot.data}');
-                              },
-                            )),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    if (codeScanned)
+                      const CircularProgressIndicator()
+                    else
+                      const Text(
+                        "Scan a seller's QR code",
+                        style: TextStyle(color: MyConstants.red),
                       ),
-                      Container(
-                        margin: const EdgeInsets.all(8),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await controller?.flipCamera();
-                              setState(() {});
-                            },
-                            child: FutureBuilder(
-                              future: controller?.getCameraInfo(),
-                              builder: (context, snapshot) {
-                                if (snapshot.data != null) {
-                                  return Text('Camera facing ${describeEnum(snapshot.data!)}');
-                                } else {
-                                  return const Text('loading');
-                                }
-                              },
-                            )),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.all(8),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            await controller?.pauseCamera();
-                          },
-                          child: const Text('pause', style: TextStyle(fontSize: 20)),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(8),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            await controller?.resumeCamera();
-                          },
-                          child: const Text('resume', style: TextStyle(fontSize: 20)),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           )
@@ -140,10 +109,13 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     setState(() {
       this.controller = controller;
     });
-    controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        result = scanData;
-      });
+    controller.scannedDataStream.listen((scanData) async {
+      if (!codeScanned) {
+        setState(() {
+          codeScanned = true;
+        });
+        attemptToFinalizeInvoice(scanData.code!);
+      }
     });
   }
 
