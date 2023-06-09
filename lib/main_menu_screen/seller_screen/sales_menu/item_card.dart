@@ -3,6 +3,7 @@ import 'package:pop_app/models/item.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/reusable_components/message.dart';
 
 class ItemCard extends StatefulWidget {
   final int index;
@@ -31,7 +32,7 @@ class _ItemCardState extends State<ItemCard>
   bool isSelected = false;
 
   void select() {
-    if (widget.onSelected != null) {
+    if (widget.onSelected != null && widget.item.getMaxAvailableAmount() > 0) {
       setState(() {
         isSelected = !isSelected;
         widget.onSelected!.call(isSelected, widget.item);
@@ -40,6 +41,9 @@ class _ItemCardState extends State<ItemCard>
         else
           _animCont.reverse();
       });
+    } else if (widget.onSelected != null && widget.item.getMaxAvailableAmount() <= 0) {
+      Message.error(context)
+          .show("Sorry, but you don't have any more stocks of ${widget.item.title}.");
     }
   }
 
