@@ -196,6 +196,7 @@ class ProductCreationTabState extends State<ProductCreationTab>
                     Message.info(context).show(
                       "Added ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
                     );
+                    widget.salesMenuKey.currentState?.loadTabContents();
                     Navigator.pop(context, true);
                   } else
                     Message.error(context).show(

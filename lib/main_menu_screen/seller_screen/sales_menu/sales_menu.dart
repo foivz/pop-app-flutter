@@ -46,8 +46,8 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
       appBar: AppBar(title: const Text("Entrepreneurial Venture"), actions: [
         IconButton(
           onPressed: () {
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-              if (await showModalBottomSheet(
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              showModalBottomSheet(
                 showDragHandle: true,
                 isScrollControlled: true,
                 backgroundColor: Colors.white,
@@ -59,7 +59,9 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
                         body: StoreContentCreation(salesMenuKey: thisMenuKey, user: widget.user)),
                   );
                 },
-              ) is bool) setState(() {});
+              ).then((value) {
+                if (value is bool) loadTabContents();
+              });
             });
           },
           icon: const Icon(Icons.add),
@@ -75,12 +77,13 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
 
   List<Widget> tabContents = List.empty(growable: true);
   void loadTabContents() {
-    setState(() {
-      tabContents = [
+    setState(() => tabContents = [Container()]);
+    setState(
+      () => tabContents = [
         ProductsTab(user: widget.user, salesMenuKey: thisMenuKey),
         const PackagesTab(),
-      ];
-    });
+      ],
+    );
   }
 
   Widget tabs() {

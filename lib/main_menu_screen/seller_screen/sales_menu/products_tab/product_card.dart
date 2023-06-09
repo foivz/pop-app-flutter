@@ -60,7 +60,7 @@ class _ProductCardState extends State<ProductCard>
             ListTile(
               leading: const Icon(Icons.edit_square, color: Colors.white),
               title: const Text('Edit product', style: TextStyle(color: Colors.white)),
-              onTap: () => edit().then((value) => Navigator.pop(context, true)),
+              onTap: edit,
             ),
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.white),
@@ -123,6 +123,8 @@ class _ProductCardState extends State<ProductCard>
                   Message.info(context).show(
                     "Saved changes for ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
                   );
+                  SalesMenuScreen.of(context)!.loadTabContents();
+                  SalesMenuScreen.of(context)!.tabController.index = 0;
                   Navigator.pop(context, true);
                 } else
                   Message.error(context).show(
