@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pop_app/main_menu_screen/buyer_screen/buying_screen/qr_scanner_screen.dart';
 import 'package:pop_app/myconstants.dart';
 
 class BuyingScreen extends StatelessWidget {
@@ -32,7 +33,9 @@ class BuyingScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // TODO: Handle QR Code option
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const QRScannerScreen(),
+                  ));
                 },
               ),
             ],
