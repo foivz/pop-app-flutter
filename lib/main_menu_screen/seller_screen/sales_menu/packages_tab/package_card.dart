@@ -10,9 +10,9 @@ import 'package:pop_app/reusable_components/message.dart';
 
 class PackageCard extends StatefulWidget {
   final int index;
-  final PackageData packageData;
+  final PackageData package;
 
-  const PackageCard({super.key, required this.index, required this.packageData});
+  const PackageCard({super.key, required this.index, required this.package});
 
   @override
   State<PackageCard> createState() => _PackageCardState();
@@ -73,7 +73,7 @@ class _PackageCardState extends State<PackageCard>
 
   void delete() {
     HapticFeedback.vibrate();
-    ApiRequestManager.deletePackage(widget.packageData.id!).then((value) {
+    ApiRequestManager.deletePackage(widget.package.id!).then((value) {
       SalesMenuScreen.of(context)!.loadTabContents();
       SalesMenuScreen.of(context)!.tabController.index = 1;
     }).catchError((e) {
@@ -121,7 +121,7 @@ class _PackageCardState extends State<PackageCard>
               padding: const EdgeInsets.all(8.0),
               child: Row(children: [
                 Image.network(
-                  widget.packageData.image!,
+                  widget.package.image!,
                   height: 128,
                   width: width * 0.2,
                 ),
@@ -133,15 +133,15 @@ class _PackageCardState extends State<PackageCard>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.packageData.title /*x${widget.packageData.count}*/,
+                        widget.package.title /*x${widget.packageData.count}*/,
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(height: 1.75),
                       ),
-                      Text(widget.packageData.description, overflow: TextOverflow.fade),
+                      Text(widget.package.description, overflow: TextOverflow.fade),
                     ],
                   ),
                 ),
                 Text(
-                  widget.packageData.price.toString(),
+                  widget.package.price.toString(),
                   style: const TextStyle(color: MyConstants.accentColor),
                 ),
               ]),

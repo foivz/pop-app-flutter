@@ -22,7 +22,7 @@ class PackagesTab extends StatelessWidget {
             itemBuilder: (context, index) {
               return PackageCard(
                 index: index,
-                packageData:
+                package:
                     PackageDataApiInterface.fromAPI((snapshot.data!.last["DATA"] as List)[index]),
               );
             },

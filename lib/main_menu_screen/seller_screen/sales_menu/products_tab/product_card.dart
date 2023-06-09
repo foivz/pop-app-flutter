@@ -1,9 +1,12 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
+import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:pop_app/reusable_components/message.dart';
 
 class ProductCard extends StatefulWidget {
   final int index;
@@ -31,6 +34,57 @@ class _ProductCardState extends State<ProductCard>
     });
   }
 
+  void showOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 0.0),
+              child: Text(
+                "Product options",
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit_square, color: Colors.white),
+              title: const Text('Edit product', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                edit();
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete, color: Colors.white),
+              title: const Text('Delete product', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                delete();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void delete() {
+    HapticFeedback.vibrate();
+    ApiRequestManager.deleteProduct(widget.product.id!).then((value) {
+      SalesMenuScreen.of(context)!.loadTabContents();
+      SalesMenuScreen.of(context)!.tabController.index = 0;
+    }).catchError((e) {
+      Message.error(context).show("Connection failure. Check your internet and try again.");
+    });
+  }
+
+  void edit() {
+    HapticFeedback.selectionClick();
+    showAboutDialog(context: context);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +105,7 @@ class _ProductCardState extends State<ProductCard>
       children: [
         InkWell(
           onTap: select,
+          onLongPress: showOptions,
           splashColor: MyConstants.red,
           focusColor: MyConstants.red.withOpacity(0.4),
           borderRadius: BorderRadius.circular(16),

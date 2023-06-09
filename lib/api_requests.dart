@@ -327,4 +327,20 @@ class ApiRequestManager {
       throw Exception("Failed to connect");
     }
   }
+
+  static Future deleteProduct(int productId) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
+    req.fields.addAll({
+      "Token": _token!,
+      "Id": productId.toString(),
+      "KorisnickoIme": await SecureStorage.getUsername(),
+    });
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
+  }
 }
