@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/qr_code_screen.dart';
@@ -20,7 +21,7 @@ class _SellItemsScreenState extends State<SellItemsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Invoice generation")),
-      bottomNavigationBar: SellContent(selectedItems: widget.selectedItems),
+      bottomSheet: SellContent(selectedItems: widget.selectedItems),
       body: ListView.separated(
         itemCount: widget.selectedItems.length,
         shrinkWrap: true,
@@ -58,12 +59,12 @@ class SellContent extends StatefulWidget {
 class _SellContentState extends State<SellContent> {
   GlobalKey<FormFieldState>? discountInputKey = GlobalKey();
   TextEditingController discountInputCont = TextEditingController(text: "0");
-  double contentHeight = 140;
+  final double contentHeight = 140;
 
   void returnToNormalSize() {
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
-      contentHeight = 140;
+      // contentHeight = 140;
     });
   }
 
@@ -87,8 +88,7 @@ class _SellContentState extends State<SellContent> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      width: 100,
+    return Container(
       height: contentHeight,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -97,7 +97,6 @@ class _SellContentState extends State<SellContent> {
         ),
         color: MyConstants.red,
       ),
-      duration: const Duration(milliseconds: 200),
       child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         Form(
           child: Padding(
@@ -122,12 +121,16 @@ class _SellContentState extends State<SellContent> {
                     TextFormField(
                       key: discountInputKey,
                       controller: discountInputCont,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                        _MaxValueInputFormatter(100),
+                      ],
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         floatingLabelStyle: MaterialStateTextStyle.resolveWith(
                           (states) => const TextStyle(
                             color: MyConstants.red,
-                            fontSize: 15,
+                            fontSize: 16,
                           ),
                         ),
                         focusedBorder: const UnderlineInputBorder(
@@ -137,7 +140,7 @@ class _SellContentState extends State<SellContent> {
                       ),
                       textInputAction: TextInputAction.done,
                       onTap: () => setState(() {
-                        contentHeight = 500;
+                        // contentHeight = 500;
                       }),
                       onEditingComplete: () => returnToNormalSize(),
                       onTapOutside: (event) {
@@ -180,7 +183,7 @@ class _SellContentState extends State<SellContent> {
                   iconSize: 40,
                   icon: const Icon(
                     Icons.start,
-                    color: MyConstants.accentColor,
+                    color: Colors.white,
                   ),
                   onPressed: () {
                     showDialog(
@@ -224,5 +227,26 @@ class _SellContentState extends State<SellContent> {
         ),
       ]),
     );
+  }
+}
+
+class _MaxValueInputFormatter extends TextInputFormatter {
+  final double maxValue;
+
+  _MaxValueInputFormatter(this.maxValue);
+
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) {
+      return newValue;
+    } else {
+      double inputValue = double.tryParse(newValue.text) ?? 0.0;
+      if (inputValue <= maxValue) {
+        return newValue;
+      } else {
+        // Return the old value if the input is greater than the max value
+        return oldValue;
+      }
+    }
   }
 }

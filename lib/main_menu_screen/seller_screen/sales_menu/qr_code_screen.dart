@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pop_app/myconstants.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QRCodeScreen extends StatelessWidget {
@@ -20,12 +21,20 @@ class QRCodeScreen extends StatelessWidget {
         body: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             const Text("Please, scan the code below."),
+            const SizedBox(height: MyConstants.formInputSpacer),
             QrImageView(
               data: invoiceId,
               size: 200,
             ),
             Text("Invoice ID: $invoiceId"),
-            const Text("Exit this screen once the buyer has scanned the code.")
+            const SizedBox(height: MyConstants.formInputSpacer),
+            const SizedBox(
+              width: 200,
+              child: Text(
+                "Exit this screen once the buyer has scanned the code.",
+                textAlign: TextAlign.center,
+              ),
+            )
           ]),
         ),
       ),
