@@ -48,7 +48,12 @@ class PackageCreation1 extends StatefulWidget {
 enum PackageFormElements { formKey, nameCont, descCont, discountCont }
 
 class PackageCreation1State extends State<PackageCreation1> with AutomaticKeepAliveClientMixin {
-  late final Map<PackageFormElements, dynamic> _package;
+  final Map<PackageFormElements, dynamic> _package = {
+    PackageFormElements.formKey: GlobalKey<FormState>(),
+    PackageFormElements.nameCont: TextEditingController(),
+    PackageFormElements.descCont: TextEditingController(),
+    PackageFormElements.discountCont: TextEditingController(),
+  };
 
   File? packageImage;
 
@@ -59,21 +64,11 @@ class PackageCreation1State extends State<PackageCreation1> with AutomaticKeepAl
   @override
   void initState() {
     super.initState();
-    var nameCont = TextEditingController();
-    var descCont = TextEditingController();
-    var discountCont = TextEditingController();
-    var formKey = GlobalKey<FormState>();
-    _package = {
-      PackageFormElements.formKey: formKey,
-      PackageFormElements.nameCont: nameCont,
-      PackageFormElements.descCont: descCont,
-      PackageFormElements.discountCont: discountCont,
-    };
     if (widget.package != null) {
       PackageData package = widget.package!;
-      nameCont.text = package.title;
-      descCont.text = package.description;
-      discountCont.text = package.discount.toString();
+      _package[PackageFormElements.nameCont].text = package.title;
+      _package[PackageFormElements.descCont].text = package.description;
+      _package[PackageFormElements.discountCont].text = package.discount.toString();
       loadImage();
     }
   }

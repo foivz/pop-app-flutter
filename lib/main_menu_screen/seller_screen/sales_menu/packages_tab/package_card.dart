@@ -1,6 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_1.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/reusable_components/message.dart';
@@ -104,30 +104,28 @@ class _PackageCardState extends State<PackageCard>
           onSubmit: () {
             formElements() => packageEditTab.currentState!.formElements();
             imageProd() => packageEditTab.currentState!.packageImage;
-            var form = (formElements()[StoreContentType.Product]![ProductFormElements.formKey]
+            var form = (formElements()[StoreContentType.Package]![PackageFormElements.formKey]
                 as GlobalKey<FormState>);
             form.currentState!.validate();
             try {
               PackageData package = PackageData(
                 id: widget.package.id,
                 products: [],
-                title: formElements()[StoreContentType.Package]![ProductFormElements.nameCont].text,
+                title: formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text,
                 description:
-                    formElements()[StoreContentType.Package]![ProductFormElements.descCont].text,
+                    formElements()[StoreContentType.Package]![PackageFormElements.descCont].text,
                 discount: widget.package.discount,
                 imageFile: imageProd(),
               );
               ApiRequestManager.editPackage(package).then((response) {
                 if (response.statusCode == 200) {
                   Message.info(context).show(
-                    "Saved changes for ${formElements()[StoreContentType.Package]![ProductFormElements.nameCont].text} to store.",
+                    "Saved changes for ${formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text} to store.",
                   );
-                  SalesMenuScreen.of(context)!.loadTabContents();
-                  SalesMenuScreen.of(context)!.tabController.index = 0;
                   Navigator.pop(context, true);
                 } else
                   Message.error(context).show(
-                    "Failed to submit changes for ${formElements()[StoreContentType.Package]![ProductFormElements.nameCont].text} to store.",
+                    "Failed to submit changes for ${formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text} to store.",
                   );
               }).catchError((error) {
                 Message.error(context)

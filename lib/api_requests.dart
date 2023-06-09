@@ -335,13 +335,14 @@ class ApiRequestManager {
   static Future editPackage(PackageData package) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
     req.fields.addAll({
-      "UPDATE": true.toString(),
       "Token": _token!,
+      "UPDATE": true.toString(),
       "Id": package.id.toString(),
       "Naziv": package.title,
       "Opis": package.description,
       "Kolicina": "1",
       "Popust": package.discount.toString(),
+      // slika
       "KorisnickoIme": await SecureStorage.getUsername(),
     });
     if (package.imageFile != null && package.imagePath == null)
