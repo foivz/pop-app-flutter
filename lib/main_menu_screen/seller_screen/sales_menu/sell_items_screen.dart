@@ -16,11 +16,7 @@ class _SellItemsScreenState extends State<SellItemsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Invoice generation")),
-      bottomNavigationBar: const SellContent(),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.sell),
-        onPressed: () {},
-      ),
+      bottomNavigationBar: SellContent(selectedItems: widget.selectedItems),
       body: ListView.separated(
         itemCount: widget.selectedItems.length,
         shrinkWrap: true,
@@ -36,7 +32,10 @@ class _SellItemsScreenState extends State<SellItemsScreen> {
           return ItemCard(
             index: index,
             item: currentItem,
-            onAmountChange: (newAmount) {},
+            onAmountChange: () {
+              // Refreshes the state (and therefore also the bottom nav bar).
+              setState(() {});
+            },
           );
         },
       ),
@@ -45,7 +44,8 @@ class _SellItemsScreenState extends State<SellItemsScreen> {
 }
 
 class SellContent extends StatefulWidget {
-  const SellContent({super.key});
+  const SellContent({super.key, required this.selectedItems});
+  final List<Item> selectedItems;
 
   @override
   State<SellContent> createState() => _SellContentState();
@@ -54,13 +54,26 @@ class SellContent extends StatefulWidget {
 class _SellContentState extends State<SellContent> {
   GlobalKey<FormFieldState>? discountInputKey = GlobalKey();
   TextEditingController discountInputCont = TextEditingController(text: "0");
-  double contentHeight = 120;
+  double contentHeight = 140;
 
   void returnToNormalSize() {
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
-      contentHeight = 120;
+      contentHeight = 140;
     });
+  }
+
+  String getTotalPrice() {
+    double totalPrice = 0;
+    for (var item in widget.selectedItems) {
+      totalPrice += item.getSelectedAmount() * item.price;
+    }
+
+    double discount = double.parse(discountInputCont.text);
+
+    if (discount != 0) totalPrice = totalPrice - totalPrice * discount / 100;
+
+    return totalPrice.toStringAsFixed(2);
   }
 
   @override
@@ -76,10 +89,10 @@ class _SellContentState extends State<SellContent> {
         color: MyConstants.red,
       ),
       duration: const Duration(milliseconds: 200),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 120, bottom: 16.0),
-        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          Form(
+      child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        Form(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 120, bottom: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -127,29 +140,29 @@ class _SellContentState extends State<SellContent> {
               ],
             ),
           ),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "TOTAL:",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            const Text(
+              "TOTAL:",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
               ),
-              Text(
-                "50",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+            ),
+            Text(
+              getTotalPrice(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
               ),
-            ],
-          )
-        ]),
-      ),
+            ),
+          ],
+        ),
+      ]),
     );
   }
 }

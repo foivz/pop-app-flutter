@@ -11,7 +11,7 @@ class ItemCard extends StatefulWidget {
 
   /// Only works if 'onAmountChange' callback is set.
   final int amountSelected = 1;
-  final Function(int newAmount)? onAmountChange;
+  final Function()? onAmountChange;
   const ItemCard({
     super.key,
     required this.index,
@@ -136,6 +136,7 @@ class _ItemCardState extends State<ItemCard>
         if (widget.onAmountChange != null)
           AmountSelector((newAmount) {
             widget.item.setSelectedAmount(newAmount);
+            widget.onAmountChange!.call();
           })
       ],
     );
