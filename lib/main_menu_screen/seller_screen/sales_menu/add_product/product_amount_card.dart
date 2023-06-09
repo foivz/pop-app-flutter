@@ -60,8 +60,8 @@ class _ProductCounterCardState extends State<ProductCounterCard> {
       shadowColor: Colors.black,
       elevation: 10,
       borderOnForeground: true,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 0, 8),
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(8, 8, 0, 8),
         child: Row(children: [
           _image(width),
           _productText(width),

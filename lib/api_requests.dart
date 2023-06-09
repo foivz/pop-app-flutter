@@ -1,4 +1,4 @@
-// ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
+// ignore_for_file: curly_braces_in_flow_control_structures, avoid_print, unnecessary_string_interpolations
 
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
@@ -292,23 +292,30 @@ class ApiRequestManager {
   }
 
   static Future addProductsToPackage(List<int> ids, List<int> amounts, int packageId) async {
-    Map<String, Object> fm = {
-      "Token": _token!,
-      "ADDTOPACKET": "True",
-      "Id_Paket": packageId.toString(),
-      // "Id_Proizvod[]": ids.toString(),
-      // "Kolicina[]": amounts.toString(),
-      "KorisnickoIme": await SecureStorage.getUsername(),
-    };
+    String username = await SecureStorage.getUsername();
+    List<http.MultipartRequest> reqs = List.generate(ids.length, (index) {
+      http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
+      req.fields.addAll({
+        "Token": _token!,
+        "ADDTOPACKET": true.toString(),
+        "Id_Paket": packageId.toString(),
+        "KorisnickoIme": username,
+      });
+      req.fields.addEntries([MapEntry("Id_Proizvod[]", ids[index].toString())]);
+      req.fields.addEntries([MapEntry("Kolicina[]", amounts[index].toString())]);
+      return req;
+    });
 
-    fm.addEntries(ids.map((id) => MapEntry("Id_Proizvod[]", id.toString())));
-    fm.addEntries(amounts.map((q) => MapEntry("Kolicina[]", q.toString())));
-
-    dynamic responseData = await _executeWithToken(await SecureStorage.getUser(), () async {
-      return (await http.post(body: fm, route(Routes.racuni))).bodyBytes;
-    }); //TODO: test if it works now
-
-    return responseData;
+    for (var req in reqs) {
+      try {
+        req.send();
+      } catch (e) {
+        throw Exception("Failed to connect");
+      }
+    }
+    // TODO: for some reason sends up to only 2 requests, or maybe the third gets
+    // cut off midway by the processing of the first two - add delay?
+    return 200;
   }
 
   static Future deletePackage(int packageId) async {

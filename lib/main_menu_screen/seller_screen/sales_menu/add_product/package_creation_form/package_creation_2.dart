@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, curly_braces_in_flow_control_structures
+
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_product/product_amount_card.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
@@ -6,6 +8,7 @@ import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
+import 'package:pop_app/reusable_components/message.dart';
 
 class PackageCreation2 extends StatefulWidget {
   final GlobalKey productListKey;
@@ -61,14 +64,20 @@ class _PackageCreation2State extends State<PackageCreation2> {
                   }
                   int packageId = int.parse(
                       ((await ApiRequestManager.getAllPackages()).last["DATA"] as List).last["Id"]);
-                  ApiRequestManager.addProductsToPackage(ids, amounts, packageId);
+                  var res = await ApiRequestManager.addProductsToPackage(ids, amounts, packageId);
+                  if (res is int) {
+                    Message.info(context).show("Successfully added products to package.");
+                    Navigator.pop(context, true);
+                  } else
+                    Message.error(context)
+                        .show("Connection failure. Check your internet and try again.");
                 },
               ),
               const SizedBox(height: MyConstants.submitButtonHeight / 4),
               FormSubmitButton(
-                buttonText: "Back",
+                buttonText: "Skip",
                 type: FormSubmitButtonStyle.OUTLINE,
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context, false),
               ),
             ],
           ),

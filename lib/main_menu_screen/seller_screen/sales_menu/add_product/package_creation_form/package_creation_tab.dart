@@ -39,13 +39,15 @@ class PackageCreationTabState extends State<PackageCreationTab> with AutomaticKe
   Widget build(BuildContext context) {
     super.build(context);
     if (showBottomSheet)
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         showModalBottomSheet(
           context: context,
           builder: (_) => packageCreation,
           isScrollControlled: true,
           useSafeArea: true,
-        );
+        ).then((value) {
+          Navigator.pop(context, true);
+        });
       });
 
     return Center(

@@ -72,7 +72,7 @@ class _ProductCardState extends State<ProductCard>
 
   void delete() {
     HapticFeedback.vibrate();
-    ApiRequestManager.deleteProduct(widget.product.id!).then((value) {
+    ApiRequestManager.deleteProduct(widget.product.id).then((value) {
       SalesMenuScreen.of(context)!.loadTabContents();
       SalesMenuScreen.of(context)!.tabController.index = 0;
     }).catchError((e) {
