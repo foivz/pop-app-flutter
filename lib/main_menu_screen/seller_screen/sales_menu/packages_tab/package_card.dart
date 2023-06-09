@@ -1,5 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
+import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/services.dart';
@@ -32,6 +34,56 @@ class _PackageCardState extends State<PackageCard>
     });
   }
 
+  void showOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 0.0),
+              child: Text(
+                "Package options",
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit_square, color: Colors.white),
+              title: const Text('Edit package', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                edit();
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete, color: Colors.white),
+              title: const Text('Delete package', style: TextStyle(color: Colors.white)),
+              onTap: () {
+                delete();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void delete() {
+    HapticFeedback.vibrate();
+    ApiRequestManager.deletePackage(widget.packageData.id!).then((value) {
+      print('happened');
+      SalesMenuScreen.of(context)!.loadTabContents();
+      SalesMenuScreen.of(context)!.tabController.index = 1;
+    }).catchError((e) => print("error $e"));
+  }
+
+  void edit() {
+    HapticFeedback.selectionClick();
+    showAboutDialog(context: context);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +104,7 @@ class _PackageCardState extends State<PackageCard>
       children: [
         InkWell(
           onTap: select,
+          onLongPress: showOptions,
           splashColor: MyConstants.red,
           focusColor: MyConstants.red.withOpacity(0.4),
           borderRadius: BorderRadius.circular(16),

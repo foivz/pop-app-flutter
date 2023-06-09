@@ -24,18 +24,18 @@ class SalesMenuScreen extends StatefulWidget {
 }
 
 class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  late TabController tabController;
 
   @override
   void initState() {
     super.initState();
     loadTabContents();
-    _tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    tabController.dispose();
     super.dispose();
   }
 
@@ -87,7 +87,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
     return Column(
       children: [
         TabBar(
-          controller: _tabController,
+          controller: tabController,
           tabs: const <Tab>[
             Tab(text: "PRODUCTS"),
             Tab(text: "PACKAGES"),
@@ -95,7 +95,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
         ),
         Expanded(
           child: TabBarView(
-            controller: _tabController,
+            controller: tabController,
             children: tabContents,
           ),
         ),

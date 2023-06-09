@@ -4,6 +4,7 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/p
 import 'dart:io';
 
 class PackageData implements PackageDataApiInterface {
+  final int? id;
   final String title;
   final String description;
   final String? image;
@@ -22,6 +23,7 @@ class PackageData implements PackageDataApiInterface {
   get itemCount => _itemCount();
 
   const PackageData({
+    this.id,
     required this.title,
     required this.description,
     this.image,
@@ -47,6 +49,7 @@ class PackageData implements PackageDataApiInterface {
 abstract class PackageDataApiInterface {
   static PackageData fromAPI(dynamic data) {
     return PackageData(
+      id: int.parse(data["Id"]),
       title: data["Naziv"],
       description: data["Opis"],
       discount: double.parse(data["Popust"]),
