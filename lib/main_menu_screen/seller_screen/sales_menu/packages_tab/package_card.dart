@@ -103,7 +103,7 @@ class _PackageCardState extends State<PackageCard>
           submitButtonLabel: "Submit changes",
           onSubmit: () {
             formElements() => packageEditTab.currentState!.formElements();
-            imageProd() => packageEditTab.currentState!.packageImage;
+            imagePack() => packageEditTab.currentState!.packageImage;
             var form = (formElements()[StoreContentType.Package]![PackageFormElements.formKey]
                 as GlobalKey<FormState>);
             form.currentState!.validate();
@@ -115,7 +115,7 @@ class _PackageCardState extends State<PackageCard>
                 description:
                     formElements()[StoreContentType.Package]![PackageFormElements.descCont].text,
                 discount: widget.package.discount,
-                imageFile: imageProd(),
+                imageFile: imagePack(),
               );
               ApiRequestManager.editPackage(package).then((response) {
                 if (response.statusCode == 200) {

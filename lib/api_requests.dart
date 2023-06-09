@@ -333,7 +333,7 @@ class ApiRequestManager {
   }
 
   static Future editPackage(PackageData package) async {
-    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
     req.fields.addAll({
       "Token": _token!,
       "UPDATE": true.toString(),
