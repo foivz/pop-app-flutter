@@ -1,15 +1,22 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:pop_app/api_requests.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_card.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
+import 'package:pop_app/models/package_data.dart';
+import 'package:pop_app/models/product_data.dart';
 
 import 'package:flutter/material.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 
-class ProductsTab extends StatelessWidget {
-  const ProductsTab({super.key});
+import '../items_tab.dart';
 
+class ProductsTab extends ItemsTab {
+  ProductsTab(onSelectionStateChange, {super.key}) : super(onSelectionStateChange);
+
+  @override
+  State<ProductsTab> createState() => _ProductsTabState();
+}
+
+class _ProductsTabState extends State<ProductsTab> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -28,9 +35,10 @@ class ProductsTab extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(5),
             itemBuilder: (context, index) {
-              return ProductCard(
+              return ItemCard(
                 index: index,
-                productdata: products[index],
+                item: products[index],
+                onSelected: widget.handleItemSelection,
               );
             },
           );

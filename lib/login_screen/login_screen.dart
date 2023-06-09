@@ -178,9 +178,9 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
     );
   }
 
-  // TODO: Implement navigation to main screen instead of Placeholder!
   _navigateToMainScreen() {
     Navigator.of(context).push(PageRouteBuilder(
+      settings: const RouteSettings(name: "main_menu"),
       pageBuilder: (c, a, s) => MainMenuScreen(role: role, username: loggedUser!.username),
       transitionsBuilder: ScreenTransitions.slideLeft,
     ));
