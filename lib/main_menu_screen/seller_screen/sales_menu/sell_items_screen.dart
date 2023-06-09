@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
+import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/reusable_components/message.dart';
 
 class SellItemsScreen extends StatefulWidget {
   final List<Item> selectedItems;
@@ -183,8 +186,22 @@ class _SellContentState extends State<SellContent> {
                         actions: <Widget>[
                           TextButton(
                             child: const Text('Generate QR Code for buyer'),
-                            onPressed: () {
-                              // TODO: Handle QR Code option
+                            onPressed: () async {
+                              try {
+                                double discountAmount = double.parse(discountInputCont.text);
+                                InitialInvoice initialInvoice =
+                                    await ApiRequestManager.generateInvoice(
+                                  discountAmount,
+                                  widget.selectedItems,
+                                );
+                                if (context.mounted) {
+                                  Message.info(context).show(
+                                    "Generated invoice. New invoice ID: ${initialInvoice.id}",
+                                  );
+                                }
+                              } on Exception catch (ex, _) {
+                                Message.error(context).show(ex.toString());
+                              }
                             },
                           ),
                         ],

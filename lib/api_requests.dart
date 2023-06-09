@@ -1,4 +1,6 @@
+import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/invoice.dart';
+import 'package:pop_app/models/item.dart';
 import 'package:pop_app/secure_storage.dart';
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/models/user.dart';
@@ -207,6 +209,33 @@ class ApiRequestManager {
     }
 
     return invoices;
+  }
+
+  static Future<InitialInvoice> generateInvoice(double discount, List<Item> items) async {
+    User user = await User.loggedIn;
+
+    Map<String, Object> fm = {
+      "Token": _token!,
+      "KorisnickoIme": user.username,
+      "GENERATESALE": "True",
+      "PopustRacuna": discount.toStringAsFixed(0),
+    };
+
+    fm.addEntries(items.map((e) => MapEntry("Itemi[]", e.id)));
+    fm.addEntries(items.map((e) => MapEntry("Kolicine[]", e.getSelectedAmount().toString())));
+
+    dynamic responseData;
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(body: fm, route(Routes.racuni));
+      return response.bodyBytes;
+    });
+
+    if (responseData["STATUSMESSAGE"] == "INVOICE GENERATED") {
+      return InitialInvoice(
+          id: responseData["DATA"]["Id"], code: responseData["DATA"]["Kod_Racuna"]);
+    } else {
+      throw Exception("Something went wrong: ${responseData["STATUSMESSAGE"]}");
+    }
   }
 
   /// Wraps whatever fetching logic into a token check.
