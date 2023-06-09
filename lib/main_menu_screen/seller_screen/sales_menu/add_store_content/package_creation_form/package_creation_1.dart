@@ -1,19 +1,20 @@
-import 'dart:math';
+// ignore_for_file: curly_braces_in_flow_control_structures
 
-import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
+import 'package:pop_app/reusable_components/message.dart';
+import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/myconstants.dart';
 
+import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-
-import 'package:pop_app/reusable_components/message.dart';
 
 class _FormContent {
   static const int nameLengthLimit = 25;
@@ -31,57 +32,109 @@ class _FormContent {
 }
 
 class PackageCreation1 extends StatefulWidget {
-  const PackageCreation1({super.key});
+  final PackageData? package;
+  final String? submitButtonLabel;
+  final void Function()? onSubmit;
+  const PackageCreation1({
+    super.key,
+    this.package,
+    this.submitButtonLabel,
+    this.onSubmit,
+  });
   @override
-  State<PackageCreation1> createState() => _PackageCreation1State();
+  State<PackageCreation1> createState() => PackageCreation1State();
 }
 
 enum PackageFormElements { formKey, nameCont, descCont, discountCont }
 
-class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepAliveClientMixin {
-  final Map<PackageFormElements, dynamic> _package = {
-    PackageFormElements.formKey: GlobalKey<FormState>(),
-    PackageFormElements.nameCont: TextEditingController(),
-    PackageFormElements.descCont: TextEditingController(),
-    PackageFormElements.discountCont: TextEditingController(),
-  };
+class PackageCreation1State extends State<PackageCreation1> with AutomaticKeepAliveClientMixin {
+  late final Map<PackageFormElements, dynamic> _package;
 
-  File? _imagePack;
+  File? packageImage;
 
   Map<StoreContentType, Map<PackageFormElements, dynamic>> formElements() {
     return {StoreContentType.Package: _package};
   }
 
-  _mockPackFormData() {
-    const StoreContentType pack = StoreContentType.Package;
-    formElements()[pack]![PackageFormElements.nameCont].text = "Mock name ${Random().nextInt(100)}";
-    formElements()[pack]![PackageFormElements.descCont].text =
-        "Mock desc ${Random().nextInt(10000)}";
-    formElements()[pack]![PackageFormElements.discountCont].text =
-        "${(Random().nextDouble() * 100).round() + Random().nextInt(99) / 100}";
-  }
-
   @override
   void initState() {
     super.initState();
-    _mockPackFormData();
+    var nameCont = TextEditingController();
+    var descCont = TextEditingController();
+    var discountCont = TextEditingController();
+    var formKey = GlobalKey<FormState>();
+    _package = {
+      PackageFormElements.formKey: formKey,
+      PackageFormElements.nameCont: nameCont,
+      PackageFormElements.descCont: descCont,
+      PackageFormElements.discountCont: discountCont,
+    };
+    if (widget.package != null) {
+      PackageData package = widget.package!;
+      nameCont.text = package.title;
+      descCont.text = package.description;
+      discountCont.text = package.discount.toString();
+      loadImage();
+    }
+  }
+
+  @override
+  void dispose() {
+    deleteImage();
+    super.dispose();
+  }
+
+  Future deleteImage() async {
+    final Directory temp = await getTemporaryDirectory();
+    try {
+      return await File("${temp.path}/productImageNet.png").delete();
+    } catch (e) {/**/}
+  }
+
+  void loadImage() async {
+    PackageData package = widget.package!;
+    http.Response response = await http.get(Uri.parse(package.imagePath!));
+    final Directory temp = await getTemporaryDirectory();
+    var timestamp = DateTime.now().millisecondsSinceEpoch;
+    File file = await File("${temp.path}/packageImageNet$timestamp.png").create();
+    file.writeAsBytesSync(response.bodyBytes);
+    packageImage = file;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return SingleChildScrollView(
-      child: Center(
-        child: Form(
-          key: formElements()[StoreContentType.Package]![PackageFormElements.formKey],
-          child: Column(children: _genFormInputs()),
+    return _genForm();
+  }
+
+  Widget _genForm() {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Form(
+            key: formElements()[StoreContentType.Package]![PackageFormElements.formKey],
+            child: Column(children: _genFormInputs()),
+          ),
         ),
       ),
     );
   }
 
   List<Widget> _genFormInputs() {
+    Text? title;
+    if (widget.submitButtonLabel != null)
+      title = Text(
+        "Edit package",
+        style: Theme.of(context).textTheme.titleLarge!.copyWith(color: MyConstants.red),
+      );
+    var titleWidget = Container(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: title,
+    );
     return <Widget>[
+      titleWidget,
       CustomTextFormField(
         inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.nameLengthLimit)],
         maxLength: _FormContent.nameLengthLimit,
@@ -103,32 +156,36 @@ class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepA
       _buildImageInput(),
       const SizedBox(height: MyConstants.formInputSpacer),
       FormSubmitButton(
-        buttonText: "Next",
-        onPressed: () {
-          var form = (formElements()[StoreContentType.Package]![PackageFormElements.formKey]
-              as GlobalKey<FormState>);
-          form.currentState!.validate();
-          try {
-            ApiRequestManager.addPackageToStore(
-              PackageData(
-                title: formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text,
-                description:
-                    formElements()[StoreContentType.Package]![PackageFormElements.descCont].text,
-                discount: double.parse(
-                    formElements()[StoreContentType.Package]![PackageFormElements.discountCont]
-                        .text),
-                imageFile: _imagePack,
-                products: [],
-              ),
-            ).then((value) {
-              PackageCreationTab.of(context)!.showProductSelectionScreen();
-            }).catchError((error) {
-              Message.error(context).show("Connection failure. Check your internet and try again.");
-            });
-          } catch (e) {
-            Message.error(context).show("Not all fields are filled.");
-          }
-        },
+        buttonText: widget.submitButtonLabel ?? "Next",
+        onPressed: widget.onSubmit ??
+            () {
+              var form = (formElements()[StoreContentType.Package]![PackageFormElements.formKey]
+                  as GlobalKey<FormState>);
+              form.currentState!.validate();
+              try {
+                ApiRequestManager.addPackageToStore(
+                  PackageData(
+                    title: formElements()[StoreContentType.Package]![PackageFormElements.nameCont]
+                        .text,
+                    description:
+                        formElements()[StoreContentType.Package]![PackageFormElements.descCont]
+                            .text,
+                    discount: double.parse(
+                        formElements()[StoreContentType.Package]![PackageFormElements.discountCont]
+                            .text),
+                    imageFile: packageImage,
+                    products: [],
+                  ),
+                ).then((value) {
+                  PackageCreationTab.of(context)!.showProductSelectionScreen();
+                }).catchError((error) {
+                  Message.error(context)
+                      .show("Connection failure. Check your internet and try again.");
+                });
+              } catch (e) {
+                Message.error(context).show("Not all fields are filled.");
+              }
+            },
       ),
     ];
   }
@@ -152,7 +209,7 @@ class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepA
       maxHeight: MyConstants.textFieldWidth,
       maxWidth: MyConstants.textFieldWidth,
     );
-    if (pickedFile != null) setState(() => _imagePack = File(pickedFile.path));
+    if (pickedFile != null) setState(() => packageImage = File(pickedFile.path));
   }
 
   Future<void> _getFromGallery() async {
@@ -161,11 +218,11 @@ class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepA
       maxHeight: MyConstants.textFieldWidth,
       maxWidth: MyConstants.textFieldWidth,
     );
-    if (pickedFile != null) setState(() => _imagePack = File(pickedFile.path));
+    if (pickedFile != null) setState(() => packageImage = File(pickedFile.path));
   }
 
   Widget _buildImageInput() {
-    if (_imagePack != null) {
+    if (packageImage != null) {
       return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -174,7 +231,7 @@ class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepA
         child: InkWell(
           onTap: () => _showImagePicker(),
           child: Image.file(
-            _imagePack!,
+            packageImage!,
             width: MyConstants.textFieldWidth,
             height: MyConstants.textFieldWidth,
             fit: BoxFit.cover,
@@ -224,10 +281,10 @@ class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepA
             ListTile(
               leading: const Icon(Icons.cancel, color: Colors.white),
               title: const Text('Clear photo', style: TextStyle(color: Colors.white)),
-              enabled: _imagePack != null,
-              tileColor: _imagePack == null ? Colors.black.withOpacity(0.4) : null,
+              enabled: packageImage != null,
+              tileColor: packageImage == null ? Colors.black.withOpacity(0.4) : null,
               onTap: () {
-                setState(() => _imagePack = null);
+                setState(() => packageImage = null);
                 Navigator.pop(context);
               },
             ),

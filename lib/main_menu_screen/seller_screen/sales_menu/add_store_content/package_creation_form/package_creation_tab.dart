@@ -2,14 +2,23 @@
 
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_1.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_2.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/models/user.dart';
 
 import 'package:flutter/material.dart';
 
 class PackageCreationTab extends StatefulWidget {
-  final GlobalKey productListKey;
+  final GlobalKey<SalesMenuScreenState> salesMenuKey;
+
   final User user;
-  const PackageCreationTab({super.key, required this.productListKey, required this.user});
+  final GlobalKey productListKey;
+
+  const PackageCreationTab({
+    super.key,
+    required this.salesMenuKey,
+    required this.productListKey,
+    required this.user,
+  });
 
   static PackageCreationTabState? of(BuildContext context) {
     try {
@@ -39,26 +48,23 @@ class PackageCreationTabState extends State<PackageCreationTab> with AutomaticKe
   Widget build(BuildContext context) {
     super.build(context);
     if (showBottomSheet)
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        showModalBottomSheet(
-          context: context,
-          builder: (_) => packageCreation,
-          isScrollControlled: true,
-          useSafeArea: true,
-        ).then((value) {
-          Navigator.pop(context, true);
-        });
-      });
-
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.only(top: 8.0),
-        width: MediaQuery.of(context).size.width,
-        child: const Scaffold(
-          backgroundColor: Colors.white,
-          body: PackageCreation1(),
-        ),
-      ),
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          showModalBottomSheet(
+            context: context,
+            builder: (_) => packageCreation,
+            isScrollControlled: true,
+            useSafeArea: true,
+          ).then((value) {
+            Navigator.pop(context, true);
+          });
+        },
+      );
+    GlobalKey<PackageCreationTabState> key = GlobalKey<PackageCreationTabState>();
+    return Scaffold(
+      key: key,
+      backgroundColor: Colors.white,
+      body: const PackageCreation1(),
     );
   }
 

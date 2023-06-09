@@ -13,14 +13,17 @@ import 'package:pop_app/reusable_components/message.dart';
 class ProductCard extends StatefulWidget {
   final int index;
   final ConstantProductData product;
+
   final GlobalKey<SalesMenuScreenState> salesMenuKey;
   final User user;
-  const ProductCard(
-      {super.key,
-      required this.index,
-      required this.product,
-      required this.salesMenuKey,
-      required this.user});
+
+  const ProductCard({
+    super.key,
+    required this.index,
+    required this.product,
+    required this.salesMenuKey,
+    required this.user,
+  });
 
   @override
   State<ProductCard> createState() => _ProductCardState();

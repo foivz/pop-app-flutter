@@ -7,7 +7,7 @@ class PackageData implements PackageDataApiInterface {
   final int? id;
   final String title;
   final String description;
-  final String? image;
+  final String? imagePath;
   final File? imageFile;
   final double discount;
   final double? priceAfterDiscount;
@@ -26,7 +26,7 @@ class PackageData implements PackageDataApiInterface {
     this.id,
     required this.title,
     required this.description,
-    this.image,
+    this.imagePath,
     this.imageFile,
     required this.products,
     required this.discount,
@@ -55,7 +55,7 @@ abstract class PackageDataApiInterface {
       discount: double.parse(data["Popust"]),
       priceAfterDiscount: double.parse(data["CijenaStavkeNakonPopusta"]),
       products: productsFromApi(data["StavkePaketa"] as List),
-      image: data["Slika"],
+      imagePath: data["Slika"],
     );
   }
 

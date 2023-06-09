@@ -271,7 +271,7 @@ class ApiRequestManager {
       "Naziv": package.title,
       "Opis": package.description,
       "Popust": package.discount.toString(),
-      "KolicinaPaketa": package.itemCount.toString(),
+      "KolicinaPaketa": "1",
       "KorisnickoIme": await SecureStorage.getUsername(),
     });
     if (package.imageFile != null)
@@ -323,6 +323,36 @@ class ApiRequestManager {
       "DELETE": true.toString(),
       "KorisnickoIme": await SecureStorage.getUsername(),
     });
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
+  }
+
+  static Future editPackage(PackageData package) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
+    req.fields.addAll({
+      "UPDATE": true.toString(),
+      "Token": _token!,
+      "Id": package.id.toString(),
+      "Naziv": package.title,
+      "Opis": package.description,
+      "Kolicina": "1",
+      "Popust": package.discount.toString(),
+      "KorisnickoIme": await SecureStorage.getUsername(),
+    });
+    if (package.imageFile != null && package.imagePath == null)
+      req.files.add(
+        http.MultipartFile.fromBytes(
+          'Slika',
+          filename: 'Slika',
+          await package.imageFile!.readAsBytes(),
+        ),
+      );
+    else if (package.imagePath != null) req.fields.addAll({"Slika": package.imagePath!});
     http.StreamedResponse responseData;
     try {
       responseData = await req.send();

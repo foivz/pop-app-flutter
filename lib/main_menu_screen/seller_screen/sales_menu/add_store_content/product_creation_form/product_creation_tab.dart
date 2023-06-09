@@ -10,9 +10,9 @@ import 'package:pop_app/myconstants.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:io';
 
 enum StoreContentType { Product, Package }
@@ -35,10 +35,12 @@ class _FormContent {
 
 class ProductCreationTab extends StatefulWidget {
   final GlobalKey<SalesMenuScreenState> salesMenuKey;
+
   final User user;
   final ConstantProductData? product;
   final String? submitButtonLabel;
   final void Function()? onSubmit;
+
   const ProductCreationTab({
     super.key,
     required this.salesMenuKey,
@@ -105,7 +107,7 @@ class ProductCreationTabState extends State<ProductCreationTab>
   }
 
   @override
-  void dispose() async {
+  void dispose() {
     deleteImage();
     super.dispose();
   }
@@ -148,7 +150,18 @@ class ProductCreationTabState extends State<ProductCreationTab>
   }
 
   List<Widget> _genFormInputs() {
+    Text? title;
+    if (widget.submitButtonLabel != null)
+      title = Text(
+        "Edit product",
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: MyConstants.red),
+      );
+    var titleWidget = Container(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: title,
+    );
     return <Widget>[
+      titleWidget,
       CustomTextFormField(
         inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.nameLengthLimit)],
         maxLength: _FormContent.nameLengthLimit,
@@ -294,12 +307,9 @@ class ProductCreationTabState extends State<ProductCreationTab>
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 0.0),
-              child: Text(
-                "Add a picture of your product",
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
-              ),
+            Text(
+              "Add a picture of your product",
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
             ),
             ListTile(
               leading: const Icon(Icons.camera, color: Colors.white),

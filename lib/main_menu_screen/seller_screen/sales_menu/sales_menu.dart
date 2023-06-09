@@ -81,7 +81,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
     setState(
       () => tabContents = [
         ProductsTab(user: widget.user, salesMenuKey: thisMenuKey),
-        const PackagesTab(),
+        PackagesTab(user: widget.user, salesMenuKey: thisMenuKey),
       ],
     );
   }

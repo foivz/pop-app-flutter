@@ -49,7 +49,8 @@ class _StoreContentCreationState extends State<StoreContentCreation>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    packageCreationForm = PackageCreationTab(productListKey: _productListKey, user: widget.user);
+    packageCreationForm = PackageCreationTab(
+        salesMenuKey: widget.salesMenuKey, productListKey: _productListKey, user: widget.user);
     productCreationForm = ProductCreationTab(salesMenuKey: widget.salesMenuKey, user: widget.user);
   }
 
