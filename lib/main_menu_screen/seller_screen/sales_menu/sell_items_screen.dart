@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/qr_code_screen.dart';
 import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/myconstants.dart';
@@ -195,8 +196,11 @@ class _SellContentState extends State<SellContent> {
                                   widget.selectedItems,
                                 );
                                 if (context.mounted) {
-                                  Message.info(context).show(
-                                    "Generated invoice. New invoice ID: ${initialInvoice.id}",
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => QRCodeScreen(initialInvoice.id),
+                                    ),
                                   );
                                 }
                               } on Exception catch (ex, _) {
