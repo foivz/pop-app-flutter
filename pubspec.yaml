@@ -37,6 +37,7 @@ dependencies:
     http: ^1.0.0
     flutter_secure_storage: ^8.0.0
     settings_ui: ^1.0.0
+    qr_flutter: ^4.1.0
 
 dev_dependencies:
     flutter_test:
