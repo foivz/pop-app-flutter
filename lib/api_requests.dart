@@ -291,33 +291,28 @@ class ApiRequestManager {
     }
   }
 
-  static Future addProductsToPackage(List<int> ids, List<int> amounts, int packageId) async {
-    String username = await SecureStorage.getUsername();
-    List<http.MultipartRequest> reqs = List.generate(ids.length, (index) {
-      http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
-      req.fields.addAll({
-        "Token": _token!,
-        "ADDTOPACKET": true.toString(),
-        "Id_Paket": packageId.toString(),
-        "KorisnickoIme": username,
-      });
-      req.fields.addEntries([MapEntry("Id_Proizvod[]", ids[index].toString())]);
-      req.fields.addEntries([MapEntry("Kolicina[]", amounts[index].toString())]);
-      return req;
+  static Future<bool> addProductsToPackage(List<int> ids, List<int> amounts, int packageId) async {
+    User user = await User.loggedIn;
+
+    var fm = {
+      "Token": _token,
+      "KorisnickoIme": user.username,
+      "ADDTOPACKET": "True",
+      "Id_Paket": packageId.toString(),
+    };
+
+    for (int i = 0; i < ids.length; i++) {
+      fm["Id_Proizvod[$i]"] = ids[i].toString();
+      fm["Kolicina[$i]"] = amounts[i].toString();
+    }
+
+    dynamic responseData;
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(body: fm, route(Routes.paketi));
+      return response.bodyBytes;
     });
 
-    for (var req in reqs) {
-      try {
-        // NOTE: using keyword "await" makes it only add 1 item to the package for some reason
-        // I think the backend code might delete the old package and create an entirely new one, every time it adds a product
-        req.send(); // adding Future.delayed(Duration(milliseconds(100 * i), () => req.send)) didnt solve the issue
-      } catch (e) {
-        throw Exception("Failed to connect");
-      }
-    }
-    // TODO: for some reason sends up to only 2 requests, or maybe the third gets
-    // cut off midway by the processing of the first two - adding delay didn't help, same issue
-    return 200;
+    return (responseData["STATUSMESSAGE"] == "PRODUCT ADDED TO PACKET");
   }
 
   static Future deletePackage(int packageId) async {

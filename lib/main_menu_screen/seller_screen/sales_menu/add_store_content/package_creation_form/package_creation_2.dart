@@ -64,8 +64,9 @@ class _PackageCreation2State extends State<PackageCreation2> {
                   }
                   int packageId = int.parse(
                       ((await ApiRequestManager.getAllPackages()).last["DATA"] as List).last["Id"]);
-                  var res = await ApiRequestManager.addProductsToPackage(ids, amounts, packageId);
-                  if (res is int) {
+                  bool success =
+                      await ApiRequestManager.addProductsToPackage(ids, amounts, packageId);
+                  if (success) {
                     Message.info(context).show("Successfully added products to package.");
                     Navigator.pop(context, true);
                   } else
