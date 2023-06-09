@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:pop_app/api_requests.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_product/package_creation_form/package_creation_tab.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_product/add_product_screen.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
@@ -36,27 +36,28 @@ class PackageCreation1 extends StatefulWidget {
   State<PackageCreation1> createState() => _PackageCreation1State();
 }
 
-enum _FormElements { formKey, nameCont, descCont, discountCont }
+enum PackageFormElements { formKey, nameCont, descCont, discountCont }
 
 class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepAliveClientMixin {
-  final Map<_FormElements, dynamic> _package = {
-    _FormElements.formKey: GlobalKey<FormState>(),
-    _FormElements.nameCont: TextEditingController(),
-    _FormElements.descCont: TextEditingController(),
-    _FormElements.discountCont: TextEditingController(),
+  final Map<PackageFormElements, dynamic> _package = {
+    PackageFormElements.formKey: GlobalKey<FormState>(),
+    PackageFormElements.nameCont: TextEditingController(),
+    PackageFormElements.descCont: TextEditingController(),
+    PackageFormElements.discountCont: TextEditingController(),
   };
 
   File? _imagePack;
 
-  Map<StoreContentType, Map<_FormElements, dynamic>> formElements() {
+  Map<StoreContentType, Map<PackageFormElements, dynamic>> formElements() {
     return {StoreContentType.Package: _package};
   }
 
   _mockPackFormData() {
     const StoreContentType pack = StoreContentType.Package;
-    formElements()[pack]![_FormElements.nameCont].text = "Mock name ${Random().nextInt(100)}";
-    formElements()[pack]![_FormElements.descCont].text = "Mock desc ${Random().nextInt(10000)}";
-    formElements()[pack]![_FormElements.discountCont].text =
+    formElements()[pack]![PackageFormElements.nameCont].text = "Mock name ${Random().nextInt(100)}";
+    formElements()[pack]![PackageFormElements.descCont].text =
+        "Mock desc ${Random().nextInt(10000)}";
+    formElements()[pack]![PackageFormElements.discountCont].text =
         "${(Random().nextDouble() * 100).round() + Random().nextInt(99) / 100}";
   }
 
@@ -71,7 +72,7 @@ class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepA
     super.build(context);
     return Center(
       child: Form(
-        key: formElements()[StoreContentType.Package]![_FormElements.formKey],
+        key: formElements()[StoreContentType.Package]![PackageFormElements.formKey],
         child: Column(children: _genFormInputs()),
       ),
     );
@@ -83,14 +84,16 @@ class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepA
         inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.nameLengthLimit)],
         maxLength: _FormContent.nameLengthLimit,
         inputLabel: _FormContent.nameHint(),
-        textEditingController: formElements()[StoreContentType.Package]![_FormElements.nameCont],
+        textEditingController:
+            formElements()[StoreContentType.Package]![PackageFormElements.nameCont],
       ),
       const SizedBox(height: MyConstants.formInputSpacer),
       CustomTextFormField(
         inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.descriptionLengthLimit)],
         maxLength: _FormContent.descriptionLengthLimit,
         inputLabel: _FormContent.descHint(),
-        textEditingController: formElements()[StoreContentType.Package]![_FormElements.descCont],
+        textEditingController:
+            formElements()[StoreContentType.Package]![PackageFormElements.descCont],
       ),
       const SizedBox(height: MyConstants.formInputSpacer),
       _discountInput(),
@@ -100,16 +103,18 @@ class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepA
       FormSubmitButton(
         buttonText: "Next",
         onPressed: () {
-          var form = (formElements()[StoreContentType.Package]![_FormElements.formKey]
+          var form = (formElements()[StoreContentType.Package]![PackageFormElements.formKey]
               as GlobalKey<FormState>);
           form.currentState!.validate();
           try {
             ApiRequestManager.addPackageToStore(
               PackageData(
-                title: formElements()[StoreContentType.Package]![_FormElements.nameCont].text,
-                description: formElements()[StoreContentType.Package]![_FormElements.descCont].text,
+                title: formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text,
+                description:
+                    formElements()[StoreContentType.Package]![PackageFormElements.descCont].text,
                 discount: double.parse(
-                    formElements()[StoreContentType.Package]![_FormElements.discountCont].text),
+                    formElements()[StoreContentType.Package]![PackageFormElements.discountCont]
+                        .text),
                 imageFile: _imagePack,
                 products: [],
               ),
@@ -134,7 +139,8 @@ class _PackageCreation1State extends State<PackageCreation1> with AutomaticKeepA
         _MaxValueInputFormatter(100),
       ],
       inputLabel: _FormContent.discountHint(),
-      textEditingController: formElements()[StoreContentType.Package]![_FormElements.discountCont],
+      textEditingController:
+          formElements()[StoreContentType.Package]![PackageFormElements.discountCont],
     );
   }
 

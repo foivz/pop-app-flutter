@@ -1,6 +1,5 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
-
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_product/add_product_screen.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/store_content_creation.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_list_tab.dart';
 
@@ -56,7 +55,8 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
                 builder: (context) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Scaffold(body: CreateStoreContent(salesMenuKey: key, user: widget.user)),
+                    child:
+                        Scaffold(body: StoreContentCreation(salesMenuKey: key, user: widget.user)),
                   );
                 },
               ) is bool) setState(() {});

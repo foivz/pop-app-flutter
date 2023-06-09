@@ -308,13 +308,15 @@ class ApiRequestManager {
 
     for (var req in reqs) {
       try {
-        req.send();
+        // NOTE: using keyword "await" makes it only add 1 item to the package for some reason
+        // I think the backend code might delete the old package and create an entirely new one, every time it adds a product
+        req.send(); // adding Future.delayed(Duration(milliseconds(100 * i), () => req.send)) didnt solve the issue
       } catch (e) {
         throw Exception("Failed to connect");
       }
     }
     // TODO: for some reason sends up to only 2 requests, or maybe the third gets
-    // cut off midway by the processing of the first two - add delay?
+    // cut off midway by the processing of the first two - adding delay didn't help, same issue
     return 200;
   }
 
@@ -342,6 +344,49 @@ class ApiRequestManager {
       "Id": productId.toString(),
       "KorisnickoIme": await SecureStorage.getUsername(),
     });
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
+  }
+
+  /*
+   "Edit": Edit: Boolean,
+   "Token": Token: String,
+   "Id": Id: Int,
+   "Naziv": Naziv: String,
+   "Opis": Opis: String,
+   "Cijena": Cijena: String?,
+   "Kolicina": Kolicina: Int,
+   "Slika": Slika: String,
+   "KorisnickoIme": KorisnickoIme: String
+  */
+
+  static Future editProduct(ConstantProductData product) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
+    req.fields.addAll({
+      "Edit": true.toString(),
+      "Token": _token!,
+      "Id": product.id.toString(),
+      "Naziv": product.title,
+      "Opis": product.description,
+      "Cijena": product.price.toString(),
+      "Kolicina": "1",
+      "KorisnickoIme": await SecureStorage.getUsername(),
+    });
+    if (product.imageFile != null && product.imagePath == null)
+      req.files.add(
+        http.MultipartFile.fromBytes(
+          'Slika',
+          filename: 'Slika',
+          await product.imageFile!.readAsBytes(),
+        ),
+      );
+    else
+      req.fields.addAll({"Slika": product.imagePath ?? ""});
     http.StreamedResponse responseData;
     try {
       responseData = await req.send();

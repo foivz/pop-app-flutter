@@ -1,7 +1,5 @@
 // ignore_for_file: constant_identifier_names, curly_braces_in_flow_control_structures, unused_field
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_product/package_creation_form/package_creation_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
@@ -33,80 +31,64 @@ class _FormContent {
   }
 }
 
-class CreateStoreContent extends StatefulWidget {
+class ProductCreationTab extends StatefulWidget {
   final GlobalKey<SalesMenuScreenState> salesMenuKey;
   final User user;
-  const CreateStoreContent({super.key, required this.salesMenuKey, required this.user});
+  const ProductCreationTab({super.key, required this.salesMenuKey, required this.user});
+
+  static ProductCreationTabState? of(BuildContext context) {
+    try {
+      return context.findAncestorStateOfType<ProductCreationTabState>();
+    } catch (err) {
+      return null;
+    }
+  }
+
   @override
-  State<CreateStoreContent> createState() => _CreateStoreContentState();
+  State<ProductCreationTab> createState() => ProductCreationTabState();
 }
 
-enum _FormElements { formKey, nameCont, descCont, priceCont, quantityCont, discountCont, image }
+enum ProductFormElements {
+  formKey,
+  nameCont,
+  descCont,
+  priceCont,
+  quantityCont,
+  discountCont,
+  image
+}
 
-class _CreateStoreContentState extends State<CreateStoreContent>
+class ProductCreationTabState extends State<ProductCreationTab>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  final Map<_FormElements, dynamic> _product = {
-    _FormElements.formKey: GlobalKey<FormState>(),
-    _FormElements.nameCont: TextEditingController(),
-    _FormElements.descCont: TextEditingController(),
-    _FormElements.priceCont: TextEditingController(),
-    _FormElements.quantityCont: TextEditingController(),
+  final Map<ProductFormElements, dynamic> _product = {
+    ProductFormElements.formKey: GlobalKey<FormState>(),
+    ProductFormElements.nameCont: TextEditingController(),
+    ProductFormElements.descCont: TextEditingController(),
+    ProductFormElements.priceCont: TextEditingController(),
+    ProductFormElements.quantityCont: TextEditingController(),
   };
 
   File? _imageProd, _imagePack;
 
-  Map<StoreContentType, Map<_FormElements, dynamic>> formElements() {
+  Map<StoreContentType, Map<ProductFormElements, dynamic>> formElements() {
     return {
       StoreContentType.Product: _product,
     };
   }
 
-  final GlobalKey<ProductsTabState> _productListKey = GlobalKey<ProductsTabState>();
-  late TabController _tabController;
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    packageCreationForm = PackageCreationTab(productListKey: _productListKey, user: widget.user);
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Container(child: tabs());
+    return _genForm();
   }
 
-  late PackageCreationTab packageCreationForm;
-  Widget tabs() {
-    return Column(children: [
-      Container(
-        color: Colors.white,
-        child: TabBar(
-          padding: EdgeInsets.zero,
-          controller: _tabController,
-          tabs: const <Tab>[Tab(text: "Add product"), Tab(text: "Create package")],
-        ),
-      ),
-      Expanded(
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            productCreationForm,
-            packageCreationForm,
-          ],
-        ),
-      ),
-    ]);
-  }
-
-  get productCreationForm => _genForm();
   Widget _genForm() {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
           child: Form(
-            key: formElements()[StoreContentType.Product]![_FormElements.formKey],
+            key: formElements()[StoreContentType.Product]![ProductFormElements.formKey],
             child: Column(children: _genFormInputs()),
           ),
         ),
@@ -120,14 +102,16 @@ class _CreateStoreContentState extends State<CreateStoreContent>
         inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.nameLengthLimit)],
         maxLength: _FormContent.nameLengthLimit,
         inputLabel: _FormContent.nameHint(),
-        textEditingController: formElements()[StoreContentType.Product]![_FormElements.nameCont],
+        textEditingController:
+            formElements()[StoreContentType.Product]![ProductFormElements.nameCont],
       ),
       const SizedBox(height: MyConstants.formInputSpacer),
       CustomTextFormField(
         inputFormatters: [LengthLimitingTextInputFormatter(_FormContent.descriptionLengthLimit)],
         maxLength: _FormContent.descriptionLengthLimit,
         inputLabel: _FormContent.descHint(),
-        textEditingController: formElements()[StoreContentType.Product]![_FormElements.descCont],
+        textEditingController:
+            formElements()[StoreContentType.Product]![ProductFormElements.descCont],
       ),
       const SizedBox(height: MyConstants.formInputSpacer),
       _priceQuantityInput(),
@@ -137,29 +121,30 @@ class _CreateStoreContentState extends State<CreateStoreContent>
       FormSubmitButton(
         buttonText: "Add to store",
         onPressed: () {
-          var form = (formElements()[StoreContentType.Product]![_FormElements.formKey]
+          var form = (formElements()[StoreContentType.Product]![ProductFormElements.formKey]
               as GlobalKey<FormState>);
           form.currentState!.validate();
           try {
             ConstantProductData product = ConstantProductData(
               -1,
-              title: formElements()[StoreContentType.Product]![_FormElements.nameCont].text,
-              description: formElements()[StoreContentType.Product]![_FormElements.descCont].text,
+              title: formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text,
+              description:
+                  formElements()[StoreContentType.Product]![ProductFormElements.descCont].text,
               price: double.parse(
-                  formElements()[StoreContentType.Product]![_FormElements.priceCont].text),
+                  formElements()[StoreContentType.Product]![ProductFormElements.priceCont].text),
               amount: int.parse(
-                  formElements()[StoreContentType.Product]![_FormElements.quantityCont].text),
+                  formElements()[StoreContentType.Product]![ProductFormElements.quantityCont].text),
               imageFile: _imageProd,
             );
             ApiRequestManager.addProductToStore(product).then((response) {
               if (response.statusCode == 200) {
                 Message.info(context).show(
-                  "Added ${formElements()[StoreContentType.Product]![_FormElements.nameCont].text} to store.",
+                  "Added ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
                 );
                 Navigator.pop(context, true);
               } else
                 Message.error(context).show(
-                  "Failed to add ${formElements()[StoreContentType.Product]![_FormElements.nameCont].text} to store.",
+                  "Failed to add ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
                 );
             }).catchError((error) {
               Message.error(context).show("Connection failure. Check your internet and try again.");
@@ -181,7 +166,8 @@ class _CreateStoreContentState extends State<CreateStoreContent>
           inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
           textFieldWidth: MyConstants.textFieldWidth * 0.6,
           inputLabel: _FormContent.priceHint(),
-          textEditingController: formElements()[StoreContentType.Product]![_FormElements.priceCont],
+          textEditingController:
+              formElements()[StoreContentType.Product]![ProductFormElements.priceCont],
         ),
         const SizedBox(width: MyConstants.textFieldWidth * 0.05),
         CustomTextFormField(
@@ -190,7 +176,7 @@ class _CreateStoreContentState extends State<CreateStoreContent>
           textFieldWidth: MyConstants.textFieldWidth * 0.35,
           inputLabel: _FormContent.quantityHint(),
           textEditingController:
-              formElements()[StoreContentType.Product]![_FormElements.quantityCont],
+              formElements()[StoreContentType.Product]![ProductFormElements.quantityCont],
         ),
       ],
     );

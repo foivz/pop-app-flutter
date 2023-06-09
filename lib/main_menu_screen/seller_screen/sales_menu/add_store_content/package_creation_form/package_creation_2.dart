@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'package:pop_app/api_requests.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_product/product_amount_card.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_amount_card.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/models/user.dart';
