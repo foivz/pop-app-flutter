@@ -73,7 +73,12 @@ class _SellContentState extends State<SellContent> {
       totalPrice += item.getSelectedAmount() * item.price;
     }
 
-    double discount = double.parse(discountInputCont.text);
+    double discount = 0;
+    try {
+      discount = double.parse(discountInputCont.text);
+    } catch (e) {
+      discountInputCont.text = "0";
+    }
 
     if (discount != 0) totalPrice = totalPrice - totalPrice * discount / 100;
 
