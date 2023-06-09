@@ -42,8 +42,7 @@ class _ItemCardState extends State<ItemCard>
           _animCont.reverse();
       });
     } else if (widget.onSelected != null && widget.item.getMaxAvailableAmount() <= 0) {
-      Message.error(context)
-          .show("Sorry, but you don't have any more stocks of ${widget.item.title}.");
+      Message.error(context).show("Sorry, but you don't have any ${widget.item.title} in stock.");
     }
   }
 
