@@ -44,7 +44,7 @@ class VariableProductData extends ConstantProductData {
 
   VariableProductData.withProduct(ConstantProductData product)
       : super(
-          -1,
+          product.id,
           title: product.title,
           description: product.description,
           amount: product.amount,
@@ -60,6 +60,6 @@ class VariableProductData extends ConstantProductData {
   int get quantity => _variedAmount;
 
   set quantity(int value) {
-    if (value > 0) _variedAmount = value;
+    if (value >= 0) _variedAmount = value;
   }
 }

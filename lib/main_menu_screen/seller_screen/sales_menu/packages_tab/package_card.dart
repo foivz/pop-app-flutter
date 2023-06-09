@@ -6,6 +6,7 @@ import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:pop_app/reusable_components/message.dart';
 
 class PackageCard extends StatefulWidget {
   final int index;
@@ -73,10 +74,11 @@ class _PackageCardState extends State<PackageCard>
   void delete() {
     HapticFeedback.vibrate();
     ApiRequestManager.deletePackage(widget.packageData.id!).then((value) {
-      print('happened');
       SalesMenuScreen.of(context)!.loadTabContents();
       SalesMenuScreen.of(context)!.tabController.index = 1;
-    }).catchError((e) => print("error $e"));
+    }).catchError((e) {
+      Message.error(context).show("Connection failure. Check your internet and try again.");
+    });
   }
 
   void edit() {

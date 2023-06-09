@@ -301,8 +301,8 @@ class ApiRequestManager {
       "KorisnickoIme": await SecureStorage.getUsername(),
     };
 
-    fm.addEntries(
-        [MapEntry("Id_Proizvod[]", ids.toString()), MapEntry("Kolicina[]", amounts.toString())]);
+    fm.addEntries(ids.map((id) => MapEntry("Id_Proizvod[]", id.toString())));
+    fm.addEntries(amounts.map((q) => MapEntry("Kolicina[]", q.toString())));
 
     dynamic responseData = await _executeWithToken(await SecureStorage.getUser(), () async {
       return (await http.post(body: fm, route(Routes.racuni))).bodyBytes;
@@ -312,18 +312,19 @@ class ApiRequestManager {
   }
 
   static Future deletePackage(int packageId) async {
-    // TODO: test if it works, add delete
-    Map<String, Object> fm = {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
+    req.fields.addAll({
       "Token": _token!,
       "Id": packageId.toString(),
+      "DELETE": true.toString(),
       "KorisnickoIme": await SecureStorage.getUsername(),
-    };
-
-    dynamic responseData = await _executeWithToken(await SecureStorage.getUser(), () async {
-      http.Response response = (await http.post(body: fm, route(Routes.racuni)));
-      return response.bodyBytes;
-    }); //TODO: test if it works now
-
-    return responseData;
+    });
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
   }
 }
