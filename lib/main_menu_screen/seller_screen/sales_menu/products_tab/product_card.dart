@@ -1,7 +1,9 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/services.dart';
@@ -11,7 +13,14 @@ import 'package:pop_app/reusable_components/message.dart';
 class ProductCard extends StatefulWidget {
   final int index;
   final ConstantProductData product;
-  const ProductCard({super.key, required this.index, required this.product});
+  final GlobalKey<SalesMenuScreenState> salesMenuKey;
+  final User user;
+  const ProductCard(
+      {super.key,
+      required this.index,
+      required this.product,
+      required this.salesMenuKey,
+      required this.user});
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -51,10 +60,7 @@ class _ProductCardState extends State<ProductCard>
             ListTile(
               leading: const Icon(Icons.edit_square, color: Colors.white),
               title: const Text('Edit product', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                edit();
-                Navigator.pop(context);
-              },
+              onTap: () => edit().then((value) => Navigator.pop(context, true)),
             ),
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.white),
@@ -80,9 +86,60 @@ class _ProductCardState extends State<ProductCard>
     });
   }
 
-  void edit() {
+  Future<void> edit() async {
     HapticFeedback.selectionClick();
-    showAboutDialog(context: context);
+    GlobalKey<ProductCreationTabState> productEditTab = GlobalKey<ProductCreationTabState>();
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) {
+        return ProductCreationTab(
+          key: productEditTab,
+          salesMenuKey: widget.salesMenuKey,
+          user: widget.user,
+          product: widget.product,
+          submitButtonLabel: "Submit changes",
+          onSubmit: () {
+            formElements() => productEditTab.currentState!.formElements();
+            imageProd() => productEditTab.currentState!.productImage;
+            var form = (formElements()[StoreContentType.Product]![ProductFormElements.formKey]
+                as GlobalKey<FormState>);
+            form.currentState!.validate();
+            try {
+              ConstantProductData product = ConstantProductData(
+                widget.product.id,
+                title: formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text,
+                description:
+                    formElements()[StoreContentType.Product]![ProductFormElements.descCont].text,
+                price: double.parse(
+                    formElements()[StoreContentType.Product]![ProductFormElements.priceCont].text),
+                amount: int.parse(
+                    formElements()[StoreContentType.Product]![ProductFormElements.quantityCont]
+                        .text),
+                imageFile: imageProd(),
+              );
+              ApiRequestManager.editProduct(product).then((response) {
+                if (response.statusCode == 200) {
+                  Message.info(context).show(
+                    "Saved changes for ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
+                  );
+                  Navigator.pop(context, true);
+                } else
+                  Message.error(context).show(
+                    "Failed to submit changes for ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
+                  );
+              }).catchError((error) {
+                Message.error(context)
+                    .show("Connection failure. Check your internet and try again.");
+              });
+            } catch (e) {
+              Message.error(context).show("Not all fields are filled.");
+            }
+          },
+        );
+      },
+    );
+    return;
   }
 
   @override

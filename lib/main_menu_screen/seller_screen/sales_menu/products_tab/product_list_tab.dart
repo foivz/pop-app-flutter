@@ -3,14 +3,16 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/p
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_card.dart';
 import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 
 import 'package:pop_app/models/user.dart';
 import 'package:flutter/material.dart';
 
 class ProductsTab extends StatefulWidget {
   final User user;
+  final GlobalKey<SalesMenuScreenState>? salesMenuKey;
   final Function(int index, VariableProductData product)? wrapper;
-  const ProductsTab({super.key, required this.user, this.wrapper});
+  const ProductsTab({super.key, required this.user, this.salesMenuKey, this.wrapper});
 
   static ProductsTabState? of(BuildContext context) {
     try {
@@ -44,7 +46,12 @@ class ProductsTabState extends State<ProductsTab> {
                 products[index] = VariableProductData.withProduct(products[index]);
                 return widget.wrapper!(index, products[index] as VariableProductData);
               } else
-                return ProductCard(index: index, product: products[index]);
+                return ProductCard(
+                  index: index,
+                  product: products[index],
+                  salesMenuKey: widget.salesMenuKey!,
+                  user: widget.user,
+                );
             },
           );
         } else

@@ -8,9 +8,11 @@ import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
+import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'dart:io';
 
 enum StoreContentType { Product, Package }
@@ -34,7 +36,17 @@ class _FormContent {
 class ProductCreationTab extends StatefulWidget {
   final GlobalKey<SalesMenuScreenState> salesMenuKey;
   final User user;
-  const ProductCreationTab({super.key, required this.salesMenuKey, required this.user});
+  final ConstantProductData? product;
+  final String? submitButtonLabel;
+  final void Function()? onSubmit;
+  const ProductCreationTab({
+    super.key,
+    required this.salesMenuKey,
+    required this.user,
+    this.product,
+    this.submitButtonLabel,
+    this.onSubmit,
+  });
 
   static ProductCreationTabState? of(BuildContext context) {
     try {
@@ -68,12 +80,51 @@ class ProductCreationTabState extends State<ProductCreationTab>
     ProductFormElements.quantityCont: TextEditingController(),
   };
 
-  File? _imageProd, _imagePack;
+  File? productImage;
 
   Map<StoreContentType, Map<ProductFormElements, dynamic>> formElements() {
     return {
       StoreContentType.Product: _product,
     };
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.product != null) {
+      (_product[ProductFormElements.nameCont] as TextEditingController).text =
+          widget.product!.title;
+      (_product[ProductFormElements.descCont] as TextEditingController).text =
+          widget.product!.description;
+      (_product[ProductFormElements.priceCont] as TextEditingController).text =
+          widget.product!.price.toString();
+      (_product[ProductFormElements.quantityCont] as TextEditingController).text =
+          widget.product!.amount.toString();
+
+      loadImage();
+    }
+  }
+
+  @override
+  void dispose() async {
+    deleteImage();
+    super.dispose();
+  }
+
+  Future deleteImage() async {
+    final Directory temp = await getTemporaryDirectory();
+    try {
+      return await File("${temp.path}/productImageNet.png").delete();
+    } catch (e) {/**/}
+  }
+
+  void loadImage() async {
+    http.Response response = await http.get(Uri.parse(widget.product!.imagePath!));
+    final Directory temp = await getTemporaryDirectory();
+    File file = await File("${temp.path}/productImageNet.png").create()
+      ..writeAsBytesSync(response.bodyBytes);
+    productImage = file;
+    setState(() {});
   }
 
   @override
@@ -119,40 +170,45 @@ class ProductCreationTabState extends State<ProductCreationTab>
       _buildImageInput(),
       const SizedBox(height: MyConstants.formInputSpacer),
       FormSubmitButton(
-        buttonText: "Add to store",
-        onPressed: () {
-          var form = (formElements()[StoreContentType.Product]![ProductFormElements.formKey]
-              as GlobalKey<FormState>);
-          form.currentState!.validate();
-          try {
-            ConstantProductData product = ConstantProductData(
-              -1,
-              title: formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text,
-              description:
-                  formElements()[StoreContentType.Product]![ProductFormElements.descCont].text,
-              price: double.parse(
-                  formElements()[StoreContentType.Product]![ProductFormElements.priceCont].text),
-              amount: int.parse(
-                  formElements()[StoreContentType.Product]![ProductFormElements.quantityCont].text),
-              imageFile: _imageProd,
-            );
-            ApiRequestManager.addProductToStore(product).then((response) {
-              if (response.statusCode == 200) {
-                Message.info(context).show(
-                  "Added ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
+        buttonText: widget.submitButtonLabel ?? "Add to store",
+        onPressed: widget.onSubmit ??
+            () {
+              var form = (formElements()[StoreContentType.Product]![ProductFormElements.formKey]
+                  as GlobalKey<FormState>);
+              form.currentState!.validate();
+              try {
+                ConstantProductData product = ConstantProductData(
+                  -1,
+                  title:
+                      formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text,
+                  description:
+                      formElements()[StoreContentType.Product]![ProductFormElements.descCont].text,
+                  price: double.parse(
+                      formElements()[StoreContentType.Product]![ProductFormElements.priceCont]
+                          .text),
+                  amount: int.parse(
+                      formElements()[StoreContentType.Product]![ProductFormElements.quantityCont]
+                          .text),
+                  imageFile: productImage,
                 );
-                Navigator.pop(context, true);
-              } else
-                Message.error(context).show(
-                  "Failed to add ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
-                );
-            }).catchError((error) {
-              Message.error(context).show("Connection failure. Check your internet and try again.");
-            });
-          } catch (e) {
-            Message.error(context).show("Not all fields are filled.");
-          }
-        },
+                ApiRequestManager.addProductToStore(product).then((response) {
+                  if (response.statusCode == 200) {
+                    Message.info(context).show(
+                      "Added ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
+                    );
+                    Navigator.pop(context, true);
+                  } else
+                    Message.error(context).show(
+                      "Failed to add ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
+                    );
+                }).catchError((error) {
+                  Message.error(context)
+                      .show("Connection failure. Check your internet and try again.");
+                });
+              } catch (e) {
+                Message.error(context).show("Not all fields are filled.");
+              }
+            },
       ),
     ];
   }
@@ -188,7 +244,7 @@ class ProductCreationTabState extends State<ProductCreationTab>
       maxHeight: MyConstants.textFieldWidth,
       maxWidth: MyConstants.textFieldWidth,
     );
-    if (pickedFile != null) setState(() => _imageProd = File(pickedFile.path));
+    if (pickedFile != null) setState(() => productImage = File(pickedFile.path));
   }
 
   Future<void> _getFromGallery() async {
@@ -197,11 +253,11 @@ class ProductCreationTabState extends State<ProductCreationTab>
       maxHeight: MyConstants.textFieldWidth,
       maxWidth: MyConstants.textFieldWidth,
     );
-    if (pickedFile != null) setState(() => _imageProd = File(pickedFile.path));
+    if (pickedFile != null) setState(() => productImage = File(pickedFile.path));
   }
 
   Widget _buildImageInput() {
-    if ((_imageProd) != null) {
+    if ((productImage) != null) {
       return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -210,7 +266,7 @@ class ProductCreationTabState extends State<ProductCreationTab>
         child: InkWell(
           onTap: () => _showImagePicker(),
           child: Image.file(
-            (_imageProd)!,
+            (productImage)!,
             width: MyConstants.textFieldWidth,
             height: MyConstants.textFieldWidth,
             fit: BoxFit.cover,
@@ -263,10 +319,10 @@ class ProductCreationTabState extends State<ProductCreationTab>
             ListTile(
               leading: const Icon(Icons.cancel, color: Colors.white),
               title: const Text('Clear photo', style: TextStyle(color: Colors.white)),
-              enabled: (_imageProd) != null,
-              tileColor: (_imageProd) == null ? Colors.black.withOpacity(0.4) : null,
+              enabled: (productImage) != null,
+              tileColor: (productImage) == null ? Colors.black.withOpacity(0.4) : null,
               onTap: () {
-                setState(() => _imageProd = null);
+                setState(() => productImage = null);
                 Navigator.pop(context);
               },
             ),

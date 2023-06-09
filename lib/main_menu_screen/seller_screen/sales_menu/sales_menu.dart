@@ -38,11 +38,11 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
     super.dispose();
   }
 
+  GlobalKey<SalesMenuScreenState> thisMenuKey = GlobalKey<SalesMenuScreenState>();
   @override
   Widget build(BuildContext context) {
-    GlobalKey<SalesMenuScreenState> key = GlobalKey<SalesMenuScreenState>();
     return Scaffold(
-      key: key,
+      key: thisMenuKey,
       appBar: AppBar(title: const Text("Entrepreneurial Venture"), actions: [
         IconButton(
           onPressed: () {
@@ -55,8 +55,8 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
                 builder: (context) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child:
-                        Scaffold(body: StoreContentCreation(salesMenuKey: key, user: widget.user)),
+                    child: Scaffold(
+                        body: StoreContentCreation(salesMenuKey: thisMenuKey, user: widget.user)),
                   );
                 },
               ) is bool) setState(() {});
@@ -77,7 +77,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
   void loadTabContents() {
     setState(() {
       tabContents = [
-        ProductsTab(user: widget.user),
+        ProductsTab(user: widget.user, salesMenuKey: thisMenuKey),
         const PackagesTab(),
       ];
     });

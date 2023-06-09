@@ -353,18 +353,6 @@ class ApiRequestManager {
     }
   }
 
-  /*
-   "Edit": Edit: Boolean,
-   "Token": Token: String,
-   "Id": Id: Int,
-   "Naziv": Naziv: String,
-   "Opis": Opis: String,
-   "Cijena": Cijena: String?,
-   "Kolicina": Kolicina: Int,
-   "Slika": Slika: String,
-   "KorisnickoIme": KorisnickoIme: String
-  */
-
   static Future editProduct(ConstantProductData product) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
     req.fields.addAll({
@@ -385,8 +373,7 @@ class ApiRequestManager {
           await product.imageFile!.readAsBytes(),
         ),
       );
-    else
-      req.fields.addAll({"Slika": product.imagePath ?? ""});
+    else if (product.imagePath != null) req.fields.addAll({"Slika": product.imagePath!});
     http.StreamedResponse responseData;
     try {
       responseData = await req.send();
