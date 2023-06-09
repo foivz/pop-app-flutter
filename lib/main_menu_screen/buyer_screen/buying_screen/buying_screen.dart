@@ -9,36 +9,37 @@ class BuyingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Commit purchase")),
-        body: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: Text(
-                      "Make sure the seller is ready to sell the product!",
-                      style: Theme.of(context).textTheme.headlineMedium,
-                      textAlign: TextAlign.center,
-                    ),
+      appBar: AppBar(title: const Text("Commit purchase")),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Text(
+                    "Make sure the seller is ready to sell the product!",
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: MyConstants.formInputSpacer * 4),
-                  FormSubmitButton(
-                    buttonText: 'Scan the QR Code',
-                    color: MyConstants.accentColor2,
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const QRScannerScreen(),
-                      ));
-                    },
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: MyConstants.formInputSpacer * 4),
+                FormSubmitButton(
+                  buttonText: 'Scan the QR Code',
+                  color: MyConstants.accentColor2,
+                  onPressed: () async {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) => const QRScannerScreen()))
+                        .then((value) => value is bool ? null : Navigator.pop(context));
+                  },
+                ),
+              ],
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

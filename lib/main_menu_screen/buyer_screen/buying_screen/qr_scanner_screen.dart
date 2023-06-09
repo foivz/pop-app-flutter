@@ -38,15 +38,16 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       invoice = await ApiRequestManager.finalizeInvoice(readCode);
       if (context.mounted) {
         if (invoice != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => InvoiceDetailsScreen(invoice!)),
-          );
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => InvoiceDetailsScreen(invoice!)),
+              result: true);
         } else {
           Message.error(context).show("Something went wrong, try again.");
         }
       }
     } on FormatException {
       Message.error(context).show("You cannot proceed with this invoice.");
+      Navigator.pop(context, false);
     } catch (e) {
       Message.error(context).show(e.toString());
     }
@@ -67,20 +68,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
           ),
         ),
         padding: const EdgeInsets.all(16.0),
-        child: FittedBox(
-          fit: BoxFit.contain,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              if (codeScanned)
-                const CircularProgressIndicator()
-              else
-                const Text(
-                  "Scan a seller's QR code",
-                  style: TextStyle(color: Colors.white),
-                ),
-            ],
-          ),
+        child: Text(
+          !codeScanned ? "Scan a seller's QR code" : "Processing scanned code...",
+          style: TextStyle(color: !codeScanned ? Colors.white : MyConstants.accentColor),
         ),
       ),
     );
@@ -98,11 +88,12 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
-          borderColor: Colors.red,
-          borderRadius: 10,
-          borderLength: 30,
-          borderWidth: 10,
-          cutOutSize: scanArea),
+        borderColor: Colors.red,
+        borderRadius: 10,
+        borderLength: 30,
+        borderWidth: 10,
+        cutOutSize: scanArea,
+      ),
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
   }
