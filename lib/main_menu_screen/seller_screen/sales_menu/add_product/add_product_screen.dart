@@ -141,7 +141,8 @@ class _CreateStoreContentState extends State<CreateStoreContent>
               as GlobalKey<FormState>);
           form.currentState!.validate();
           try {
-            ProductData product = ProductData(
+            ConstantProductData product = ConstantProductData(
+              -1,
               title: formElements()[StoreContentType.Product]![_FormElements.nameCont].text,
               description: formElements()[StoreContentType.Product]![_FormElements.descCont].text,
               price: double.parse(

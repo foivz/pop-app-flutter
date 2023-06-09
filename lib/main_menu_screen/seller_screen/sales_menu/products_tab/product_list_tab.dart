@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 
 class ProductsTab extends StatefulWidget {
   final User user;
-  final Function(int index, ProductData product)? wrapper;
+  final Function(int index, VariableProductData product)? wrapper;
   const ProductsTab({super.key, required this.user, this.wrapper});
 
   static ProductsTabState? of(BuildContext context) {
@@ -25,7 +25,7 @@ class ProductsTab extends StatefulWidget {
 }
 
 class ProductsTabState extends State<ProductsTab> {
-  List<ProductData> products = List.empty(growable: true);
+  List<ConstantProductData> products = List.empty(growable: true);
   void reload() => setState(() {});
   @override
   Widget build(BuildContext context) {
@@ -40,9 +40,10 @@ class ProductsTabState extends State<ProductsTab> {
             separatorBuilder: (_, __) => const Divider(indent: 3, endIndent: 3, thickness: 0),
             padding: const EdgeInsets.all(5),
             itemBuilder: (context, index) {
-              if (widget.wrapper != null)
-                return widget.wrapper!(index, products[index]);
-              else
+              if (widget.wrapper != null) {
+                products[index] = VariableProductData.withProduct(products[index]);
+                return widget.wrapper!(index, products[index] as VariableProductData);
+              } else
                 return ProductCard(index: index, product: products[index]);
             },
           );

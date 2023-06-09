@@ -2,13 +2,11 @@
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_card.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
 import 'package:pop_app/api_requests.dart';
-import 'package:pop_app/models/user.dart';
 
 import 'package:flutter/material.dart';
 
 class PackagesTab extends StatelessWidget {
-  final User user;
-  const PackagesTab({super.key, required this.user});
+  const PackagesTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +30,7 @@ class PackagesTab extends StatelessWidget {
         } else
           return const Center(child: CircularProgressIndicator());
       },
-      future: ApiRequestManager.getAllPackages(user),
+      future: ApiRequestManager.getAllPackages(),
     );
   }
 }

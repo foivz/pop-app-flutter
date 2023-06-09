@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class ProductCard extends StatefulWidget {
   final int index;
-  final ProductData product;
+  final ConstantProductData product;
   const ProductCard({super.key, required this.index, required this.product});
 
   @override

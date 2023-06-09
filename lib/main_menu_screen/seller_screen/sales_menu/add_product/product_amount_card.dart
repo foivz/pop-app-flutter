@@ -1,19 +1,28 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
 
 class ProductCounterCard extends StatefulWidget {
   final int index;
-  final ProductData product;
-  const ProductCounterCard({super.key, required this.index, required this.product});
+  final GlobalKey<ProductsTabState> productsTabKey;
+  const ProductCounterCard({super.key, required this.index, required this.productsTabKey});
 
   @override
   State<ProductCounterCard> createState() => _ProductCounterCardState();
 }
 
 class _ProductCounterCardState extends State<ProductCounterCard> {
+  late VariableProductData product;
+
+  @override
+  void initState() {
+    super.initState();
+    product = widget.productsTabKey.currentState!.products[widget.index] as VariableProductData;
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -38,13 +47,12 @@ class _ProductCounterCardState extends State<ProductCounterCard> {
 
   Image _image(double width) {
     return Image.network(
-      widget.product.imagePath ?? "",
+      product.imagePath ?? "",
       height: 128,
       width: width * 0.2,
     );
   }
 
-  int prodQuantity = 0;
   Card _card(double width) {
     return Card(
       color: Colors.white,
@@ -67,10 +75,11 @@ class _ProductCounterCardState extends State<ProductCounterCard> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.remove_circle),
-                        onPressed: () => setState(() => prodQuantity >= 1 ? prodQuantity-- : null),
+                        onPressed: () =>
+                            setState(() => product.quantity >= 1 ? product.quantity-- : null),
                       ),
                       Text(
-                        prodQuantity.toString(),
+                        product.quantity.toString(),
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge
@@ -78,7 +87,7 @@ class _ProductCounterCardState extends State<ProductCounterCard> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.add_circle),
-                        onPressed: () => setState(() => prodQuantity++),
+                        onPressed: () => setState(() => product.quantity++),
                       ),
                     ],
                   ),
@@ -100,10 +109,10 @@ class _ProductCounterCardState extends State<ProductCounterCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.product.title,
+            product.title,
             style: Theme.of(context).textTheme.titleMedium!.copyWith(height: 1.75),
           ),
-          Text(widget.product.description, overflow: TextOverflow.fade),
+          Text(product.description, overflow: TextOverflow.fade),
         ],
       ),
     );
@@ -111,7 +120,7 @@ class _ProductCounterCardState extends State<ProductCounterCard> {
 
   Text _price() {
     return Text(
-      widget.product.price.toString(),
+      product.price.toString(),
       style: const TextStyle(color: MyConstants.accentColor),
     );
   }

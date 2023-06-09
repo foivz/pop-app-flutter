@@ -10,7 +10,7 @@ class PackageData implements PackageDataApiInterface {
   final File? imageFile;
   final double discount;
   final double? priceAfterDiscount;
-  final List<ProductData> products;
+  final List<ConstantProductData> products;
 
   /// Calculates total price of products included.
   get price => _price();
@@ -39,7 +39,7 @@ class PackageData implements PackageDataApiInterface {
 
   int _itemCount() {
     int sum = 0;
-    for (ProductData product in products) sum += product.amount;
+    for (ConstantProductData product in products) sum += product.amount;
     return sum;
   }
 }
@@ -56,13 +56,14 @@ abstract class PackageDataApiInterface {
     );
   }
 
-  static List<ProductData> productsFromApi(List? productList) {
-    List<ProductData> products = List.empty(growable: true);
+  static List<ConstantProductData> productsFromApi(List? productList) {
+    List<ConstantProductData> products = List.empty(growable: true);
     if (productList == null || productList.isEmpty) {
       return products;
     }
     for (var product in productList) {
-      products.add(ProductData(
+      products.add(ConstantProductData(
+        int.parse(product["Id"]),
         title: product["Naziv"],
         description: product["Opis"],
         price: double.parse(product["Cijena"]),
