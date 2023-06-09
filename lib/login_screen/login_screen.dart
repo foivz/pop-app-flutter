@@ -1,4 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
+import 'dart:io';
+
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/role_selection/role_selection_screen.dart';
@@ -34,11 +36,21 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
     super.initState();
     SecureStorage.getUsername().then((val) => setState(() => usernameCont.text = val));
     SecureStorage.getPassword().then((val) => setState(() => passwordCont.text = val));
+    checkInternetConnection();
   }
 
   String message = "";
   void error(bool showError, {String errorMessage = "Username or password not valid."}) {
     showError ? setState(() => message = errorMessage) : message = "";
+  }
+
+  void checkInternetConnection() async {
+    try {
+      await InternetAddress.lookup('example.com');
+    } on SocketException catch (_) {
+      Message.error(context).show("You don't seem to have an internet connection!\n"
+          "Make sure you're connected before you use this application!");
+    }
   }
 
   @override
