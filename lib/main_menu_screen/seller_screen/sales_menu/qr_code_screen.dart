@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pop_app/main_menu_screen/main_menu.dart';
-import 'package:pop_app/models/user.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QRCodeScreen extends StatelessWidget {
@@ -11,18 +9,11 @@ class QRCodeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        await Navigator.maybePop(context);
-        User user = await User.loggedIn;
+        Navigator.pop(context);
         if (context.mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  MainMenuScreen(role: UserRoleType.seller, username: user.username),
-            ),
-          );
+          Navigator.popUntil(context, ModalRoute.withName("main_menu"));
         }
-        return false;
+        return true;
       },
       child: Scaffold(
         appBar: AppBar(title: const Text("Finalize invoice")),
