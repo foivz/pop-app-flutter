@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pop_app/main_menu_screen/invoices_screen/invoices_screen.dart';
 import 'package:pop_app/main_menu_screen/wallet_screen/wallet_screen.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
@@ -25,7 +26,9 @@ mixin MenuScreenMixin<T extends StatefulWidget> on State<T> {
             }));
           });
         }),
-        buildButton(context, 'assets/icons/view-icon.png', 'Invoices', () {}),
+        buildButton(context, 'assets/icons/view-icon.png', 'Invoices', () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const InvoicesScreen()));
+        }),
         buildButton(context, 'assets/icons/wallet-icon.png', 'Wallet', () {
           Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WalletScreen()));
         }),
