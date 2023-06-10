@@ -2,20 +2,21 @@
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
 import 'package:pop_app/models/package_data.dart';
-import 'package:pop_app/models/product_data.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../../../models/item.dart';
 import '../items_tab.dart';
 
 class ProductsTab extends ItemsTab {
-  final Function()? onAmountStateChange;
   final int startAmount;
+
+  final List<Item> products = List.empty(growable: true);
+
   ProductsTab({
     super.key,
     required super.user,
     super.onSelectionStateChange,
-    this.onAmountStateChange,
     this.startAmount = 1,
   });
 
@@ -24,7 +25,8 @@ class ProductsTab extends ItemsTab {
 }
 
 class ProductsTabState extends State<ProductsTab> {
-  List<ProductData> products = List.empty(growable: true);
+  List<Item> get products => widget.products;
+
   @override
   Widget build(BuildContext context) {
     GlobalKey<ProductsTabState> productsTabStateKey = GlobalKey<ProductsTabState>();
@@ -44,9 +46,14 @@ class ProductsTabState extends State<ProductsTab> {
               ),
             );
           }
-          products = PackageDataApiInterface.productsFromApi(snapshot.data!.last["DATA"]);
+
+          widget.products.clear();
+          widget.products.addAll(PackageDataApiInterface.productsFromApi(
+            snapshot.data!.last["DATA"],
+          ));
+
           return ListView.separated(
-            itemCount: products.length,
+            itemCount: widget.products.length,
             shrinkWrap: true,
             clipBehavior: Clip.hardEdge,
             separatorBuilder: (context, index) => const Divider(
@@ -58,9 +65,9 @@ class ProductsTabState extends State<ProductsTab> {
             itemBuilder: (context, index) {
               return ItemCard(
                 index: index,
-                item: products[index],
+                item: widget.products[index],
                 onSelected: widget.handleItemSelection,
-                onAmountChange: widget.onAmountStateChange,
+                onSelectedAmountChange: null,
                 startAmount: widget.startAmount,
               );
             },

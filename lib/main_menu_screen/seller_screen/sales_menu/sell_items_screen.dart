@@ -39,9 +39,8 @@ class _SellItemsScreenState extends State<SellItemsScreen> {
           return ItemCard(
             index: index,
             item: currentItem,
-            onAmountChange: () {
-              // Refreshes the state (and therefore also the bottom nav bar).
-              setState(() {});
+            onSelectedAmountChange: (newAmount) {
+              widget.selectedItems[index].selectedForSelling = newAmount;
             },
           );
         },

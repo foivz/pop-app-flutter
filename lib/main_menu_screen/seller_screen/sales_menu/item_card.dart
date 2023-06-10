@@ -19,14 +19,14 @@ class ItemCard extends StatefulWidget {
 
   /// Only works if 'onAmountChange' callback is set.
   final int amountSelected = 1;
-  final Function()? onAmountChange;
+  final Function(int newAmount)? onSelectedAmountChange;
   final int startAmount;
   const ItemCard({
     super.key,
     required this.index,
     required this.item,
     this.onSelected,
-    this.onAmountChange,
+    this.onSelectedAmountChange,
     this.startAmount = 1,
   });
 
@@ -274,7 +274,7 @@ class _ItemCardState extends State<ItemCard>
       children: [
         InkWell(
           onTap: select,
-          onLongPress: widget.onAmountChange == null
+          onLongPress: widget.onSelectedAmountChange == null
               ? () => showOptions(context, _getItemTypeOfCurrentItem(), widget.item.id)
               : null,
           splashColor: MyConstants.red,
@@ -311,15 +311,12 @@ class _ItemCardState extends State<ItemCard>
                       ],
                     ),
                   ),
-                  if (widget.onAmountChange != null)
+                  if (widget.onSelectedAmountChange != null)
                     AmountSelector(
-                      onAmountChange: (newAmount) {
-                        widget.item.selectedForPackaging = newAmount;
-                        widget.onAmountChange!.call();
-                      },
+                      onAmountChange: widget.onSelectedAmountChange!,
                       startAmount: widget.startAmount,
                     ),
-                  if (widget.onAmountChange == null)
+                  if (widget.onSelectedAmountChange == null)
                     Padding(
                       padding: const EdgeInsets.only(right: 12.0),
                       child: Text(
@@ -388,18 +385,15 @@ class _AmountSelectorState extends State<AmountSelector> {
   }
 
   void changeAmount(bool increment) {
-    // TODO: onAmountChange should probably completely override this function because otherwise you cna't reduce the product count back to 0 when adding products to package
-    if (increment || selectedAmount != 1) {
+    setState(() {
+      increment ? selectedAmount++ : selectedAmount--;
+    });
+    try {
+      widget.onAmountChange(selectedAmount);
+    } on Exception {
       setState(() {
-        increment ? selectedAmount++ : selectedAmount--;
+        increment ? selectedAmount-- : selectedAmount++;
       });
-      try {
-        widget.onAmountChange(selectedAmount);
-      } on Exception {
-        setState(() {
-          selectedAmount--;
-        });
-      }
     }
   }
 

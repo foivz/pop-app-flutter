@@ -20,7 +20,7 @@ class _ProductCounterCardState extends State<ProductCounterCard> {
   @override
   void initState() {
     super.initState();
-    product = widget.productsTabKey.currentState!.products[widget.index];
+    product = widget.productsTabKey.currentState!.products[widget.index] as ProductData;
   }
 
   @override

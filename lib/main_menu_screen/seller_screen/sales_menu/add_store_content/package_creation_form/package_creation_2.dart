@@ -2,7 +2,8 @@
 
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
+import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
@@ -11,11 +12,13 @@ import 'package:pop_app/reusable_components/message.dart';
 
 class PackageCreation2 extends StatefulWidget {
   final GlobalKey productListKey;
+  final List<Item> availableItems;
   final User user;
   const PackageCreation2({
     super.key,
     required this.user,
     required this.productListKey,
+    required this.availableItems,
   });
 
   @override
@@ -25,16 +28,27 @@ class PackageCreation2 extends StatefulWidget {
 class _PackageCreation2State extends State<PackageCreation2> {
   @override
   Widget build(BuildContext context) {
-    GlobalKey<ProductsTabState> productsTabKey = GlobalKey<ProductsTabState>();
     return Scaffold(
-      body: ProductsTab(
-        key: productsTabKey,
-        user: widget.user,
-        onAmountStateChange: () {
-          // TODO: declare callback
-          print("amount changed");
+      body: ListView.separated(
+        itemCount: widget.availableItems.length,
+        shrinkWrap: true,
+        clipBehavior: Clip.none,
+        separatorBuilder: (context, index) => const Divider(
+          indent: 3,
+          endIndent: 3,
+          thickness: 0, // linked to vertical symmetric padding above
+        ),
+        padding: const EdgeInsets.all(5),
+        itemBuilder: (context, index) {
+          Item currentItem = widget.availableItems[index];
+          return ItemCard(
+            index: index,
+            item: currentItem,
+            onSelectedAmountChange: (newAmount) {
+              widget.availableItems[index].selectedForPackaging = newAmount;
+            },
+          );
         },
-        startAmount: 0,
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(top: 15),
@@ -55,16 +69,16 @@ class _PackageCreation2State extends State<PackageCreation2> {
                 onPressed: () async {
                   List<int> ids = List.empty(growable: true);
                   List<int> amounts = List.empty(growable: true);
-                  for (var product
-                      in (productsTabKey.currentWidget! as ProductsTab).selectedItems.where((p) {
-                    return p.selectedForPackaging > 0;
-                  })) {
-                    if (product.selectedForPackaging > 0) {
-                      ids.add(int.parse(product.id));
-                      // TODO: verify that it loads the right amount
-                      amounts.add(product.selectedForPackaging);
-                    }
+
+                  var selectedItems =
+                      widget.availableItems.where((p) => p.selectedForPackaging > 0);
+
+                  for (var product in selectedItems) {
+                    ids.add(int.parse(product.id));
+                    // TODO: verify that it loads the right amount
+                    amounts.add(product.selectedForPackaging);
                   }
+
                   int packageId = int.parse(
                       ((await ApiRequestManager.getAllPackages()).last["DATA"] as List).last["Id"]);
                   bool success =

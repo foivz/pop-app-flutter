@@ -116,6 +116,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: Scaffold(
                         body: StoreContentCreation(
+                          availableItems: productsTab.products,
                           user: widget.user,
                           selectedIndex: tabController.index,
                         ),
