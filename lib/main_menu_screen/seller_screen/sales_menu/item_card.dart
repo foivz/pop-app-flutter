@@ -21,7 +21,7 @@ class ItemCard extends StatefulWidget {
   /// Only works if 'onAmountChange' callback is set.
   final int amountSelected = 1;
   final Function()? onAmountChange;
-  final bool withCounter;
+  final int startAmount;
   const ItemCard({
     super.key,
     required this.index,
@@ -29,7 +29,7 @@ class ItemCard extends StatefulWidget {
     required this.salesMenuKey,
     this.onSelected,
     this.onAmountChange,
-    this.withCounter = false,
+    this.startAmount = 1,
   });
 
   @override
@@ -318,17 +318,23 @@ class _ItemCardState extends State<ItemCard>
                     ),
                   ),
                   if (widget.onAmountChange != null)
-                    AmountSelector((newAmount) {
-                      widget.item.selectedAmount = newAmount;
-                      widget.onAmountChange!.call();
-                    }),
+                    AmountSelector(
+                      onAmountChange: (newAmount) {
+                        widget.item.selectedAmount = newAmount;
+                        widget.onAmountChange!.call();
+                      },
+                      startAmount: widget.startAmount,
+                    ),
                   if (widget.onAmountChange == null)
                     Padding(
                       padding: const EdgeInsets.only(right: 12.0),
                       child: Text(
                         "💸\n${widget.item.getPrice}",
                         style: const TextStyle(
-                            color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold),
+                          color: Colors.green,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                 ],
@@ -336,7 +342,7 @@ class _ItemCardState extends State<ItemCard>
             ),
           ),
         ),
-        if (widget.onSelected == null)
+        if (widget.onSelected != null)
           Align(
             alignment: Alignment.topRight,
             child: Padding(
@@ -372,16 +378,23 @@ class _ItemCardState extends State<ItemCard>
 
 class AmountSelector extends StatefulWidget {
   final Function(int newAmount) onAmountChange;
-  const AmountSelector(this.onAmountChange, {super.key});
+  final int startAmount;
+  const AmountSelector({super.key, required this.onAmountChange, this.startAmount = 1});
 
   @override
   State<AmountSelector> createState() => _AmountSelectorState();
 }
 
 class _AmountSelectorState extends State<AmountSelector> {
-  int selectedAmount = 1;
+  late int selectedAmount;
+  @override
+  void initState() {
+    super.initState();
+    selectedAmount = widget.startAmount;
+  }
 
   void changeAmount(bool increment) {
+    // TODO: onAmountChange should probably completely override this function because otherwise you cna't reduce the product count back to 0 when adding products to package
     if (increment || selectedAmount != 1) {
       setState(() {
         increment ? selectedAmount++ : selectedAmount--;

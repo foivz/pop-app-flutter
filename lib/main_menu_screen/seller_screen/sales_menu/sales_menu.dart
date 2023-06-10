@@ -51,7 +51,6 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
       user: widget.user,
       salesMenuKey: widget.salesMenuKey,
       onSelectionStateChange: onSelectionStateChange,
-      withCounter: true,
     );
     packagesTab = PackagesTab(
       user: widget.user,
@@ -76,63 +75,66 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
   Widget build(BuildContext context) {
     return Scaffold(
       key: thisMenuKey,
-      appBar: AppBar(title: const Text("Entrepreneurial Venture"), actions: [
-        IconButton(
-          onPressed: () {
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              showModalBottomSheet(
-                showDragHandle: true,
-                isScrollControlled: true,
-                backgroundColor: Colors.white,
-                context: context,
-                builder: (context) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Scaffold(
-                      body: StoreContentCreation(
-                        salesMenuKey: thisMenuKey,
-                        user: widget.user,
-                        selectedIndex: tabController.index,
-                      ),
-                    ),
-                  );
-                },
-              ).then((value) {
-                if (value is bool) loadTabContents();
-              });
-            });
-          },
-          icon: const Icon(Icons.add),
-        ),
-        RotationTransition(
-          turns: Tween(begin: 0.0, end: 1.0).animate(_animCont),
-          child: ScaleTransition(
-            scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
-            child: IconButton(
-              key: _sellIconKey,
-              style: ButtonStyle(iconSize: MaterialStateProperty.resolveWith((states) => 40)),
-              onPressed: () {
-                List<Item> selectedItems = List.from(productsTab.selectedItems);
-                selectedItems.addAll(packagesTab.selectedItems);
+      appBar: AppBar(
+        title: const Text("In stock"),
+        actions: [
+          RotationTransition(
+            turns: Tween(begin: 0.0, end: 1.0).animate(_animCont),
+            child: ScaleTransition(
+              scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
+              child: IconButton(
+                key: _sellIconKey,
+                style: ButtonStyle(iconSize: MaterialStateProperty.resolveWith((states) => 24)),
+                onPressed: () {
+                  List<Item> selectedItems = List.from(productsTab.selectedItems);
+                  selectedItems.addAll(packagesTab.selectedItems);
 
-                if (selectedItems.isNotEmpty) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SellItemsScreen(selectedItems),
-                    ),
-                  );
-                } else {
-                  Message.error(context).show(
-                    "You can't sell products until you select them. Select products to sell them.",
-                  );
-                }
-              },
-              icon: const Icon(Icons.attach_money),
+                  if (selectedItems.isNotEmpty) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SellItemsScreen(selectedItems),
+                      ),
+                    );
+                  } else {
+                    Message.error(context).show(
+                      "You can't sell products until you select them. Select products to sell them.",
+                    );
+                  }
+                },
+                icon: const Icon(Icons.attach_money),
+              ),
             ),
           ),
-        )
-      ]),
+          IconButton(
+            onPressed: () {
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                showModalBottomSheet(
+                  showDragHandle: true,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.white,
+                  context: context,
+                  builder: (context) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Scaffold(
+                        body: StoreContentCreation(
+                          salesMenuKey: thisMenuKey,
+                          user: widget.user,
+                          selectedIndex: tabController.index,
+                        ),
+                      ),
+                    );
+                  },
+                ).then((value) {
+                  if (value is bool) loadTabContents();
+                });
+              });
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
       body: tabs(),
     );
   }

@@ -34,7 +34,11 @@ class _PackageCreation2State extends State<PackageCreation2> {
         key: productsTabKey,
         user: widget.user,
         salesMenuKey: widget.salesMenuKey,
-        withCounter: true,
+        onAmountStateChange: () {
+          // TODO: declare callback
+          print("amount changed");
+        },
+        startAmount: 0,
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(top: 15),
@@ -61,7 +65,8 @@ class _PackageCreation2State extends State<PackageCreation2> {
                   })) {
                     if (product.selectedAmount > 0) {
                       ids.add(int.parse(product.id));
-                      amounts.add(product.selectedAmount);
+                      amounts.add(
+                          product.selectedAmount); // TODO: verify that it load sthe right amount
                     }
                   }
                   int packageId = int.parse(
