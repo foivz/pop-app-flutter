@@ -4,28 +4,33 @@ import 'package:pop_app/models/product_data.dart';
 
 class PackageData extends Item implements PackageDataApiInterface {
   final double discount;
-  final double priceAfterDiscount;
+  double priceAfterDiscount = 0;
+
   final List<ProductData> products;
 
   get count => products.length;
   get itemCount => _itemCount();
 
   PackageData({
-    id,
-    required title,
-    required description,
-    required image,
+    super.id,
+    required super.title,
+    required super.description,
     required this.products,
     required this.discount,
-    required this.priceAfterDiscount,
-  }) : super(
-          id: id,
-          title: title,
-          description: description,
-          image: image,
-          price: 0,
-        ) {
-    price = _price();
+    priceAfterDiscount,
+    super.imagePath,
+    super.imageFile,
+    super.price = 0,
+  }) {
+    super.price = _price();
+
+    // In case an API returns price after discount, use that (backend's) number.
+    // Otherwise, calculate it here.
+    if (priceAfterDiscount != null) {
+      this.priceAfterDiscount = priceAfterDiscount;
+    } else {
+      this.priceAfterDiscount = price - price * discount;
+    }
   }
 
   double _price() {
@@ -62,7 +67,7 @@ abstract class PackageDataApiInterface {
       discount: double.parse(dat["Popust"]),
       priceAfterDiscount: double.parse(dat["CijenaStavkeNakonPopusta"]),
       products: productsFromApi(dat["StavkePaketa"]),
-      image: dat["Slika"],
+      imagePath: dat["Slika"],
     );
   }
 
@@ -74,8 +79,7 @@ abstract class PackageDataApiInterface {
         title: product["Naziv"],
         description: product["Opis"],
         price: double.parse(product["Cijena"]),
-        currency: product["Naziv"],
-        image: product["Slika"],
+        imagePath: product["Slika"],
         amount: int.parse(product["Kolicina"]),
       ));
     }

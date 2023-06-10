@@ -1,8 +1,8 @@
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/invoice.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/package_data.dart';
+import 'package:pop_app/models/product_data.dart';
 import 'package:pop_app/secure_storage.dart';
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/models/user.dart';
@@ -323,7 +323,7 @@ class ApiRequestManager {
     return [responseData];
   }
 
-  static Future addProductToStore(ConstantProductData product) async {
+  static Future addProductToStore(ProductData product) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
     req.fields.addAll({
       "Token": _token!,
@@ -466,7 +466,7 @@ class ApiRequestManager {
     }
   }
 
-  static Future editProduct(ConstantProductData product) async {
+  static Future editProduct(ProductData product) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
     req.fields.addAll({
       "Edit": true.toString(),

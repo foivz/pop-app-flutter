@@ -1,13 +1,13 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/items_tab.dart';
+import 'package:pop_app/models/product_data.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
 
 class ProductCounterCard extends StatefulWidget {
   final int index;
-  final GlobalKey<ProductsTabState> productsTabKey;
+  final GlobalKey<ItemsTab> productsTabKey;
   const ProductCounterCard({super.key, required this.index, required this.productsTabKey});
 
   @override
@@ -15,12 +15,12 @@ class ProductCounterCard extends StatefulWidget {
 }
 
 class _ProductCounterCardState extends State<ProductCounterCard> {
-  late VariableProductData product;
+  late ProductData product;
 
   @override
   void initState() {
     super.initState();
-    product = widget.productsTabKey.currentState!.products[widget.index] as VariableProductData;
+    product = widget.productsTabKey.currentState!.selectedItems[widget.index] as ProductData;
   }
 
   @override

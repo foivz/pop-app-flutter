@@ -4,6 +4,7 @@ import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_amount_card.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
@@ -32,8 +33,7 @@ class _PackageCreation2State extends State<PackageCreation2> {
       body: ProductsTab(
         key: productsTabKey,
         user: widget.user,
-        wrapper: (index, product) =>
-            ProductCounterCard(index: index, productsTabKey: productsTabKey),
+        wrapper: (index, product) => ProductCounterCard(index: index, product: product),
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(top: 15),

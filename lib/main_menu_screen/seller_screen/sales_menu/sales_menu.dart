@@ -1,8 +1,6 @@
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/packages_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/store_content_creation.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_list_tab.dart';
 
 import 'package:flutter/material.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sell_items_screen.dart';
@@ -12,7 +10,8 @@ import 'package:pop_app/reusable_components/message.dart';
 
 class SalesMenuScreen extends StatefulWidget {
   final User user;
-  const SalesMenuScreen({super.key, required this.user});
+  final GlobalKey<SalesMenuScreenState> salesMenuKey = GlobalKey();
+  SalesMenuScreen({super.key, required this.user});
 
   static SalesMenuScreenState? of(BuildContext context) {
     try {
@@ -48,8 +47,16 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
 
   @override
   void initState() {
-    productsTab = ProductsTab(onSelectionStateChange);
-    packagesTab = PackagesTab(onSelectionStateChange);
+    productsTab = ProductsTab(
+      user: widget.user,
+      salesMenuKey: widget.salesMenuKey,
+      onSelectionStateChange: onSelectionStateChange,
+    );
+    packagesTab = PackagesTab(
+      user: widget.user,
+      salesMenuKey: widget.salesMenuKey,
+      onSelectionStateChange: onSelectionStateChange,
+    );
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     _animCont = AnimationController(vsync: this, duration: const Duration(milliseconds: 150));
@@ -134,8 +141,8 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
     setState(() => tabContents = [Container()]);
     setState(
       () => tabContents = [
-        ProductsTab(user: widget.user, salesMenuKey: thisMenuKey),
-        PackagesTab(user: widget.user, salesMenuKey: thisMenuKey),
+        productsTab,
+        packagesTab,
       ],
     );
     return true;

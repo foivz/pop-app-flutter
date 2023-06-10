@@ -55,7 +55,7 @@ class _StoreContentCreationState extends State<StoreContentCreation>
     _tabController.index = widget.selectedIndex;
     packageCreationForm = PackageCreationTab(
         salesMenuKey: widget.salesMenuKey, productListKey: _productListKey, user: widget.user);
-    productCreationForm = ProductCreationTab(salesMenuKey: widget.salesMenuKey, user: widget.user);
+    productCreationForm = ProductCreationTab(salesMenuKey: widget.salesMenuKey);
   }
 
   @override

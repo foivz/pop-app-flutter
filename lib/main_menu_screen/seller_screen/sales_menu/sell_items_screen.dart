@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/qr_code_screen.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/myconstants.dart';
@@ -10,7 +11,8 @@ import 'package:pop_app/reusable_components/message.dart';
 
 class SellItemsScreen extends StatefulWidget {
   final List<Item> selectedItems;
-  const SellItemsScreen(this.selectedItems, {super.key});
+  SellItemsScreen(this.selectedItems, {super.key});
+  final GlobalKey<SalesMenuScreenState> salesMenuKey = GlobalKey();
 
   @override
   State<SellItemsScreen> createState() => _SellItemsScreenState();
@@ -37,6 +39,7 @@ class _SellItemsScreenState extends State<SellItemsScreen> {
           return ItemCard(
             index: index,
             item: currentItem,
+            salesMenuKey: widget.salesMenuKey,
             onAmountChange: () {
               // Refreshes the state (and therefore also the bottom nav bar).
               setState(() {});

@@ -1,8 +1,8 @@
 // ignore_for_file: constant_identifier_names, curly_braces_in_flow_control_structures, unused_field
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
+import 'package:pop_app/models/product_data.dart';
 import 'package:pop_app/reusable_components/message.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/myconstants.dart';
@@ -35,7 +35,7 @@ class _FormContent {
 class ProductCreationTab extends StatefulWidget {
   final GlobalKey<SalesMenuScreenState> salesMenuKey;
 
-  final ConstantProductData? product;
+  final ProductData? product;
   final String? submitButtonLabel;
   final void Function()? onSubmit;
 
@@ -190,8 +190,7 @@ class ProductCreationTabState extends State<ProductCreationTab>
                 return;
               }
               try {
-                ConstantProductData product = ConstantProductData(
-                  -1,
+                ProductData product = ProductData(
                   title:
                       formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text,
                   description:

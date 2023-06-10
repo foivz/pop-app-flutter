@@ -26,7 +26,7 @@ class _SellerMenuState extends State<SellerMenu> with MenuScreenMixin {
         ? generateMenu(
             context: context,
             nameOfCustomOption: "Sell",
-            customOptionScreen: SalesMenuScreen(user: user))
+            customOptionScreen: SalesMenuScreen(user: user!))
         : const CircularProgressIndicator();
   }
 }

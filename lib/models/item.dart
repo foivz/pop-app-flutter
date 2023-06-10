@@ -1,9 +1,16 @@
+import 'dart:io';
+
 abstract class Item {
   String id;
   late String title;
   late String description;
-  late String image;
   late double price;
+
+  // Uploaded image path.
+  final String? imagePath;
+
+  // New image file.
+  File? imageFile;
 
   /// Amount selected for selling.
   int _selectedAmount = 1;
@@ -29,7 +36,8 @@ abstract class Item {
     this.id = "0",
     required this.title,
     required this.description,
-    required this.image,
     required this.price,
+    this.imagePath,
+    this.imageFile,
   });
 }

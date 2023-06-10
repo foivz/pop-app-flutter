@@ -10,8 +10,12 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dar
 import '../items_tab.dart';
 
 class ProductsTab extends ItemsTab {
-  final GlobalKey<SalesMenuScreenState> salesMenuKey = GlobalKey();
-  ProductsTab(onSelectionStateChange, {super.key}) : super(onSelectionStateChange);
+  ProductsTab({
+    super.key,
+    required super.user,
+    required super.salesMenuKey,
+    required super.onSelectionStateChange,
+  });
 
   @override
   State<ProductsTab> createState() => _ProductsTabState();
@@ -47,7 +51,7 @@ class _ProductsTabState extends State<ProductsTab> {
         } else
           return const Center(child: CircularProgressIndicator());
       },
-      future: ApiRequestManager.getAllProducts(SalesMenuScreen.of(context)!.widget.user!),
+      future: ApiRequestManager.getAllProducts(SalesMenuScreen.of(context)!.widget.user),
     );
   }
 }

@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_1.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/package_data.dart';
+import 'package:pop_app/models/product_data.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
@@ -77,7 +77,7 @@ class _ItemCardState extends State<ItemCard>
             Padding(
               padding: const EdgeInsets.only(top: 0.0),
               child: Text(
-               "$itemType options",
+                "$itemType options",
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
               ),
             ),
@@ -87,10 +87,10 @@ class _ItemCardState extends State<ItemCard>
               onTap: () {
                 switch (itemType) {
                   case StoreContentType.Product:
-                    editProduct(context,itemType);
+                    editProduct(context);
                     break;
                   case StoreContentType.Package:
-                    editPackage(context, itemType);
+                    editPackage(context);
                     break;
                   default:
                 }
@@ -102,10 +102,7 @@ class _ItemCardState extends State<ItemCard>
               onTap: () {
                 switch (itemType) {
                   case StoreContentType.Product:
-                    deletePackage(
-                      context,
-                      id
-                    );
+                    deletePackage(context, id);
                     break;
                   case StoreContentType.Package:
                     deleteProduct(context, id);
@@ -141,7 +138,7 @@ class _ItemCardState extends State<ItemCard>
     });
   }
 
-    Future<void> editProduct(BuildContext context, StoreContentType itemType) async {
+  Future<void> editProduct(BuildContext context) async {
     HapticFeedback.selectionClick();
     GlobalKey<ProductCreationTabState> productEditTab = GlobalKey<ProductCreationTabState>();
     await showModalBottomSheet(
@@ -163,8 +160,8 @@ class _ItemCardState extends State<ItemCard>
               return;
             }
             try {
-              ConstantProductData product = ConstantProductData(
-                widget.product.id,
+              ProductData product = ProductData(
+                id: widget.item.id,
                 title: formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text,
                 description:
                     formElements()[StoreContentType.Product]![ProductFormElements.descCont].text,
@@ -208,16 +205,16 @@ class _ItemCardState extends State<ItemCard>
     return;
   }
 
-  Future<void> editPackage(BuildContext context, StoreContentType itemType) async {
+  Future<void> editPackage(BuildContext context) async {
     HapticFeedback.selectionClick();
     GlobalKey<PackageCreation1State> packageEditTab = GlobalKey<PackageCreation1State>();
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (_) {
-        return itemType == StoreContentType.Package ? PackageCreation1(
+        return PackageCreation1(
           key: packageEditTab,
-          package: widget.item,
+          package: widget.item as PackageData,
           submitButtonLabel: "Submit changes",
           onSubmit: () {
             formElements() => packageEditTab.currentState!.formElements();
@@ -266,15 +263,14 @@ class _ItemCardState extends State<ItemCard>
               Message.error(context).show("Not all fields are filled.");
             }
           },
-        ) : 
-        // TODO productCreation
-        ;
+        );
       },
     );
     return;
   }
 
-  StoreContentType _getItemTypeOfCurrentItem() => widget.item is ProductData ? StoreContentType.Product : StoreContentType.Package;
+  StoreContentType _getItemTypeOfCurrentItem() =>
+      widget.item is ProductData ? StoreContentType.Product : StoreContentType.Package;
 
   @override
   Widget build(BuildContext context) {
@@ -299,7 +295,7 @@ class _ItemCardState extends State<ItemCard>
               padding: const EdgeInsets.all(8.0),
               child: Row(children: [
                 Image.network(
-                  widget.item.image,
+                  widget.item.imagePath!,
                   height: 128,
                   width: width * 0.2,
                 ),

@@ -1,18 +1,21 @@
 import 'package:pop_app/models/item.dart';
 
 class ProductData extends Item {
-  final String currency;
   final int amount;
 
+  // Quantity of this product in a new package that's being created.
+  int quantity = 0;
+
   ProductData({
-    id = 0,
-    required title,
-    required description,
-    required image,
-    required price,
-    required this.currency,
-    this.amount = 1,
-  }) : super(id: id, title: title, description: description, image: image, price: price);
+    super.id,
+    required super.title,
+    required super.description,
+    required this.amount,
+    this.quantity = 0,
+    super.imagePath,
+    super.imageFile,
+    super.price = 0,
+  });
 
   @override
   int getMaxAvailableAmount() => amount;

@@ -2,9 +2,9 @@
 
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_data.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
+import 'package:pop_app/models/package_data.dart';
 import 'package:pop_app/reusable_components/message.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/myconstants.dart';
