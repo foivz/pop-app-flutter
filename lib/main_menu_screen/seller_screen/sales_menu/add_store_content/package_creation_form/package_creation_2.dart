@@ -57,12 +57,12 @@ class _PackageCreation2State extends State<PackageCreation2> {
                   List<int> amounts = List.empty(growable: true);
                   for (var product
                       in (productsTabKey.currentWidget! as ProductsTab).selectedItems.where((p) {
-                    return p.selectedAmount > 0;
+                    return p.selectedForPackaging > 0;
                   })) {
-                    if (product.selectedAmount > 0) {
+                    if (product.selectedForPackaging > 0) {
                       ids.add(int.parse(product.id));
-                      amounts.add(
-                          product.selectedAmount); // TODO: verify that it load sthe right amount
+                      // TODO: verify that it loads the right amount
+                      amounts.add(product.selectedForPackaging);
                     }
                   }
                   int packageId = int.parse(

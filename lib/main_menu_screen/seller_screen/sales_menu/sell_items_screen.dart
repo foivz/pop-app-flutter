@@ -73,7 +73,7 @@ class _SellContentState extends State<SellContent> {
   String getTotalPrice() {
     double totalPrice = 0;
     for (var item in widget.selectedItems) {
-      totalPrice += item.selectedAmount * item.price;
+      totalPrice += item.selectedForSelling * item.price;
     }
 
     double discount = 0;

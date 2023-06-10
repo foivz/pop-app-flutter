@@ -315,7 +315,7 @@ class _ItemCardState extends State<ItemCard>
                   if (widget.onAmountChange != null)
                     AmountSelector(
                       onAmountChange: (newAmount) {
-                        widget.item.selectedAmount = newAmount;
+                        widget.item.selectedForPackaging = newAmount;
                         widget.onAmountChange!.call();
                       },
                       startAmount: widget.startAmount,

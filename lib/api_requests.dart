@@ -283,7 +283,7 @@ class ApiRequestManager {
 
     for (int i = 0; i < items.length; i++) {
       fm["Itemi[$i]"] = items[i].id;
-      fm["Kolicine[$i]"] = items[i].selectedAmount.toString();
+      fm["Kolicine[$i]"] = items[i].selectedForSelling.toString();
     }
 
     dynamic responseData;
