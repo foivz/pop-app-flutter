@@ -179,7 +179,6 @@ class _ItemCardState extends State<ItemCard>
                   Message.info(context).show(
                     "Saved changes for ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
                   );
-                  // TODO: this loads as null which registers a connection failure
                   SalesMenuScreen.refreshTab?.call(0);
                   Navigator.pop(context, true);
                 } else
