@@ -2,20 +2,16 @@
 
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_1.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_2.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/models/user.dart';
 
 import 'package:flutter/material.dart';
 
 class PackageCreationTab extends StatefulWidget {
-  final GlobalKey<SalesMenuScreenState> salesMenuKey;
-
   final User user;
   final GlobalKey productListKey;
 
   const PackageCreationTab({
     super.key,
-    required this.salesMenuKey,
     required this.productListKey,
     required this.user,
   });
@@ -40,7 +36,6 @@ class PackageCreationTabState extends State<PackageCreationTab> with AutomaticKe
     packageCreation2 = PackageCreation2(
       productListKey: widget.productListKey,
       user: widget.user,
-      salesMenuKey: widget.salesMenuKey,
     );
   }
 

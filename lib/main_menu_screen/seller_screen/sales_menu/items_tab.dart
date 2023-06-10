@@ -9,12 +9,10 @@ abstract class ItemsTab extends StatefulWidget {
   final List<Item> selectedItems = List.empty(growable: true);
 
   final User user;
-  final GlobalKey<SalesMenuScreenState> salesMenuKey;
 
   ItemsTab({
     super.key,
     required this.user,
-    required this.salesMenuKey,
     this.onSelectionStateChange,
   });
 

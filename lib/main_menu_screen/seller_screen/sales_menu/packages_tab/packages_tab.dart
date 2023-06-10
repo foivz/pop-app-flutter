@@ -11,7 +11,6 @@ class PackagesTab extends ItemsTab {
   PackagesTab({
     super.key,
     required super.onSelectionStateChange,
-    required super.salesMenuKey,
     required super.user,
   });
 
@@ -36,7 +35,6 @@ class _PackagesTabState extends State<PackagesTab> {
                 index: index,
                 item: PackageDataApiInterface.fromAPI((snapshot.data!.last["DATA"] as List)[index]),
                 onSelected: widget.handleItemSelection,
-                salesMenuKey: widget.salesMenuKey,
               );
             },
           );

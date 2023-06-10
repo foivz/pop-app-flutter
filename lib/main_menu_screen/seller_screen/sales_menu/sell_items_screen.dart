@@ -39,7 +39,6 @@ class _SellItemsScreenState extends State<SellItemsScreen> {
           return ItemCard(
             index: index,
             item: currentItem,
-            salesMenuKey: widget.salesMenuKey,
             onAmountChange: () {
               // Refreshes the state (and therefore also the bottom nav bar).
               setState(() {});

@@ -16,7 +16,6 @@ class ItemCard extends StatefulWidget {
   final int index;
   final Item item;
   final Function(bool isSelected, Item item)? onSelected;
-  final GlobalKey<SalesMenuScreenState> salesMenuKey;
 
   /// Only works if 'onAmountChange' callback is set.
   final int amountSelected = 1;
@@ -26,7 +25,6 @@ class ItemCard extends StatefulWidget {
     super.key,
     required this.index,
     required this.item,
-    required this.salesMenuKey,
     this.onSelected,
     this.onAmountChange,
     this.startAmount = 1,
@@ -70,6 +68,7 @@ class _ItemCardState extends State<ItemCard>
   }
 
   void showOptions(BuildContext context, StoreContentType itemType, String id) {
+    String type = itemType == StoreContentType.Package ? "Package" : "Product";
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -77,12 +76,12 @@ class _ItemCardState extends State<ItemCard>
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "${itemType.name} options",
+              "$type options",
               style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
             ),
             ListTile(
               leading: const Icon(Icons.edit_square, color: Colors.white),
-              title: Text('Edit $itemType', style: const TextStyle(color: Colors.white)),
+              title: Text('Edit $type', style: const TextStyle(color: Colors.white)),
               onTap: () {
                 switch (itemType) {
                   case StoreContentType.Product:
@@ -97,14 +96,14 @@ class _ItemCardState extends State<ItemCard>
             ),
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.white),
-              title: Text('Delete $itemType', style: const TextStyle(color: Colors.white)),
+              title: Text('Delete $type', style: const TextStyle(color: Colors.white)),
               onTap: () {
                 switch (itemType) {
                   case StoreContentType.Product:
-                    deletePackage(context, id);
+                    deleteProduct(context, id);
                     break;
                   case StoreContentType.Package:
-                    deleteProduct(context, id);
+                    deletePackage(context, id);
                     break;
                   default:
                 }
@@ -117,21 +116,19 @@ class _ItemCardState extends State<ItemCard>
     );
   }
 
-  void deletePackage(BuildContext context, String packageId) {
+  void deleteProduct(BuildContext context, String productId) {
     HapticFeedback.vibrate();
-    ApiRequestManager.deletePackage(packageId).then((value) {
-      SalesMenuScreen.of(context)!.loadTabContents();
-      SalesMenuScreen.of(context)!.tabController.index = 1;
+    ApiRequestManager.deleteProduct(productId).then((value) {
+      SalesMenuScreen.refreshTab?.call(0);
     }).catchError((e) {
       Message.error(context).show("Connection failure. Check your internet and try again.");
     });
   }
 
-  void deleteProduct(BuildContext context, String productId) {
+  void deletePackage(BuildContext context, String packageId) {
     HapticFeedback.vibrate();
-    ApiRequestManager.deleteProduct(productId).then((value) {
-      SalesMenuScreen.of(context)!.loadTabContents();
-      SalesMenuScreen.of(context)!.tabController.index = 0;
+    ApiRequestManager.deletePackage(packageId).then((value) {
+      SalesMenuScreen.refreshTab?.call(1);
     }).catchError((e) {
       Message.error(context).show("Connection failure. Check your internet and try again.");
     });
@@ -146,7 +143,6 @@ class _ItemCardState extends State<ItemCard>
       builder: (_) {
         return ProductCreationTab(
           key: productEditTab,
-          salesMenuKey: widget.salesMenuKey,
           product: widget.item as ProductData,
           submitButtonLabel: "Submit changes",
           onSubmit: () {
@@ -183,9 +179,8 @@ class _ItemCardState extends State<ItemCard>
                   Message.info(context).show(
                     "Saved changes for ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
                   );
-                  SalesMenuScreen.of(context)!
-                      .loadTabContents(); // TODO: this loads as null which registers a connection failure
-                  SalesMenuScreen.of(context)!.tabController.index = 0;
+                  // TODO: this loads as null which registers a connection failure
+                  SalesMenuScreen.refreshTab?.call(0);
                   Navigator.pop(context, true);
                 } else
                   Message.error(context).show(
@@ -249,7 +244,7 @@ class _ItemCardState extends State<ItemCard>
                   Message.info(context).show(
                     "Saved changes for ${formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text} to store.",
                   );
-                  SalesMenuScreen.of(context)!.loadTabContents();
+                  SalesMenuScreen.refreshTab?.call(1);
                   Navigator.pop(context, true);
                 } else
                   Message.error(context).show(

@@ -3,7 +3,6 @@
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
@@ -11,14 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:pop_app/reusable_components/message.dart';
 
 class PackageCreation2 extends StatefulWidget {
-  final GlobalKey<SalesMenuScreenState> salesMenuKey;
   final GlobalKey productListKey;
   final User user;
   const PackageCreation2({
     super.key,
     required this.user,
     required this.productListKey,
-    required this.salesMenuKey,
   });
 
   @override
@@ -33,7 +30,6 @@ class _PackageCreation2State extends State<PackageCreation2> {
       body: ProductsTab(
         key: productsTabKey,
         user: widget.user,
-        salesMenuKey: widget.salesMenuKey,
         onAmountStateChange: () {
           // TODO: declare callback
           print("amount changed");

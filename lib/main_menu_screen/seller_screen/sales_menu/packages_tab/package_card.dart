@@ -83,8 +83,7 @@ class _PackageCardState extends State<PackageCard>
   void delete() {
     HapticFeedback.vibrate();
     ApiRequestManager.deletePackage(widget.package.id).then((value) {
-      SalesMenuScreen.of(context)!.loadTabContents();
-      SalesMenuScreen.of(context)!.tabController.index = 1;
+      SalesMenuScreen.refreshTab?.call(1);
     }).catchError((e) {
       Message.error(context).show("Connection failure. Check your internet and try again.");
     });
@@ -127,7 +126,7 @@ class _PackageCardState extends State<PackageCard>
                   Message.info(context).show(
                     "Saved changes for ${formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text} to store.",
                   );
-                  SalesMenuScreen.of(context)!.loadTabContents();
+                  SalesMenuScreen.refreshTab?.call(1);
                   Navigator.pop(context, true);
                 } else
                   Message.error(context).show(

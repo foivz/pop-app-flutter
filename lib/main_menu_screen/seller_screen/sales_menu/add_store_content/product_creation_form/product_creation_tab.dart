@@ -33,15 +33,12 @@ class _FormContent {
 }
 
 class ProductCreationTab extends StatefulWidget {
-  final GlobalKey<SalesMenuScreenState> salesMenuKey;
-
   final ProductData? product;
   final String? submitButtonLabel;
   final void Function()? onSubmit;
 
   const ProductCreationTab({
     super.key,
-    required this.salesMenuKey,
     this.product,
     this.submitButtonLabel,
     this.onSubmit,
@@ -190,17 +187,21 @@ class ProductCreationTabState extends State<ProductCreationTab>
                 return;
               }
               try {
+                String productName =
+                    formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text;
+                String productDescription =
+                    formElements()[StoreContentType.Product]![ProductFormElements.descCont].text;
+                double productPrice = double.parse(
+                    formElements()[StoreContentType.Product]![ProductFormElements.priceCont].text);
+                int productAmount = int.parse(
+                    formElements()[StoreContentType.Product]![ProductFormElements.quantityCont]
+                        .text);
+
                 ProductData product = ProductData(
-                  title:
-                      formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text,
-                  description:
-                      formElements()[StoreContentType.Product]![ProductFormElements.descCont].text,
-                  price: double.parse(
-                      formElements()[StoreContentType.Product]![ProductFormElements.priceCont]
-                          .text),
-                  amount: int.parse(
-                      formElements()[StoreContentType.Product]![ProductFormElements.quantityCont]
-                          .text),
+                  title: productName,
+                  description: productDescription,
+                  price: productPrice,
+                  amount: productAmount,
                   imageFile: productImage,
                 );
 
@@ -213,13 +214,13 @@ class ProductCreationTabState extends State<ProductCreationTab>
                 ApiRequestManager.addProductToStore(product).then((response) {
                   if (response.statusCode == 200) {
                     Message.info(context).show(
-                      "Added ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
+                      "Added $productName to store.",
                     );
-                    widget.salesMenuKey.currentState?.loadTabContents();
+                    SalesMenuScreen.refreshTab?.call(0);
                     Navigator.pop(context, true);
                   } else
                     Message.error(context).show(
-                      "Failed to add ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
+                      "Failed to add $productName to store.",
                     );
                 }).catchError((error) {
                   Message.error(context)

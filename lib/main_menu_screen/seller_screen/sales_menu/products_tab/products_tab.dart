@@ -14,7 +14,6 @@ class ProductsTab extends ItemsTab {
   ProductsTab({
     super.key,
     required super.user,
-    required super.salesMenuKey,
     super.onSelectionStateChange,
     this.onAmountStateChange,
     this.startAmount = 1,
@@ -61,7 +60,6 @@ class ProductsTabState extends State<ProductsTab> {
                 index: index,
                 item: products[index],
                 onSelected: widget.handleItemSelection,
-                salesMenuKey: widget.salesMenuKey,
                 onAmountChange: widget.onAmountStateChange,
                 startAmount: widget.startAmount,
               );

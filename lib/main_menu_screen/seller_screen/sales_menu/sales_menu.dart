@@ -10,16 +10,8 @@ import 'package:pop_app/reusable_components/message.dart';
 
 class SalesMenuScreen extends StatefulWidget {
   final User user;
-  final GlobalKey<SalesMenuScreenState> salesMenuKey = GlobalKey();
-  SalesMenuScreen({super.key, required this.user});
-
-  static SalesMenuScreenState? of(BuildContext context) {
-    try {
-      return context.findAncestorStateOfType<SalesMenuScreenState>();
-    } catch (err) {
-      return null;
-    }
-  }
+  static late void Function(int selectedTab)? refreshTab;
+  const SalesMenuScreen({super.key, required this.user});
 
   @override
   State<SalesMenuScreen> createState() => SalesMenuScreenState();
@@ -47,20 +39,27 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
 
   @override
   void initState() {
-    productsTab = ProductsTab(
-      user: widget.user,
-      salesMenuKey: widget.salesMenuKey,
-      onSelectionStateChange: onSelectionStateChange,
-    );
-    packagesTab = PackagesTab(
-      user: widget.user,
-      salesMenuKey: widget.salesMenuKey,
-      onSelectionStateChange: onSelectionStateChange,
-    );
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     _animCont = AnimationController(vsync: this, duration: const Duration(milliseconds: 150));
     loadTabContents();
+
+    SalesMenuScreen.refreshTab = (selectedTabIndex) {
+      loadTabContents();
+      tabController.index = selectedTabIndex;
+    };
+  }
+
+  List<Widget> get getNewProductsTabAndPackagesTabObjects {
+    productsTab = ProductsTab(
+      user: widget.user,
+      onSelectionStateChange: onSelectionStateChange,
+    );
+    packagesTab = PackagesTab(
+      user: widget.user,
+      onSelectionStateChange: onSelectionStateChange,
+    );
+    return [productsTab, packagesTab];
   }
 
   @override
@@ -70,11 +69,9 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
     super.dispose();
   }
 
-  GlobalKey<SalesMenuScreenState> thisMenuKey = GlobalKey<SalesMenuScreenState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: thisMenuKey,
       appBar: AppBar(
         title: const Text("In stock"),
         actions: [
@@ -119,7 +116,6 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: Scaffold(
                         body: StoreContentCreation(
-                          salesMenuKey: thisMenuKey,
                           user: widget.user,
                           selectedIndex: tabController.index,
                         ),
@@ -143,10 +139,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
   bool loadTabContents() {
     setState(() => tabContents = [Container()]);
     setState(
-      () => tabContents = [
-        productsTab,
-        packagesTab,
-      ],
+      () => tabContents = getNewProductsTabAndPackagesTabObjects,
     );
     return true;
   }
@@ -164,10 +157,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
         Expanded(
           child: TabBarView(
             controller: tabController,
-            children: [
-              productsTab,
-              packagesTab,
-            ],
+            children: getNewProductsTabAndPackagesTabObjects,
           ),
         ),
       ],
