@@ -33,6 +33,18 @@ class ProductsTabState extends State<ProductsTab> {
       key: productsTabStateKey,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          if (snapshot.data!.last["STATUSMESSAGE"] == "OK, NO PRODUCTS") {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Text(
+                  "It's empty in here...\n"
+                  "How about using that + sign in the top right corner?",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            );
+          }
           products = PackageDataApiInterface.productsFromApi(snapshot.data!.last["DATA"]);
           return ListView.separated(
             itemCount: products.length,
