@@ -56,7 +56,12 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with SingleTickerProvi
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: Scaffold(
-                        body: StoreContentCreation(salesMenuKey: thisMenuKey, user: widget.user)),
+                      body: StoreContentCreation(
+                        salesMenuKey: thisMenuKey,
+                        user: widget.user,
+                        selectedIndex: tabController.index,
+                      ),
+                    ),
                   );
                 },
               ).then((value) {

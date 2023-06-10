@@ -8,8 +8,11 @@ import 'package:flutter/material.dart';
 
 class StoreContentCreation extends StatefulWidget {
   final GlobalKey<SalesMenuScreenState> salesMenuKey;
+  // 0 -> products, 1 -> packages
+  final int selectedIndex;
   final User user;
-  const StoreContentCreation({super.key, required this.salesMenuKey, required this.user});
+  const StoreContentCreation(
+      {super.key, required this.salesMenuKey, required this.user, required this.selectedIndex});
 
   @override
   State<StoreContentCreation> createState() => _StoreContentCreationState();
@@ -49,6 +52,7 @@ class _StoreContentCreationState extends State<StoreContentCreation>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.index = widget.selectedIndex;
     packageCreationForm = PackageCreationTab(
         salesMenuKey: widget.salesMenuKey, productListKey: _productListKey, user: widget.user);
     productCreationForm = ProductCreationTab(salesMenuKey: widget.salesMenuKey, user: widget.user);
