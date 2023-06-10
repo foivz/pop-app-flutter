@@ -33,11 +33,15 @@ class PackageCreationTab extends StatefulWidget {
 }
 
 class PackageCreationTabState extends State<PackageCreationTab> with AutomaticKeepAliveClientMixin {
-  late PackageCreation2 packageCreation;
+  late PackageCreation2 packageCreation2;
   @override
   void initState() {
     super.initState();
-    packageCreation = PackageCreation2(productListKey: widget.productListKey, user: widget.user);
+    packageCreation2 = PackageCreation2(
+      productListKey: widget.productListKey,
+      user: widget.user,
+      salesMenuKey: widget.salesMenuKey,
+    );
   }
 
   bool showBottomSheet = false;
@@ -52,7 +56,7 @@ class PackageCreationTabState extends State<PackageCreationTab> with AutomaticKe
         (timeStamp) {
           showModalBottomSheet(
             context: context,
-            builder: (_) => packageCreation,
+            builder: (_) => packageCreation2,
             isScrollControlled: true,
             useSafeArea: true,
           ).then((value) {

@@ -352,24 +352,3 @@ class ProductCreationTabState extends State<ProductCreationTab>
   @override
   bool get wantKeepAlive => true;
 }
-
-class _MaxValueInputFormatter extends TextInputFormatter {
-  final double maxValue;
-
-  _MaxValueInputFormatter(this.maxValue);
-
-  @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    if (newValue.text.isEmpty) {
-      return newValue;
-    } else {
-      double inputValue = double.tryParse(newValue.text) ?? 0.0;
-      if (inputValue <= maxValue) {
-        return newValue;
-      } else {
-        // Return the old value if the input is greater than the max value
-        return oldValue;
-      }
-    }
-  }
-}

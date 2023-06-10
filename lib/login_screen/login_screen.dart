@@ -105,7 +105,6 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                           ApiRequestManager.login(username, password).then((val) {
                             loggedUser = User.loginInfo(username: username, password: password);
                             if (val["STATUS"]) {
-                              // TODO: Think about using the User class for storing all user info.
                               User.storeUserData(val["DATA"], username, password);
                               loggedUser!.firstName = val["DATA"]["Ime"];
                               loggedUser!.lastName = val["DATA"]["Prezime"];

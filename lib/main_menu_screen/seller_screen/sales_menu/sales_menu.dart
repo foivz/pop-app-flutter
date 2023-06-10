@@ -51,6 +51,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
       user: widget.user,
       salesMenuKey: widget.salesMenuKey,
       onSelectionStateChange: onSelectionStateChange,
+      withCounter: true,
     );
     packagesTab = PackagesTab(
       user: widget.user,

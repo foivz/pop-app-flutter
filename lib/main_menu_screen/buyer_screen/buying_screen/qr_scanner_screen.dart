@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/invoice_details_screen/invoice_details_screen.dart';

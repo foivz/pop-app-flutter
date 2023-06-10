@@ -58,16 +58,15 @@ class PackageData extends Item implements PackageDataApiInterface {
 }
 
 abstract class PackageDataApiInterface {
-  static PackageData fromAPI(dynamic data) {
-    var dat = data.first;
+  static PackageData fromAPI(Map data) {
     return PackageData(
-      id: dat["Id"],
-      title: dat["Naziv"],
-      description: dat["Opis"],
-      discount: double.parse(dat["Popust"]),
-      priceAfterDiscount: double.parse(dat["CijenaStavkeNakonPopusta"]),
-      products: productsFromApi(dat["StavkePaketa"]),
-      imagePath: dat["Slika"],
+      id: data["Id"],
+      title: data["Naziv"],
+      description: data["Opis"],
+      discount: double.parse(data["Popust"]),
+      priceAfterDiscount: double.parse(data["CijenaStavkeNakonPopusta"]),
+      products: productsFromApi(data["StavkePaketa"]),
+      imagePath: data["Slika"],
     );
   }
 

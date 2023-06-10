@@ -1,10 +1,9 @@
 // ignore_for_file: use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'package:pop_app/api_requests.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_amount_card.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
@@ -12,12 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:pop_app/reusable_components/message.dart';
 
 class PackageCreation2 extends StatefulWidget {
+  final GlobalKey<SalesMenuScreenState> salesMenuKey;
   final GlobalKey productListKey;
   final User user;
   const PackageCreation2({
     super.key,
     required this.user,
     required this.productListKey,
+    required this.salesMenuKey,
   });
 
   @override
@@ -29,11 +30,11 @@ class _PackageCreation2State extends State<PackageCreation2> {
   Widget build(BuildContext context) {
     GlobalKey<ProductsTabState> productsTabKey = GlobalKey<ProductsTabState>();
     return Scaffold(
-      backgroundColor: Colors.white,
       body: ProductsTab(
         key: productsTabKey,
         user: widget.user,
-        wrapper: (index, product) => ProductCounterCard(index: index, product: product),
+        salesMenuKey: widget.salesMenuKey,
+        withCounter: true,
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(top: 15),
@@ -54,12 +55,13 @@ class _PackageCreation2State extends State<PackageCreation2> {
                 onPressed: () async {
                   List<int> ids = List.empty(growable: true);
                   List<int> amounts = List.empty(growable: true);
-                  for (var product in productsTabKey.currentState!.products.where((p) {
-                    return p.quantity > 0;
+                  for (var product
+                      in (productsTabKey.currentWidget! as ProductsTab).selectedItems.where((p) {
+                    return p.selectedAmount > 0;
                   })) {
-                    if (product.quantity > 0) {
-                      ids.add(product.id);
-                      amounts.add(product.quantity);
+                    if (product.selectedAmount > 0) {
+                      ids.add(int.parse(product.id));
+                      amounts.add(product.selectedAmount);
                     }
                   }
                   int packageId = int.parse(

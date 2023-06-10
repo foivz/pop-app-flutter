@@ -21,6 +21,7 @@ class ItemCard extends StatefulWidget {
   /// Only works if 'onAmountChange' callback is set.
   final int amountSelected = 1;
   final Function()? onAmountChange;
+  final bool withCounter;
   const ItemCard({
     super.key,
     required this.index,
@@ -28,6 +29,7 @@ class ItemCard extends StatefulWidget {
     required this.salesMenuKey,
     this.onSelected,
     this.onAmountChange,
+    this.withCounter = false,
   });
 
   @override
@@ -74,12 +76,9 @@ class _ItemCardState extends State<ItemCard>
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 0.0),
-              child: Text(
-                "$itemType options",
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
-              ),
+            Text(
+              "${itemType.name} options",
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
             ),
             ListTile(
               leading: const Icon(Icons.edit_square, color: Colors.white),
@@ -184,7 +183,8 @@ class _ItemCardState extends State<ItemCard>
                   Message.info(context).show(
                     "Saved changes for ${formElements()[StoreContentType.Product]![ProductFormElements.nameCont].text} to store.",
                   );
-                  SalesMenuScreen.of(context)!.loadTabContents();
+                  SalesMenuScreen.of(context)!
+                      .loadTabContents(); // TODO: this loads as null which registers a connection failure
                   SalesMenuScreen.of(context)!.tabController.index = 0;
                   Navigator.pop(context, true);
                 } else
@@ -279,8 +279,10 @@ class _ItemCardState extends State<ItemCard>
     return Stack(
       children: [
         InkWell(
-          onTap: select,
-          onLongPress: () => showOptions(context, _getItemTypeOfCurrentItem(), widget.item.id),
+          onTap: widget.onAmountChange == null ? select : null,
+          onLongPress: widget.onAmountChange == null
+              ? () => showOptions(context, _getItemTypeOfCurrentItem(), widget.item.id)
+              : null,
           splashColor: MyConstants.red,
           focusColor: MyConstants.red.withOpacity(0.4),
           borderRadius: BorderRadius.circular(16),
@@ -292,70 +294,74 @@ class _ItemCardState extends State<ItemCard>
             elevation: 10,
             borderOnForeground: true,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(children: [
-                Image.network(
-                  widget.item.imagePath!,
-                  height: 128,
-                  width: width * 0.2,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 5),
-                  width: width * 0.5,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.item.title,
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(height: 1.75),
+              padding: const EdgeInsets.all(08.0),
+              child: Row(
+                children: [
+                  Image.network(
+                    widget.item.imagePath!,
+                    height: 128,
+                    width: width * 0.2,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                    width: width * 0.5,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.item.title,
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(height: 1.75),
+                        ),
+                        Text(widget.item.description, overflow: TextOverflow.fade),
+                      ],
+                    ),
+                  ),
+                  if (widget.onAmountChange != null)
+                    AmountSelector((newAmount) {
+                      widget.item.selectedAmount = newAmount;
+                      widget.onAmountChange!.call();
+                    }),
+                  if (widget.onAmountChange == null)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: Text(
+                        "💸\n${widget.item.getPrice}",
+                        style: const TextStyle(
+                            color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                      Text(widget.item.description, overflow: TextOverflow.fade),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: Text(
-                    "💸\n${widget.item.getPrice()}",
-                    style: const TextStyle(
-                        color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ]),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.topRight,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: RotationTransition(
-              turns: Tween(begin: 0.0, end: 1.0).animate(_animCont),
-              child: ScaleTransition(
-                scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isSelected ? MyConstants.red : Colors.grey,
-                      width: 3,
+        if (widget.onSelected == null)
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: RotationTransition(
+                turns: Tween(begin: 0.0, end: 1.0).animate(_animCont),
+                child: ScaleTransition(
+                  scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected ? MyConstants.red : Colors.grey,
+                        width: 3,
+                      ),
                     ),
-                  ),
-                  child: Icon(
-                    color: isSelected ? MyConstants.red : Colors.grey,
-                    Icons.attach_money,
+                    child: Icon(
+                      color: isSelected ? MyConstants.red : Colors.grey,
+                      Icons.attach_money,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-        if (widget.onAmountChange != null)
-          AmountSelector((newAmount) {
-            widget.item.setSelectedAmount(newAmount);
-            widget.onAmountChange!.call();
-          })
       ],
     );
   }
@@ -392,33 +398,21 @@ class _AmountSelectorState extends State<AmountSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 80),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Column(
         children: [
           IconButton(
-            onPressed: () => changeAmount(false),
-            icon: const Icon(
-              Icons.remove_circle_sharp,
-              color: MyConstants.red,
-            ),
-            iconSize: 35,
+            icon: const Icon(Icons.add_circle, color: MyConstants.accentColor2),
+            onPressed: () => changeAmount(true),
           ),
           Text(
             selectedAmount.toString(),
-            style: TextStyle(
-              fontSize: 25,
-              color: Colors.grey.shade800,
-            ),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: MyConstants.accentColor2),
           ),
           IconButton(
-            onPressed: () => changeAmount(true),
-            icon: const Icon(
-              Icons.add_circle_outlined,
-              color: MyConstants.red,
-            ),
-            iconSize: 35,
+            icon: const Icon(Icons.remove_circle, color: MyConstants.accentColor2),
+            onPressed: () => changeAmount(false),
           ),
         ],
       ),

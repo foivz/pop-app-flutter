@@ -1,5 +1,5 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/items_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
 import 'package:pop_app/models/product_data.dart';
 import 'package:pop_app/myconstants.dart';
 
@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class ProductCounterCard extends StatefulWidget {
   final int index;
-  final GlobalKey<ItemsTab> productsTabKey;
+  final GlobalKey<ProductsTabState> productsTabKey;
   const ProductCounterCard({super.key, required this.index, required this.productsTabKey});
 
   @override
@@ -20,13 +20,14 @@ class _ProductCounterCardState extends State<ProductCounterCard> {
   @override
   void initState() {
     super.initState();
-    product = widget.productsTabKey.currentState!.selectedItems[widget.index] as ProductData;
+    product = widget.productsTabKey.currentState!.products[widget.index];
   }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return Stack(
+      // TODO: resolve card not displaygin
       children: [
         Container(
           decoration: _rectangleBorderDecoration(),

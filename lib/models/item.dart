@@ -17,20 +17,16 @@ abstract class Item {
 
   int getMaxAvailableAmount();
 
-  void setSelectedAmount(int newSelectedAmount) {
+  set selectedAmount(int newSelectedAmount) {
     if (newSelectedAmount > getMaxAvailableAmount()) {
       throw Exception("Amount exceeded!");
     }
     _selectedAmount = newSelectedAmount;
   }
 
-  int getSelectedAmount() {
-    return _selectedAmount;
-  }
+  int get selectedAmount => _selectedAmount;
 
-  String getPrice() {
-    return price.toStringAsFixed(2);
-  }
+  String get getPrice => price.toStringAsFixed(2);
 
   Item({
     this.id = "0",

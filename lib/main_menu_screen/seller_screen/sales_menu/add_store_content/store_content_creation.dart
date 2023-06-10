@@ -1,6 +1,6 @@
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dart';
 import 'package:pop_app/models/user.dart';
 
@@ -54,7 +54,10 @@ class _StoreContentCreationState extends State<StoreContentCreation>
     _tabController = TabController(length: 2, vsync: this);
     _tabController.index = widget.selectedIndex;
     packageCreationForm = PackageCreationTab(
-        salesMenuKey: widget.salesMenuKey, productListKey: _productListKey, user: widget.user);
+      salesMenuKey: widget.salesMenuKey,
+      productListKey: _productListKey,
+      user: widget.user,
+    );
     productCreationForm = ProductCreationTab(salesMenuKey: widget.salesMenuKey);
   }
 

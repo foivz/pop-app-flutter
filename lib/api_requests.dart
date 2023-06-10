@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/invoice.dart';
 import 'package:pop_app/models/item.dart';
@@ -281,7 +283,7 @@ class ApiRequestManager {
 
     for (int i = 0; i < items.length; i++) {
       fm["Itemi[$i]"] = items[i].id;
-      fm["Kolicine[$i]"] = items[i].getSelectedAmount().toString();
+      fm["Kolicine[$i]"] = items[i].selectedAmount.toString();
     }
 
     dynamic responseData;

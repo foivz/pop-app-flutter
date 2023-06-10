@@ -1,8 +1,6 @@
 import 'package:pop_app/main_menu_screen/buyer_screen/buying_screen/buying_screen.dart';
 import 'package:pop_app/main_menu_screen/menu_screen_mixin.dart';
 import 'package:pop_app/models/user.dart';
-import 'package:pop_app/main_menu_screen/invoices_screen/invoices_screen.dart';
-import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
 

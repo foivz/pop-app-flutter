@@ -1,6 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_amount_card.dart';
 import 'package:pop_app/models/package_data.dart';
 import 'package:pop_app/models/product_data.dart';
 
@@ -10,25 +11,29 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dar
 import '../items_tab.dart';
 
 class ProductsTab extends ItemsTab {
+  final bool withCounter;
   ProductsTab({
     super.key,
     required super.user,
     required super.salesMenuKey,
-    required super.onSelectionStateChange,
+    super.onSelectionStateChange,
+    this.withCounter = false,
   });
 
   @override
-  State<ProductsTab> createState() => _ProductsTabState();
+  State<ProductsTab> createState() => ProductsTabState();
 }
 
-class _ProductsTabState extends State<ProductsTab> {
+class ProductsTabState extends State<ProductsTab> {
+  List<ProductData> products = List.empty(growable: true);
   @override
   Widget build(BuildContext context) {
+    GlobalKey<ProductsTabState> productsTabStateKey = GlobalKey<ProductsTabState>();
     return FutureBuilder(
+      key: productsTabStateKey,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<ProductData> products =
-              PackageDataApiInterface.productsFromApi(snapshot.data!.last["DATA"]);
+          products = PackageDataApiInterface.productsFromApi(snapshot.data!.last["DATA"]);
           return ListView.separated(
             itemCount: products.length,
             shrinkWrap: true,
@@ -45,13 +50,14 @@ class _ProductsTabState extends State<ProductsTab> {
                 item: products[index],
                 onSelected: widget.handleItemSelection,
                 salesMenuKey: widget.salesMenuKey,
+                onAmountChange: () => print('chagnede'),
               );
             },
           );
         } else
           return const Center(child: CircularProgressIndicator());
       },
-      future: ApiRequestManager.getAllProducts(SalesMenuScreen.of(context)!.widget.user),
+      future: ApiRequestManager.getAllProducts(widget.user),
     );
   }
 }
