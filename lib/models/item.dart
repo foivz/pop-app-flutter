@@ -27,7 +27,9 @@ abstract class Item {
   int get selectedForSelling => _selectedForSelling;
 
   /// Amount selected for putting this product into packages.
-  int selectedForPackaging = 0;
+  int _selectedForPackaging = 0;
+  int get selectedForPackaging => _selectedForPackaging;
+  set selectedForPackaging(int amount) => amount >= 0 ? _selectedForPackaging = amount : null;
 
   String get getPrice => price.toStringAsFixed(2);
 

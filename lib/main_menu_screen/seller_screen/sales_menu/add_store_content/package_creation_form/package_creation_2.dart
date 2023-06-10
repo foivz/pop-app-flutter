@@ -45,8 +45,9 @@ class _PackageCreation2State extends State<PackageCreation2> {
             index: index,
             item: currentItem,
             onSelectedAmountChange: (newAmount) {
-              widget.availableItems[index].selectedForPackaging = newAmount;
+              if (newAmount >= 0) widget.availableItems[index].selectedForPackaging = newAmount;
             },
+            startAmount: 0,
           );
         },
       ),

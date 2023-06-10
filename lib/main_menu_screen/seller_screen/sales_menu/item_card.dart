@@ -17,7 +17,7 @@ class ItemCard extends StatefulWidget {
   final Item item;
   final Function(bool isSelected, Item item)? onSelected;
 
-  /// Only works if 'onAmountChange' callback is set.
+  /// Only works if 'onSelectedAmountChange' callback is set.
   final int amountSelected = 1;
   final Function(int newAmount)? onSelectedAmountChange;
   final int startAmount;
@@ -44,7 +44,7 @@ class _ItemCardState extends State<ItemCard>
     if (widget.onSelected != null && widget.item.getRemainingAmount() > 0) {
       setState(() {
         isSelected = !isSelected;
-        widget.onSelected!.call(isSelected, widget.item);
+        widget.onSelected?.call(isSelected, widget.item);
         if (isSelected)
           _animCont.forward();
         else
@@ -77,7 +77,7 @@ class _ItemCardState extends State<ItemCard>
           children: [
             Text(
               "$type options",
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
             ),
             ListTile(
               leading: const Icon(Icons.edit_square, color: Colors.white),
@@ -269,98 +269,121 @@ class _ItemCardState extends State<ItemCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    double width = MediaQuery.of(context).size.width;
+    final double width = MediaQuery.of(context).size.width;
+    final bool notInCounterMode = widget.onSelectedAmountChange == null;
+    const Color red = MyConstants.red;
+    final Color transparentRed = red.withOpacity(0.4);
+    final Color splashColorOnHover = notInCounterMode ? red : Colors.transparent;
+    final Color borderColorOnHover = notInCounterMode ? transparentRed : Colors.transparent;
+    void options() => showOptions(context, _getItemTypeOfCurrentItem(), widget.item.id);
     return Stack(
       children: [
         InkWell(
           onTap: select,
-          onLongPress: widget.onSelectedAmountChange == null
-              ? () => showOptions(context, _getItemTypeOfCurrentItem(), widget.item.id)
-              : null,
-          splashColor: MyConstants.red,
-          focusColor: MyConstants.red.withOpacity(0.4),
+          onLongPress: notInCounterMode ? options : null,
+          splashColor: splashColorOnHover,
+          focusColor: borderColorOnHover,
+          highlightColor: borderColorOnHover,
           borderRadius: BorderRadius.circular(16),
-          highlightColor: MyConstants.red.withOpacity(0.4),
-          child: Card(
-            color: Colors.white,
-            surfaceTintColor: Colors.white,
-            shadowColor: Colors.black,
-            elevation: 10,
-            borderOnForeground: true,
-            child: Padding(
-              padding: const EdgeInsets.all(08.0),
-              child: Row(
-                children: [
-                  Image.network(
-                    widget.item.imagePath!,
-                    height: 128,
-                    width: width * 0.2,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
-                    width: width * 0.5,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.item.title,
-                          style: Theme.of(context).textTheme.titleMedium!.copyWith(height: 1.75),
-                        ),
-                        Text(widget.item.description, overflow: TextOverflow.fade),
-                      ],
-                    ),
-                  ),
-                  if (widget.onSelectedAmountChange != null)
-                    AmountSelector(
-                      onAmountChange: widget.onSelectedAmountChange!,
-                      startAmount: widget.startAmount,
-                    ),
-                  if (widget.onSelectedAmountChange == null)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12.0),
-                      child: Text(
-                        "💸\n${widget.item.getPrice}",
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                ],
+          child: _card(width, notInCounterMode),
+        ),
+        if (widget.onSelected != null) _animatedSelectedIcon(),
+      ],
+    );
+  }
+
+  Card _card(double width, bool notInCounterMode) {
+    return Card(
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      shadowColor: Colors.black,
+      elevation: 10,
+      borderOnForeground: true,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            _imagePreview(width),
+            _titleAndText(width),
+            _priceOrAmount(notInCounterMode),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _animatedSelectedIcon() {
+    return Align(
+      alignment: Alignment.topRight,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: RotationTransition(
+          turns: Tween(begin: 0.0, end: 1.0).animate(_animCont),
+          child: ScaleTransition(
+            scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? MyConstants.red : Colors.grey,
+                  width: 3,
+                ),
+              ),
+              child: Icon(
+                color: isSelected ? MyConstants.red : Colors.grey,
+                Icons.attach_money,
               ),
             ),
           ),
         ),
-        if (widget.onSelected != null)
-          Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: RotationTransition(
-                turns: Tween(begin: 0.0, end: 1.0).animate(_animCont),
-                child: ScaleTransition(
-                  scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isSelected ? MyConstants.red : Colors.grey,
-                        width: 3,
-                      ),
-                    ),
-                    child: Icon(
-                      color: isSelected ? MyConstants.red : Colors.grey,
-                      Icons.attach_money,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
+      ),
     );
+  }
+
+  Widget _titleAndText(double width) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+      width: width * 0.5,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.item.title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(height: 1.75),
+          ),
+          Text(widget.item.description, overflow: TextOverflow.fade),
+        ],
+      ),
+    );
+  }
+
+  Image _imagePreview(double width) {
+    return Image.network(
+      widget.item.imagePath!,
+      height: 128,
+      width: width * 0.2,
+    );
+  }
+
+  Widget _priceOrAmount(bool notInCounterMode) {
+    if (!notInCounterMode)
+      return AmountSelector(
+        onAmountChange: widget.onSelectedAmountChange!,
+        startAmount: widget.startAmount,
+      );
+    else
+      return Padding(
+        padding: const EdgeInsets.only(right: 12.0),
+        child: Text(
+          "💸\n${widget.item.getPrice}",
+          style: const TextStyle(
+            color: Colors.green,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
   }
 
   @override
@@ -370,19 +393,27 @@ class _ItemCardState extends State<ItemCard>
 class AmountSelector extends StatefulWidget {
   final Function(int newAmount) onAmountChange;
   final int startAmount;
-  const AmountSelector({super.key, required this.onAmountChange, this.startAmount = 1});
+  final bool forcePositive;
+  const AmountSelector(
+      {super.key, required this.onAmountChange, this.startAmount = 1, this.forcePositive = true});
 
   @override
   State<AmountSelector> createState() => _AmountSelectorState();
 }
 
 class _AmountSelectorState extends State<AmountSelector> {
-  late int selectedAmount;
+  late int _selectedAmount;
   @override
   void initState() {
     super.initState();
-    selectedAmount = widget.startAmount;
+    _selectedAmount = widget.startAmount;
   }
+
+  set selectedAmount(int amount) {
+    if (widget.forcePositive && amount >= 0) _selectedAmount = amount;
+  }
+
+  int get selectedAmount => _selectedAmount;
 
   void changeAmount(bool increment) {
     setState(() {
