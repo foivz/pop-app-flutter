@@ -95,7 +95,7 @@ class ProductCreationTabState extends State<ProductCreationTab>
       (_product[ProductFormElements.priceCont] as TextEditingController).text =
           widget.product!.price.toString();
       (_product[ProductFormElements.quantityCont] as TextEditingController).text =
-          widget.product!.amount.toString();
+          widget.product!.remainingAmount.toString();
       loadImage();
     }
   }
@@ -201,7 +201,7 @@ class ProductCreationTabState extends State<ProductCreationTab>
                   title: productName,
                   description: productDescription,
                   price: productPrice,
-                  amount: productAmount,
+                  remainingAmount: productAmount,
                   imageFile: productImage,
                 );
 

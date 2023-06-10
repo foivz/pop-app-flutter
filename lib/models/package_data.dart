@@ -8,9 +8,6 @@ class PackageData extends Item implements PackageDataApiInterface {
 
   final List<ProductData> products;
 
-  get count => products.length;
-  get itemCount => _itemCount();
-
   PackageData({
     super.id,
     required super.title,
@@ -39,18 +36,12 @@ class PackageData extends Item implements PackageDataApiInterface {
     return sum;
   }
 
-  int _itemCount() {
-    int sum = 0;
-    for (ProductData product in products) sum += product.amount;
-    return sum;
-  }
-
   @override
-  int getMaxAvailableAmount() {
+  int getRemainingAmount() {
     int maxAmount = 0;
     for (ProductData product in products) {
-      if (maxAmount == 0 || maxAmount > product.amount) {
-        maxAmount = product.amount;
+      if (maxAmount == 0 || maxAmount > product.remainingAmount) {
+        maxAmount = product.remainingAmount;
       }
     }
     return maxAmount;
@@ -79,7 +70,7 @@ abstract class PackageDataApiInterface {
         description: product["Opis"],
         price: double.parse(product["Cijena"]),
         imagePath: product["Slika"],
-        amount: int.parse(product["Kolicina"]),
+        remainingAmount: int.parse(product["Kolicina"]),
       ));
     }
     return products;

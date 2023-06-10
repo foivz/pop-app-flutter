@@ -76,11 +76,11 @@ class _ProductCounterCardState extends State<ProductCounterCard> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.remove_circle),
-                        onPressed: () =>
-                            setState(() => product.quantity >= 1 ? product.quantity-- : null),
+                        onPressed: () => setState(() =>
+                            product.amountInNewPackage >= 1 ? product.amountInNewPackage-- : null),
                       ),
                       Text(
-                        product.quantity.toString(),
+                        product.amountInNewPackage.toString(),
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge
@@ -88,7 +88,7 @@ class _ProductCounterCardState extends State<ProductCounterCard> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.add_circle),
-                        onPressed: () => setState(() => product.quantity++),
+                        onPressed: () => setState(() => product.amountInNewPackage++),
                       ),
                     ],
                   ),

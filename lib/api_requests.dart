@@ -332,7 +332,7 @@ class ApiRequestManager {
       "Naziv": product.title,
       "Opis": product.description,
       "Cijena": product.price.toString(),
-      "Kolicina": product.amount.toString(),
+      "Kolicina": product.remainingAmount.toString(),
       "KorisnickoIme": await SecureStorage.getUsername(),
     });
     if (product.imageFile != null)
@@ -477,7 +477,7 @@ class ApiRequestManager {
       "Naziv": product.title,
       "Opis": product.description,
       "Cijena": product.price.toString(),
-      "Kolicina": "1",
+      "Kolicina": product.remainingAmount.toString(),
       "KorisnickoIme": await SecureStorage.getUsername(),
     });
     if (product.imageFile != null && product.imagePath == null) {

@@ -41,7 +41,7 @@ class _ItemCardState extends State<ItemCard>
   bool isSelected = false;
 
   void select() {
-    if (widget.onSelected != null && widget.item.getMaxAvailableAmount() > 0) {
+    if (widget.onSelected != null && widget.item.getRemainingAmount() > 0) {
       setState(() {
         isSelected = !isSelected;
         widget.onSelected!.call(isSelected, widget.item);
@@ -50,7 +50,7 @@ class _ItemCardState extends State<ItemCard>
         else
           _animCont.reverse();
       });
-    } else if (widget.onSelected != null && widget.item.getMaxAvailableAmount() <= 0) {
+    } else if (widget.onSelected != null && widget.item.getRemainingAmount() <= 0) {
       Message.error(context).show("Sorry, but you don't have any ${widget.item.title} in stock.");
     }
   }
@@ -162,7 +162,7 @@ class _ItemCardState extends State<ItemCard>
                     formElements()[StoreContentType.Product]![ProductFormElements.descCont].text,
                 price: double.parse(
                     formElements()[StoreContentType.Product]![ProductFormElements.priceCont].text),
-                amount: int.parse(
+                remainingAmount: int.parse(
                     formElements()[StoreContentType.Product]![ProductFormElements.quantityCont]
                         .text),
                 imageFile: imageProd(),

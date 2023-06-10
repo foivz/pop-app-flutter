@@ -15,10 +15,10 @@ abstract class Item {
   /// Amount selected for selling.
   int _selectedForSelling = 1;
 
-  int getMaxAvailableAmount();
+  int getRemainingAmount();
 
   set selectedForSelling(int newSelectedAmount) {
-    if (newSelectedAmount > getMaxAvailableAmount()) {
+    if (newSelectedAmount > getRemainingAmount()) {
       throw Exception("Amount exceeded!");
     }
     _selectedForSelling = newSelectedAmount;
