@@ -37,7 +37,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
   late ProductsTab productsTab;
   late PackagesTab packagesTab;
 
-  void getNewProductsTabAndPackagesTabObjects() {
+  void generateNewProductsTabAndPackagesTabObjects() {
     productsTab = ProductsTab(
       user: widget.user,
       onSelectionStateChange: onSelectionStateChange,
@@ -53,14 +53,13 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     _animCont = AnimationController(vsync: this, duration: const Duration(milliseconds: 150));
-    loadTabContents();
 
     SalesMenuScreen.refreshTab = (selectedTabIndex) {
       loadTabContents();
-      getNewProductsTabAndPackagesTabObjects();
       tabController.index = selectedTabIndex;
     };
-    getNewProductsTabAndPackagesTabObjects();
+
+    loadTabContents();
   }
 
   @override
@@ -138,9 +137,10 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
 
   List<Widget> tabContents = List.empty(growable: true);
   bool loadTabContents() {
-    getNewProductsTabAndPackagesTabObjects();
+    generateNewProductsTabAndPackagesTabObjects();
     setState(
       () {
+        tabContents = [Container()];
         tabContents = [productsTab, packagesTab];
       },
     );
@@ -160,7 +160,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
         Expanded(
           child: TabBarView(
             controller: tabController,
-            children: [productsTab, packagesTab],
+            children: tabContents,
           ),
         ),
       ],
