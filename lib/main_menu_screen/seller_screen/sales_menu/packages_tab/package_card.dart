@@ -122,6 +122,13 @@ class _PackageCardState extends State<PackageCard>
                         .text),
                 imageFile: imagePack(),
               );
+
+              if (package.title.contains("'") || package.description.contains("'")) {
+                Message.error(context)
+                    .show("Do not use ' character in your title and description!");
+                return;
+              }
+
               ApiRequestManager.editPackage(package).then((response) {
                 if (response.statusCode == 200) {
                   Message.info(context).show(

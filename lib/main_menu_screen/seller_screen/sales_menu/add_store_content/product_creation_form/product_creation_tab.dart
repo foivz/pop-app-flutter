@@ -207,6 +207,13 @@ class ProductCreationTabState extends State<ProductCreationTab>
                           .text),
                   imageFile: productImage,
                 );
+
+                if (product.title.contains("'") || product.description.contains("'")) {
+                  Message.error(context)
+                      .show("Do not use ' character in your title and description!");
+                  return;
+                }
+
                 ApiRequestManager.addProductToStore(product).then((response) {
                   if (response.statusCode == 200) {
                     Message.info(context).show(

@@ -161,20 +161,27 @@ class PackageCreation1State extends State<PackageCreation1> with AutomaticKeepAl
                 Message.error(context).show("Not all fields are filled.");
                 return;
               }
+
+              PackageData packageData = PackageData(
+                title: formElements()[StoreContentType.Package]![PackageFormElements.nameCont].text,
+                description:
+                    formElements()[StoreContentType.Package]![PackageFormElements.descCont].text,
+                discount: double.parse(
+                    formElements()[StoreContentType.Package]![PackageFormElements.discountCont]
+                        .text),
+                imageFile: packageImage,
+                products: [],
+              );
+
+              if (packageData.title.contains("'") || packageData.description.contains("'")) {
+                Message.error(context)
+                    .show("Do not use ' character in your title and description!");
+                return;
+              }
+
               try {
                 ApiRequestManager.addPackageToStore(
-                  PackageData(
-                    title: formElements()[StoreContentType.Package]![PackageFormElements.nameCont]
-                        .text,
-                    description:
-                        formElements()[StoreContentType.Package]![PackageFormElements.descCont]
-                            .text,
-                    discount: double.parse(
-                        formElements()[StoreContentType.Package]![PackageFormElements.discountCont]
-                            .text),
-                    imageFile: packageImage,
-                    products: [],
-                  ),
+                  packageData,
                 ).then((value) {
                   PackageCreationTab.of(context)!.showProductSelectionScreen();
                 }).catchError((error) {
