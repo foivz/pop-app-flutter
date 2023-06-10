@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:pop_app/models/user.dart';
 
 /// For accessing, storing and retreiving user data from secure storage.
 class SecureStorage {
@@ -10,6 +11,13 @@ class SecureStorage {
 
   static Future<String> getUsername() async {
     return getSecureStorageValue('username');
+  }
+
+  static Future<User> getUser() async {
+    return User(
+      username: await getSecureStorageValue('username'),
+      password: await getSecureStorageValue('password'),
+    );
   }
 
   static Future<void> setPassword(String value) async {

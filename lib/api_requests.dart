@@ -1,11 +1,13 @@
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_data.dart';
 import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/invoice.dart';
 import 'package:pop_app/models/item.dart';
+import 'package:pop_app/models/package_data.dart';
 import 'package:pop_app/secure_storage.dart';
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/models/user.dart';
-import 'package:http/http.dart' as http;
 
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 List<Map<String, String>> routes = [
@@ -44,15 +46,6 @@ class ApiRequestManager {
     return responseData;
   }
 
-  static void _updateTokenData(responseData) {
-    try {
-      var tokenData = responseData["DATA"]["Token"];
-      _token = tokenData;
-    } catch (e) {
-      SecureStorage.setUserData(json.encode("{}"));
-    }
-  }
-
   static Future register(User user) async {
     var fm = {
       "Ime": user.firstName,
@@ -69,6 +62,40 @@ class ApiRequestManager {
 
     var responseData = json.decode(response.body);
     _updateTokenData(responseData);
+
+    return responseData;
+  }
+
+  static void _updateTokenData(responseData) {
+    try {
+      var tokenData = responseData["DATA"]["Token"];
+      _token = tokenData;
+    } catch (e) {
+      SecureStorage.setUserData(json.encode("{}"));
+    }
+  }
+
+  /// Wraps whatever fetching logic into a token check.
+  /// If the server reports token is invalid, this method attempts login once.
+  /// If the new token is still invalid, method returns null instead of response.
+  /// [requestCallback] should return a response body!
+  static Future<dynamic> _executeWithToken(User user, dynamic requestCallback) async {
+    int attempts = 0;
+
+    dynamic responseData;
+    bool isTokenValid = false;
+    do {
+      dynamic body = await requestCallback();
+      responseData = jsonDecode(utf8.decode(body));
+      isTokenValid = _isTokenValid(responseData);
+      if (!isTokenValid) {
+        login(user.username, user.password);
+      }
+    } while (!isTokenValid && ++attempts != 2);
+
+    if (attempts == 2) {
+      responseData = null;
+    }
 
     return responseData;
   }
@@ -127,7 +154,7 @@ class ApiRequestManager {
   }
 
   static Future<bool> assignRole(User user) async {
-    if (user.getRole() == null) {
+    if (user.role == null) {
       return false;
     }
 
@@ -135,7 +162,7 @@ class ApiRequestManager {
       "Token": _token,
       "KorisnickoIme": user.username,
       "SETOWNROLE": "True",
-      "RoleId": user.getRole()!.roleId.toString()
+      "RoleId": user.role!.roleId.toString()
     };
 
     dynamic responseData;
@@ -148,7 +175,7 @@ class ApiRequestManager {
   }
 
   static Future<double> getBalance(User user) async {
-    if (user.getRole() == null) {
+    if (user.role == null) {
       throw Exception("Can't get balance: user's role not set!");
     }
 
@@ -160,7 +187,7 @@ class ApiRequestManager {
     var fm = {
       "Token": _token,
       "KorisnickoIme": user.username,
-      roleMap[user.getRole()!.roleName]: "True",
+      roleMap[user.role!.roleName]: "True",
     };
 
     dynamic responseData;
@@ -271,36 +298,12 @@ class ApiRequestManager {
     }
   }
 
-  /// Wraps whatever fetching logic into a token check.
-  /// If the server reports token is invalid, this method attempts login once.
-  /// If the new token is still invalid, method returns null instead of response.
-  /// [requestCallback] should return a response body!
-  static Future<dynamic> _executeWithToken(User user, dynamic requestCallback) async {
-    int attempts = 0;
-
-    dynamic responseData;
-    bool isTokenValid = false;
-    do {
-      dynamic body = await requestCallback();
-      responseData = jsonDecode(utf8.decode(body));
-      isTokenValid = _isTokenValid(responseData);
-      if (!isTokenValid) {
-        login(user.username, user.password);
-      }
-    } while (!isTokenValid && ++attempts != 2);
-
-    if (attempts == 2) {
-      responseData = null;
-    }
-
-    return responseData;
-  }
-
   static bool _isTokenValid(responseData) {
     return responseData["STATUSMESSAGE"] != "OLD TOKEN";
   }
 
-  static Future<List> getAllPackages(User user) async {
+  static Future<List> getAllPackages() async {
+    User user = await SecureStorage.getUser();
     var fm = {"Token": _token, "KorisnickoIme": user.username, "GET": "True"};
     dynamic responseData;
     responseData = await _executeWithToken(user, () async {
@@ -318,5 +321,178 @@ class ApiRequestManager {
       return response.bodyBytes;
     });
     return [responseData];
+  }
+
+  static Future addProductToStore(ConstantProductData product) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
+    req.fields.addAll({
+      "Token": _token!,
+      "Naziv": product.title,
+      "Opis": product.description,
+      "Cijena": product.price.toString(),
+      "Kolicina": product.amount.toString(),
+      "KorisnickoIme": await SecureStorage.getUsername(),
+    });
+    if (product.imageFile != null)
+      req.files.add(
+        http.MultipartFile.fromBytes(
+          'Slika',
+          filename: 'Slika',
+          await product.imageFile!.readAsBytes(),
+        ),
+      );
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
+  }
+
+  static Future addPackageToStore(PackageData package) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
+    req.fields.addAll({
+      "Token": _token!,
+      "ADD": "True",
+      "Naziv": package.title,
+      "Opis": package.description,
+      "Popust": package.discount.toString(),
+      "KolicinaPaketa": "1",
+      "KorisnickoIme": await SecureStorage.getUsername(),
+    });
+    if (package.imageFile != null)
+      req.files.add(
+        http.MultipartFile.fromBytes(
+          'Slika',
+          filename: 'Slika',
+          await package.imageFile!.readAsBytes(),
+        ),
+      );
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
+  }
+
+  static Future<bool> addProductsToPackage(List<int> ids, List<int> amounts, int packageId) async {
+    User user = await User.loggedIn;
+
+    var fm = {
+      "Token": _token,
+      "KorisnickoIme": user.username,
+      "ADDTOPACKET": "True",
+      "Id_Paket": packageId.toString(),
+    };
+
+    for (int i = 0; i < ids.length; i++) {
+      fm["Id_Proizvod[$i]"] = ids[i].toString();
+      fm["Kolicina[$i]"] = amounts[i].toString();
+    }
+
+    dynamic responseData;
+    responseData = await _executeWithToken(user, () async {
+      http.Response response = await http.post(body: fm, route(Routes.paketi));
+      return response.bodyBytes;
+    });
+
+    return (responseData["STATUSMESSAGE"] == "PRODUCT ADDED TO PACKET");
+  }
+
+  static Future deletePackage(String packageId) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
+    req.fields.addAll({
+      "Token": _token!,
+      "Id": packageId,
+      "DELETE": true.toString(),
+      "KorisnickoIme": await SecureStorage.getUsername(),
+    });
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
+  }
+
+  static Future editPackage(PackageData package) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
+    req.fields.addAll({
+      "Token": _token!,
+      "UPDATE": true.toString(),
+      "Id": package.id.toString(),
+      "Naziv": package.title,
+      "Opis": package.description,
+      "Kolicina": "1",
+      "Popust": package.discount.toString(),
+      // slika
+      "KorisnickoIme": await SecureStorage.getUsername(),
+    });
+    if (package.imageFile != null && package.imagePath == null) {
+      req.files.add(
+        http.MultipartFile.fromBytes(
+          'Slika',
+          filename: 'Slika',
+          await package.imageFile!.readAsBytes(),
+        ),
+      );
+    } else if (package.imagePath != null) req.fields.addAll({"Slika": package.imagePath!});
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
+  }
+
+  static Future deleteProduct(String productId) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
+    req.fields.addAll({
+      "Token": _token!,
+      "Id": productId.toString(),
+      "KorisnickoIme": await SecureStorage.getUsername(),
+    });
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
+  }
+
+  static Future editProduct(ConstantProductData product) async {
+    http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
+    req.fields.addAll({
+      "Edit": true.toString(),
+      "Token": _token!,
+      "Id": product.id.toString(),
+      "Naziv": product.title,
+      "Opis": product.description,
+      "Cijena": product.price.toString(),
+      "Kolicina": "1",
+      "KorisnickoIme": await SecureStorage.getUsername(),
+    });
+    if (product.imageFile != null && product.imagePath == null) {
+      req.files.add(
+        http.MultipartFile.fromBytes(
+          'Slika',
+          filename: 'Slika',
+          await product.imageFile!.readAsBytes(),
+        ),
+      );
+    } else if (product.imagePath != null) req.fields.addAll({"Slika": product.imagePath!});
+    http.StreamedResponse responseData;
+    try {
+      responseData = await req.send();
+      return responseData;
+    } catch (e) {
+      throw Exception("Failed to connect");
+    }
   }
 }

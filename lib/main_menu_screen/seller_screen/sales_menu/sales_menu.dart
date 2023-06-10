@@ -1,5 +1,8 @@
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/packages_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/store_content_creation.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/product_list_tab.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/packages_tab/package_list_tab.dart';
 
 import 'package:flutter/material.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sell_items_screen.dart';
@@ -8,8 +11,8 @@ import 'package:pop_app/models/user.dart';
 import 'package:pop_app/reusable_components/message.dart';
 
 class SalesMenuScreen extends StatefulWidget {
-  final User? user;
-  const SalesMenuScreen({super.key, this.user});
+  final User user;
+  const SalesMenuScreen({super.key, required this.user});
 
   static SalesMenuScreenState? of(BuildContext context) {
     try {
@@ -24,7 +27,7 @@ class SalesMenuScreen extends StatefulWidget {
 }
 
 class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderStateMixin {
-  late TabController _tabController;
+  late TabController tabController;
   late final GlobalKey _sellIconKey = GlobalKey();
   late AnimationController _animCont;
   int _selectedItemsCount = 0;
@@ -48,27 +51,49 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
     productsTab = ProductsTab(onSelectionStateChange);
     packagesTab = PackagesTab(onSelectionStateChange);
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
     _animCont = AnimationController(vsync: this, duration: const Duration(milliseconds: 150));
+    loadTabContents();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    tabController.dispose();
     _animCont.dispose();
     super.dispose();
   }
 
-  GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
-
+  GlobalKey<SalesMenuScreenState> thisMenuKey = GlobalKey<SalesMenuScreenState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
-      // TODO: load shop name instead
+      key: thisMenuKey,
       appBar: AppBar(title: const Text("Entrepreneurial Venture"), actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              showModalBottomSheet(
+                showDragHandle: true,
+                isScrollControlled: true,
+                backgroundColor: Colors.white,
+                context: context,
+                builder: (context) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Scaffold(
+                      body: StoreContentCreation(
+                        salesMenuKey: thisMenuKey,
+                        user: widget.user,
+                        selectedIndex: tabController.index,
+                      ),
+                    ),
+                  );
+                },
+              ).then((value) {
+                if (value is bool) loadTabContents();
+              });
+            });
+          },
           icon: const Icon(Icons.add),
         ),
         RotationTransition(
@@ -104,12 +129,23 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
     );
   }
 
+  List<Widget> tabContents = List.empty(growable: true);
+  bool loadTabContents() {
+    setState(() => tabContents = [Container()]);
+    setState(
+      () => tabContents = [
+        ProductsTab(user: widget.user, salesMenuKey: thisMenuKey),
+        PackagesTab(user: widget.user, salesMenuKey: thisMenuKey),
+      ],
+    );
+    return true;
+  }
+
   Widget tabs() {
     return Column(
       children: [
         TabBar(
-          padding: EdgeInsets.zero,
-          controller: _tabController,
+          controller: tabController,
           tabs: const <Tab>[
             Tab(text: "PRODUCTS"),
             Tab(text: "PACKAGES"),
@@ -117,7 +153,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
         ),
         Expanded(
           child: TabBarView(
-            controller: _tabController,
+            controller: tabController,
             children: [
               productsTab,
               packagesTab,

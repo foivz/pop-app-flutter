@@ -10,6 +10,7 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sales_menu.dar
 import '../items_tab.dart';
 
 class ProductsTab extends ItemsTab {
+  final GlobalKey<SalesMenuScreenState> salesMenuKey = GlobalKey();
   ProductsTab(onSelectionStateChange, {super.key}) : super(onSelectionStateChange);
 
   @override
@@ -39,6 +40,7 @@ class _ProductsTabState extends State<ProductsTab> {
                 index: index,
                 item: products[index],
                 onSelected: widget.handleItemSelection,
+                salesMenuKey: widget.salesMenuKey,
               );
             },
           );

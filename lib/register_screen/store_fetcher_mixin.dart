@@ -49,7 +49,7 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
 
   Widget storeSelection(
       User user, GlobalKey<FormState> formKey, TextEditingController storeNameController) {
-    return user.getRole()?.roleName == "seller"
+    return user.role?.roleName == "seller"
         ? Form(
             key: formKey,
             child: Column(
