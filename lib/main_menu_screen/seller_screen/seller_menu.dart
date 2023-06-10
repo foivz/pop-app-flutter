@@ -5,7 +5,7 @@ import 'package:pop_app/models/user.dart';
 import 'package:flutter/material.dart';
 
 class SellerMenu extends StatefulWidget {
-  const SellerMenu({Key? key}) : super(key: key);
+  const SellerMenu({super.key});
 
   @override
   State<SellerMenu> createState() => _SellerMenuState();
@@ -26,7 +26,8 @@ class _SellerMenuState extends State<SellerMenu> with MenuScreenMixin {
         ? generateMenu(
             context: context,
             nameOfCustomOption: "Sell",
-            customOptionScreen: SalesMenuScreen(user: user!))
+            customOptionScreen: SalesMenuScreen(user: user!),
+          )
         : const CircularProgressIndicator();
   }
 }
