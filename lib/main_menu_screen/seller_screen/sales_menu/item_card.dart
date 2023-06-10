@@ -274,7 +274,7 @@ class _ItemCardState extends State<ItemCard>
     return Stack(
       children: [
         InkWell(
-          onTap: widget.onAmountChange == null ? select : null,
+          onTap: select,
           onLongPress: widget.onAmountChange == null
               ? () => showOptions(context, _getItemTypeOfCurrentItem(), widget.item.id)
               : null,
