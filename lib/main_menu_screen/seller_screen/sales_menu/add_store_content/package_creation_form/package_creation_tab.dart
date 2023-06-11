@@ -2,7 +2,6 @@
 
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_1.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_2.dart';
-import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/user.dart';
 
 import 'package:flutter/material.dart';
@@ -10,13 +9,11 @@ import 'package:flutter/material.dart';
 class PackageCreationTab extends StatefulWidget {
   final User user;
   final GlobalKey productListKey;
-  final List<Item> availableItems;
 
   const PackageCreationTab({
     super.key,
     required this.productListKey,
     required this.user,
-    required this.availableItems,
   });
 
   static PackageCreationTabState? of(BuildContext context) {
@@ -37,7 +34,6 @@ class PackageCreationTabState extends State<PackageCreationTab> with AutomaticKe
   void initState() {
     super.initState();
     packageCreation2 = PackageCreation2(
-      availableItems: widget.availableItems,
       productListKey: widget.productListKey,
       user: widget.user,
     );
@@ -63,11 +59,9 @@ class PackageCreationTabState extends State<PackageCreationTab> with AutomaticKe
           });
         },
       );
-    GlobalKey<PackageCreationTabState> key = GlobalKey<PackageCreationTabState>();
-    return Scaffold(
-      key: key,
+    return const Scaffold(
       backgroundColor: Colors.white,
-      body: const PackageCreation1(),
+      body: PackageCreation1(),
     );
   }
 
