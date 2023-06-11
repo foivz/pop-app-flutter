@@ -42,6 +42,7 @@ class ProductsTabState extends State<ProductsTab> {
       });
     }
     List<Item> items = PackageDataApiInterface.productsFromApi(receivedData.last["DATA"]);
+    provider.removeAll();
     provider.addAll(items);
   }
 
