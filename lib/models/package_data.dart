@@ -33,7 +33,8 @@ class PackageData extends Item implements PackageDataApiInterface {
 
   double _price() {
     double sum = 0.0;
-    for (var product in products) sum += product.price;
+    for (var product in products) sum += product.price * product.getRemainingAmount();
+    sum = sum - sum * discount / 100;
     return sum;
   }
 
