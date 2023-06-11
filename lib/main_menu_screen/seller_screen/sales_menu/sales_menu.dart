@@ -8,6 +8,7 @@ import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/items_selected_for_selling.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/reusable_components/message.dart';
+import 'package:pop_app/utils/seller_logic.dart';
 import 'package:provider/provider.dart';
 
 class SalesMenuScreen extends StatefulWidget {
@@ -57,6 +58,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
     _animCont = AnimationController(vsync: this, duration: const Duration(milliseconds: 150));
 
     SalesMenuScreen.refreshTab = (selectedTabIndex) {
+      refreshAllProducts(context, widget.user);
       loadTabContents();
       tabController.index = selectedTabIndex;
     };
