@@ -219,7 +219,10 @@ class _SellContentState extends State<SellContent> {
                                         );
                                       }
                                     } on Exception catch (ex, _) {
-                                      Message.error(context).show(ex.toString());
+                                      Message.info(context).show(
+                                        ex.toString().replaceFirst("Exception: ", ""),
+                                      );
+                                      Navigator.of(context, rootNavigator: true).pop('dialog');
                                     }
                                   },
                                 ),
