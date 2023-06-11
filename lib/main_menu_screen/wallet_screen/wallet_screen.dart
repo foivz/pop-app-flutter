@@ -70,7 +70,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: Text(
-                                "$balanceAmount 💸",
+                                "${balanceAmount.toStringAsFixed(2)} 💸",
                                 style: const TextStyle(
                                   fontSize: 25,
                                 ),
