@@ -34,7 +34,19 @@ class SellerQRCodeScreen extends StatelessWidget {
                 "Exit this screen once the buyer has scanned the code.",
                 textAlign: TextAlign.center,
               ),
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 40.0, left: 20, right: 20),
+              child: Text(
+                "Or, if scanning fails, "
+                "go back and recreate the invoice by pressing the button bellow.",
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+            BackButton(onPressed: () => Navigator.pop(context))
           ]),
         ),
       ),
