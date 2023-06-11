@@ -1,4 +1,3 @@
-// ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
 import 'dart:io';
 
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
@@ -108,9 +107,9 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                               User.storeUserData(val["DATA"], username, password);
                               loggedUser!.firstName = val["DATA"]["Ime"];
                               loggedUser!.lastName = val["DATA"]["Prezime"];
-                              if (val["DATA"]["Naziv_Uloge"] == "Prodavac")
+                              if (val["DATA"]["Naziv_Uloge"] == "Prodavac") {
                                 role = UserRoleType.seller;
-                              print(val["DATA"]["Token"]);
+                              }
                               _navigateToMainScreen();
                             } else if (val["STATUSMESSAGE"] == "USER NEEDS STORE") {
                               _navigateToRoleSelection();
