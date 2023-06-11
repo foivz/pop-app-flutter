@@ -94,22 +94,23 @@ class _ItemCardState extends State<ItemCard>
                 }
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.white),
-              title: Text('Delete $type', style: const TextStyle(color: Colors.white)),
-              onTap: () {
-                switch (itemType) {
-                  case StoreContentType.Product:
-                    deleteProduct(context, id);
-                    break;
-                  case StoreContentType.Package:
-                    deletePackage(context, id);
-                    break;
-                  default:
-                }
-                Navigator.pop(context);
-              },
-            ),
+            if (!isSelected)
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.white),
+                title: Text('Delete $type', style: const TextStyle(color: Colors.white)),
+                onTap: () {
+                  switch (itemType) {
+                    case StoreContentType.Product:
+                      deleteProduct(context, id);
+                      break;
+                    case StoreContentType.Package:
+                      deletePackage(context, id);
+                      break;
+                    default:
+                  }
+                  Navigator.pop(context);
+                },
+              ),
           ],
         );
       },
