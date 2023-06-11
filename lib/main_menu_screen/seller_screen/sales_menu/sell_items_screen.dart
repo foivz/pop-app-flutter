@@ -5,12 +5,13 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/qr_code_screen.dart';
 import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/item.dart';
+import 'package:pop_app/models/items_selected_for_selling.dart';
 import 'package:pop_app/myconstants.dart';
 import 'package:pop_app/reusable_components/message.dart';
+import 'package:provider/provider.dart';
 
 class SellItemsScreen extends StatefulWidget {
-  final List<Item> selectedItems;
-  const SellItemsScreen(this.selectedItems, {super.key});
+  const SellItemsScreen({super.key});
 
   @override
   State<SellItemsScreen> createState() => _SellItemsScreenState();
@@ -19,37 +20,40 @@ class SellItemsScreen extends StatefulWidget {
 class _SellItemsScreenState extends State<SellItemsScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Invoice generation")),
-      bottomSheet: SellContent(selectedItems: widget.selectedItems),
-      body: ListView.separated(
-        itemCount: widget.selectedItems.length,
-        shrinkWrap: true,
-        clipBehavior: Clip.none,
-        separatorBuilder: (context, index) => const Divider(
-          indent: 3,
-          endIndent: 3,
-          thickness: 0, // linked to vertical symmetric padding above
-        ),
-        padding: const EdgeInsets.fromLTRB(10, 20, 10, 300),
-        itemBuilder: (context, index) {
-          Item currentItem = widget.selectedItems[index];
-          return ItemCard(
-            index: index,
-            item: currentItem,
-            onSelectedAmountChange: (newAmount) {
-              widget.selectedItems[index].selectedForSelling = newAmount;
+    return Consumer<ItemsSelectedForSelling>(
+      builder: (context, model, child) {
+        return Scaffold(
+          appBar: AppBar(title: const Text("Invoice generation")),
+          bottomSheet: SellContent(),
+          body: ListView.separated(
+            itemCount: model.selectedItems.length,
+            shrinkWrap: true,
+            clipBehavior: Clip.none,
+            separatorBuilder: (context, index) => const Divider(
+              indent: 3,
+              endIndent: 3,
+              thickness: 0, // linked to vertical symmetric padding above
+            ),
+            padding: const EdgeInsets.fromLTRB(10, 20, 10, 300),
+            itemBuilder: (context, index) {
+              Item currentItem = model.selectedItems[index];
+              return ItemCard(
+                index: index,
+                item: currentItem,
+                onSelectedAmountChange: (newAmount) {
+                  model.changeProductAmount(index, newAmount);
+                },
+              );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
 
 class SellContent extends StatefulWidget {
-  const SellContent({super.key, required this.selectedItems});
-  final List<Item> selectedItems;
+  const SellContent({super.key});
 
   @override
   State<SellContent> createState() => _SellContentState();
@@ -67,9 +71,9 @@ class _SellContentState extends State<SellContent> {
     });
   }
 
-  String getTotalPrice() {
+  String getTotalPrice(List<Item> selectedItems) {
     double totalPrice = 0;
-    for (var item in widget.selectedItems) {
+    for (var item in selectedItems) {
       totalPrice += item.selectedForSelling * item.price;
     }
 
@@ -87,144 +91,151 @@ class _SellContentState extends State<SellContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: contentHeight,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.elliptical(20, 10),
-          topRight: Radius.elliptical(20, 10),
-        ),
-        color: MyConstants.red,
-      ),
-      child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-        Form(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 120, bottom: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "DISCOUNT (%):",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  color: MyConstants.textfieldBackground,
-                  width: 75,
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Stack(children: [
-                    TextFormField(
-                      key: discountInputKey,
-                      controller: discountInputCont,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-                        _MaxValueInputFormatter(100),
-                      ],
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        floatingLabelStyle: MaterialStateTextStyle.resolveWith(
-                          (states) => const TextStyle(
-                            color: MyConstants.red,
-                            fontSize: 16,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: MyConstants.accentColor),
-                        ),
-                        contentPadding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
-                      ),
-                      textInputAction: TextInputAction.done,
-                      onTap: () => setState(() {
-                        // contentHeight = 500;
-                      }),
-                      onEditingComplete: () => returnToNormalSize(),
-                      onTapOutside: (event) {
-                        returnToNormalSize();
-                      },
-                    ),
-                  ]),
-                )
-              ],
+    return Consumer<ItemsSelectedForSelling>(
+      builder: (context, model, child) {
+        return Container(
+          height: contentHeight,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.elliptical(20, 10),
+              topRight: Radius.elliptical(20, 10),
             ),
+            color: MyConstants.red,
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            const Text(
-              "TOTAL:",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            Text(
-              getTotalPrice(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            Row(
-              children: [
-                IconButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith(
-                      (states) => MyConstants.accentColor2,
-                    ),
-                  ),
-                  iconSize: 40,
-                  icon: const Icon(
-                    Icons.start,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Initiate Payment'),
-                        content: const Text('Confirm payment:'),
-                        surfaceTintColor: Colors.white,
-                        actions: <Widget>[
-                          TextButton(
-                            child: const Text('Generate QR Code for buyer'),
-                            onPressed: () async {
-                              try {
-                                double discountAmount = double.parse(discountInputCont.text);
-                                InitialInvoice initialInvoice =
-                                    await ApiRequestManager.generateInvoice(
-                                  discountAmount,
-                                  widget.selectedItems,
-                                );
-                                if (context.mounted) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => QRCodeScreen(initialInvoice.id),
-                                    ),
-                                  );
-                                }
-                              } on Exception catch (ex, _) {
-                                Message.error(context).show(ex.toString());
-                              }
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Form(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 120, bottom: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "DISCOUNT (%):",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        color: MyConstants.textfieldBackground,
+                        width: 75,
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: Stack(children: [
+                          TextFormField(
+                            key: discountInputKey,
+                            controller: discountInputCont,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                              _MaxValueInputFormatter(100),
+                            ],
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+                                (states) => const TextStyle(
+                                  color: MyConstants.red,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              focusedBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(color: MyConstants.accentColor),
+                              ),
+                              contentPadding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
+                            ),
+                            textInputAction: TextInputAction.done,
+                            onTap: () => setState(() {
+                              // contentHeight = 500;
+                            }),
+                            onEditingComplete: () => returnToNormalSize(),
+                            onTapOutside: (event) {
+                              returnToNormalSize();
                             },
                           ),
-                        ],
-                      ),
-                    );
-                  },
+                        ]),
+                      )
+                    ],
+                  ),
                 ),
-              ],
-            )
-          ],
-        ),
-      ]),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  const Text(
+                    "TOTAL:",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(
+                    getTotalPrice(model.selectedItems),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.resolveWith(
+                            (states) => MyConstants.accentColor2,
+                          ),
+                        ),
+                        iconSize: 40,
+                        icon: const Icon(
+                          Icons.start,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Initiate Payment'),
+                              content: const Text('Confirm payment:'),
+                              surfaceTintColor: Colors.white,
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Generate QR Code for buyer'),
+                                  onPressed: () async {
+                                    try {
+                                      double discountAmount = double.parse(discountInputCont.text);
+                                      InitialInvoice initialInvoice =
+                                          await ApiRequestManager.generateInvoice(
+                                        discountAmount,
+                                        model.selectedItems,
+                                      );
+                                      if (context.mounted) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => QRCodeScreen(initialInvoice.id),
+                                          ),
+                                        );
+                                      }
+                                    } on Exception catch (ex, _) {
+                                      Message.error(context).show(ex.toString());
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

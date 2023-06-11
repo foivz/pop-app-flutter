@@ -5,8 +5,10 @@ import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_cont
 import 'package:flutter/material.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sell_items_screen.dart';
 import 'package:pop_app/models/item.dart';
+import 'package:pop_app/models/items_selected_for_selling.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/reusable_components/message.dart';
+import 'package:provider/provider.dart';
 
 class SalesMenuScreen extends StatefulWidget {
   final User user;
@@ -90,7 +92,9 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SellItemsScreen(selectedItems),
+                        builder: (context) => ChangeNotifierProvider<ItemsSelectedForSelling>(
+                            create: (context) => ItemsSelectedForSelling(selectedItems),
+                            child: const SellItemsScreen()),
                       ),
                     );
                   } else {
