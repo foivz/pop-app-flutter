@@ -58,7 +58,7 @@ class _StoreContentCreationState extends State<StoreContentCreation>
       productListKey: _productListKey,
       user: widget.user,
     );
-    productCreationForm = ProductCreationTab();
+    productCreationForm = const ProductCreationTab();
   }
 
   @override

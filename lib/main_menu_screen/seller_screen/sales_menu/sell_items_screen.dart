@@ -24,7 +24,7 @@ class _SellItemsScreenState extends State<SellItemsScreen> {
       builder: (context, model, child) {
         return Scaffold(
           appBar: AppBar(title: const Text("Invoice generation")),
-          bottomSheet: SellContent(),
+          bottomSheet: const SellContent(),
           body: ListView.separated(
             itemCount: model.selectedItems.length,
             shrinkWrap: true,
