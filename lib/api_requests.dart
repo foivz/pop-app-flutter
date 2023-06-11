@@ -295,6 +295,9 @@ class ApiRequestManager {
     if (responseData["STATUSMESSAGE"] == "INVOICE GENERATED") {
       return InitialInvoice(
           id: responseData["DATA"]["Id"], code: responseData["DATA"]["Kod_Racuna"]);
+    } else if (responseData["STATUSMESSAGE"] == "MISSING AMOUNT") {
+      throw Exception("You don't have so many items!\n"
+          "Try to lower the amount you're trying to sell or edit products to add more!");
     } else {
       throw Exception("Something went wrong: ${responseData["STATUSMESSAGE"]}");
     }
