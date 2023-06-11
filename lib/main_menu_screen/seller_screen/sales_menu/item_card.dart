@@ -397,7 +397,7 @@ class _ItemCardState extends State<ItemCard>
       child: Align(
         alignment: Alignment.bottomLeft,
         child: Text(
-          "${widget.item.getRemainingAmount()} remaining",
+          "${widget.item.getRemainingAmount()} ${widget.item is ProductData ? "remaining" : "products packed"}",
           style: TextStyle(
             color:
                 widget.item.getRemainingAmount() != 0 ? Colors.grey.shade600 : Colors.red.shade800,

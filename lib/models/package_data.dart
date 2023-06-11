@@ -1,4 +1,5 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/product_data.dart';
 
@@ -38,13 +39,11 @@ class PackageData extends Item implements PackageDataApiInterface {
 
   @override
   int getRemainingAmount() {
-    int maxAmount = 0;
+    int amountOfProductsInPackage = 0;
     for (ProductData product in products) {
-      if (maxAmount == 0 || maxAmount > product.remainingAmount) {
-        maxAmount = product.remainingAmount;
-      }
+      amountOfProductsInPackage += product.getRemainingAmount();
     }
-    return maxAmount;
+    return amountOfProductsInPackage;
   }
 }
 
