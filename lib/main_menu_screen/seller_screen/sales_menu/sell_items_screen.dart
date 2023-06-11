@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pop_app/api_requests.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
-import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/qr_code_screen.dart';
+import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/seller_qr_code_screen.dart';
 import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/items_selected_for_selling.dart';
@@ -214,7 +214,8 @@ class _SellContentState extends State<SellContent> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => QRCodeScreen(initialInvoice.id),
+                                            builder: (context) =>
+                                                SellerQRCodeScreen(initialInvoice.id),
                                           ),
                                         );
                                       }

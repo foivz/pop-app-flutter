@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pop_app/myconstants.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class QRCodeScreen extends StatelessWidget {
+class SellerQRCodeScreen extends StatelessWidget {
   final String invoiceId;
-  const QRCodeScreen(this.invoiceId, {super.key});
+  const SellerQRCodeScreen(this.invoiceId, {super.key});
 
   @override
   Widget build(BuildContext context) {
