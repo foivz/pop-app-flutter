@@ -16,15 +16,18 @@ class AvailableProducts extends ChangeNotifier {
 
   void removeById(String id) {
     _items.removeWhere((element) => element.id == id);
+    notifyListeners();
   }
 
   void add(Item item) {
     _items.add(item);
+    notifyListeners();
   }
 
   void edit(Item item) {
     removeById(item.id);
     _items.add(item);
+    notifyListeners();
   }
 
   int getLength() => _items.length;
