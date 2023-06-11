@@ -301,11 +301,16 @@ class _ItemCardState extends State<ItemCard>
       borderOnForeground: true,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
+        child: Column(
           children: [
-            _imagePreview(width),
-            _titleAndText(width),
-            _priceOrAmount(notInCounterMode),
+            Row(
+              children: [
+                _imagePreview(width),
+                _titleAndText(width),
+                _priceOrAmount(notInCounterMode),
+              ],
+            ),
+            _remainingAmount(),
           ],
         ),
       ),
@@ -384,6 +389,22 @@ class _ItemCardState extends State<ItemCard>
           ),
         ),
       );
+  }
+
+  Widget _remainingAmount() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0),
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: Text(
+          "${widget.item.getRemainingAmount()} remaining",
+          style: TextStyle(
+            color:
+                widget.item.getRemainingAmount() != 0 ? Colors.grey.shade600 : Colors.red.shade800,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
