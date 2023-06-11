@@ -32,7 +32,7 @@ mixin MenuScreenMixin<T extends StatefulWidget> on State<T> {
         buildButton(context, 'assets/icons/wallet-icon.png', 'Wallet', () {
           Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WalletScreen()));
         }),
-        buildButton(context, 'assets/icons/settings-icon.png', 'Settings', () {}),
+        // buildButton(context, 'assets/icons/settings-icon.png', 'Settings', () {}),
       ],
     );
   }
