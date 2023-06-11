@@ -69,7 +69,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(bottom: 16),
-                              child: Text("$balanceAmount EUR"),
+                              child: Text("$balanceAmount 💸"),
                             )
                           ],
                         ),

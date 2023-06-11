@@ -65,7 +65,7 @@ class _InvoiceCardState extends State<InvoiceCard>
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(height: 1.75),
                       ),
                       Text(
-                        "${widget.invoice.finalPrice} HRK",
+                        "${widget.invoice.finalPrice} 💸",
                         overflow: TextOverflow.fade,
                         style: const TextStyle(fontSize: 20),
                       ),
