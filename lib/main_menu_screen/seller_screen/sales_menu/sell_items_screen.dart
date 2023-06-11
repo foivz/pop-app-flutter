@@ -33,7 +33,7 @@ class _SellItemsScreenState extends State<SellItemsScreen> {
           endIndent: 3,
           thickness: 0, // linked to vertical symmetric padding above
         ),
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.fromLTRB(10, 20, 10, 300),
         itemBuilder: (context, index) {
           Item currentItem = widget.selectedItems[index];
           return ItemCard(
