@@ -42,8 +42,8 @@ class ApiRequestManager {
       body: fm,
       route(Routes.login),
     );
-    var responseData = json.decode(response.body);
-    _updateTokenData(responseData);
+    var responseData = json.decode(utf8.decode(response.bodyBytes));
+    _setToken(responseData);
 
     return responseData;
   }
@@ -62,19 +62,16 @@ class ApiRequestManager {
       route(Routes.registracija),
     );
 
-    var responseData = json.decode(response.body);
-    _updateTokenData(responseData);
+    if (responseData["STATUS"] == true) {
+      _setToken(responseData);
+    }
 
     return responseData;
   }
 
-  static void _updateTokenData(responseData) {
-    try {
-      var tokenData = responseData["DATA"]["Token"];
-      _token = tokenData;
-    } catch (e) {
-      SecureStorage.setUserData(json.encode("{}"));
-    }
+  static void _setToken(responseData) {
+    var tokenData = responseData["DATA"]["Token"];
+    _token = tokenData;
   }
 
   /// Wraps whatever fetching logic into a token check.
