@@ -215,7 +215,7 @@ class _SellContentState extends State<SellContent> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                SellerQRCodeScreen(initialInvoice.id),
+                                                SellerQRCodeScreen(initialInvoice),
                                           ),
                                         );
                                       }

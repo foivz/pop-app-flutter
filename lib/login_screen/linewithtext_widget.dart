@@ -37,6 +37,7 @@ class LineWithText extends StatelessWidget {
               style: TextStyle(
                 backgroundColor: textBackgroundColor,
                 fontSize: fontSize,
+                color: textColor,
               ),
             ),
           ),
