@@ -8,11 +8,7 @@ import 'package:pop_app/models/package_data.dart';
 import '../items_tab.dart';
 
 class PackagesTab extends ItemsTab {
-  PackagesTab({
-    super.key,
-    required super.onSelectionStateChange,
-    required super.user,
-  });
+  PackagesTab({super.key, required super.onSelectionStateChange});
 
   @override
   State<PackagesTab> createState() => _PackagesTabState();

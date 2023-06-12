@@ -25,7 +25,6 @@ class BaseLoginScreen extends StatefulWidget {
 class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetcherMixin {
   TextEditingController usernameCont = TextEditingController();
   TextEditingController passwordCont = TextEditingController();
-  User? loggedUser;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool blockLoginRequests = false;
@@ -102,11 +101,12 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                           String username = usernameCont.text;
                           String password = passwordCont.text;
                           ApiRequestManager.login(username, password).then((val) {
-                            loggedUser = User.loginInfo(username: username, password: password);
+                            User.loggedIn.username = username;
+                            User.loggedIn.password = password;
                             if (val["STATUS"]) {
                               User.storeUserData(val["DATA"], username, password);
-                              loggedUser!.firstName = val["DATA"]["Ime"];
-                              loggedUser!.lastName = val["DATA"]["Prezime"];
+                              User.loggedIn.firstName = val["DATA"]["Ime"];
+                              User.loggedIn.lastName = val["DATA"]["Prezime"];
                               if (val["DATA"]["Naziv_Uloge"] == "Prodavac") {
                                 role = UserRoleType.seller;
                               }
@@ -155,9 +155,8 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
       PageRouteBuilder(
         pageBuilder: (c, a, s) => RoleSelectionScreen(
           onSelectedCallback: (selectedRole) async {
-            loggedUser!.setRole(selectedRole);
-            if (selectedRole.roleName == "seller") role = UserRoleType.seller;
-            if (await ApiRequestManager.assignRole(loggedUser!)) {
+            User.loggedIn.setRole(selectedRole);
+            if (await ApiRequestManager.setLoggedUsersRole()) {
               _navigateToStoreSelection();
             } else if (context.mounted) {
               Message.error(context).show("Role couldn't be selected!"
@@ -171,13 +170,12 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   }
 
   _navigateToStoreSelection() {
-    fetchStores(loggedUser!).then(
+    fetchStores().then(
       (value) => Navigator.of(context).push(
         PageRouteBuilder(
           pageBuilder: (c, a, s) => Scaffold(
             body: Center(
               child: storeSelection(
-                loggedUser!,
                 GlobalKey(),
                 TextEditingController(),
               ),
@@ -192,7 +190,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   _navigateToMainScreen() {
     Navigator.of(context).push(PageRouteBuilder(
       settings: const RouteSettings(name: "main_menu"),
-      pageBuilder: (c, a, s) => MainMenuScreen(role: role, user: loggedUser!),
+      pageBuilder: (c, a, s) => MainMenuScreen(role: role),
       transitionsBuilder: ScreenTransitions.slideLeft,
     ));
   }
@@ -201,7 +199,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   void onStoreFetched() {
     setState(() {});
     if (selectedStoreObject != null) {
-      loggedUser!.store = selectedStoreObject!;
+      User.loggedIn.store = selectedStoreObject!;
       _navigateToMainScreen();
     } else {
       Message.error(context).show("Oh no!\n"

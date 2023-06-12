@@ -1,10 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:pop_app/api_requests.dart';
-import 'package:pop_app/models/user.dart';
 import 'package:pop_app/reusable_components/message.dart';
-import 'package:pop_app/secure_storage.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -24,14 +20,8 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   void _fetchAndShowBalance() async {
-    // TODO: Think about using the User class for storing all user info.
-    var decodedUserInfo = json.decode(await SecureStorage.getUserData());
-    User user = User.username(username: decodedUserInfo["KorisnickoIme"]);
-    user.setRole(
-        User.roles.firstWhere((role) => role.roleId == int.parse(decodedUserInfo["Id_Uloge"])));
-
     try {
-      var fetchedBalance = await ApiRequestManager.getBalance(user);
+      var fetchedBalance = await ApiRequestManager.getBalance();
       setState(() {
         isWalletDataLoaded = true;
         balanceAmount = fetchedBalance;

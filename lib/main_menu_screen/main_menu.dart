@@ -11,8 +11,7 @@ enum UserRoleType { buyer, seller }
 
 class MainMenuScreen extends StatelessWidget {
   final UserRoleType role;
-  final User user;
-  const MainMenuScreen({super.key, required this.role, required this.user});
+  const MainMenuScreen({super.key, required this.role});
 
   static MainMenuScreen? of(BuildContext context) {
     try {
@@ -31,7 +30,9 @@ class MainMenuScreen extends StatelessWidget {
     return Scaffold(
       key: mainMenuKey,
       appBar: AppBar(
-        title: Text("Welcome, ${role.name} ${user.firstName} ${user.lastName}!"),
+        title: Text(
+          "Welcome, ${role.name} ${User.loggedIn.firstName} ${User.loggedIn.lastName}!",
+        ),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(

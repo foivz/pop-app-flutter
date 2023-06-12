@@ -1,10 +1,10 @@
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/register_screen/register_screen_1.dart';
 import 'package:pop_app/register_screen/register_screen_2.dart';
 import 'package:pop_app/register_screen/register_screen_3.dart';
 import 'package:pop_app/register_screen/register_screen_4.dart';
 import 'package:pop_app/register_screen/register_screen_5.dart';
 import 'package:pop_app/screentransitions.dart';
-import 'package:pop_app/models/user.dart';
 
 import 'package:flutter/material.dart';
 
@@ -18,8 +18,9 @@ class RegisterScreen extends StatefulWidget {
   final TextEditingController storeNameController = TextEditingController();
 
   final String initialUsername;
-  final User user = User.empty();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final NewUser newUser = NewUser();
 
   static RegisterScreenState? of(BuildContext context) {
     try {
@@ -74,7 +75,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (widget.user.registered) {
+        if (widget.newUser.registered) {
           bool quitEarly = false;
 
           await showDialog<String>(

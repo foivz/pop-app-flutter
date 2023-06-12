@@ -31,8 +31,8 @@ class FirstRegisterScreen extends StatelessWidget {
             buttonText: 'Next',
             onPressed: () {
               if (widget.formKey.currentState!.validate()) {
-                widget.user.firstName = widget.firstNameController.text;
-                widget.user.lastName = widget.lastName.text;
+                widget.newUser.firstName = widget.firstNameController.text;
+                widget.newUser.lastName = widget.lastName.text;
                 RegisterScreen.of(context)?.showNextRegisterScreen();
               }
             },

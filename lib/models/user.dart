@@ -12,7 +12,6 @@ class User {
   late Store store;
   late double balance;
   UserRole? _role;
-  bool registered = false;
 
   static final List<UserRole> roles = List.from([UserRole(3, "seller"), UserRole(1, "buyer")]);
   static void storeUserData(userData, username, password) {
@@ -21,25 +20,15 @@ class User {
     SecureStorage.setPassword(password);
   }
 
-  static get loggedIn async {
-    return User(
-      username: await SecureStorage.getUsername(),
-      password: await SecureStorage.getPassword(),
-    );
-  }
+  static User loggedIn = User();
 
-  get role => _role;
+  UserRole? get role => _role;
 
   void setRole(UserRole role) {
     if (roles.contains(role)) {
       _role = role;
     }
   }
-
-  User.empty();
-
-  User.username({required this.username});
-  User.loginInfo({required this.username, required this.password});
 
   User({
     this.firstName = "",
@@ -49,8 +38,6 @@ class User {
     this.password = "",
     this.balance = 0.0,
   });
-
-  User.withUsername({required this.username});
 
   User.full(this.firstName, this.lastName, this.username, this.email, this.password, UserRole role,
       this.store) {
@@ -63,4 +50,9 @@ class UserRole {
   late String roleName;
 
   UserRole(this.roleId, this.roleName);
+}
+
+/// Only used in registration purposes
+class NewUser extends User {
+  bool registered = false;
 }

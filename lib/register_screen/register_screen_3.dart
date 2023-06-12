@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/register_screen/register.dart';
 import 'package:pop_app/reusable_components/message.dart';
 import 'package:pop_app/role_selection/role_selection_screen.dart';
@@ -8,9 +9,9 @@ class ThirdRegisterScreen extends StatelessWidget {
   final RegisterScreen widget;
   const ThirdRegisterScreen(this.widget, {super.key});
 
-  void setUserRole(selectedRole, context) async {
-    widget.user.setRole(selectedRole);
-    if (await ApiRequestManager.assignRole(widget.user)) {
+  void setUserRole(UserRole selectedRole, context) async {
+    User.loggedIn.setRole(selectedRole);
+    if (await ApiRequestManager.setLoggedUsersRole()) {
       RegisterScreen.of(context)?.showNextRegisterScreen();
     } else {
       Message.error(context).show("The role couldn't be assigned to you.\n"

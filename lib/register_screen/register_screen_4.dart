@@ -18,7 +18,7 @@ class _FourthRegisterScreenState extends StoreFetcher<FourthRegisterScreen> with
   @override
   void onStoreFetched() {
     if (selectedStoreObject != null) {
-      widget.widget.user.store = selectedStoreObject!;
+      widget.widget.newUser.store = selectedStoreObject!;
       RegisterScreen.of(context)?.showNextRegisterScreen();
     } else {
       Message.error(context).show("Oh no!\n"
@@ -29,8 +29,8 @@ class _FourthRegisterScreenState extends StoreFetcher<FourthRegisterScreen> with
 
   @override
   void initState() {
-    if (widget.widget.user.role?.roleName == "buyer") {
-      fetchStores(widget.widget.user);
+    if (widget.widget.newUser.role?.roleName == "buyer") {
+      fetchStores();
     }
     super.initState();
   }
@@ -38,6 +38,8 @@ class _FourthRegisterScreenState extends StoreFetcher<FourthRegisterScreen> with
   @override
   Widget build(BuildContext context) {
     return storeSelection(
-        widget.widget.user, widget.widget.formKey, widget.widget.storeNameController);
+      widget.widget.formKey,
+      widget.widget.storeNameController,
+    );
   }
 }

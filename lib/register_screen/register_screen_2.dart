@@ -1,5 +1,6 @@
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/reusable_components/message.dart';
 import 'package:pop_app/register_screen/register.dart';
 import 'package:pop_app/api_requests.dart';
@@ -39,19 +40,19 @@ class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
   }
 
   void _setUserData() {
-    widget.widget.user.username = widget.widget.usernameController.text;
-    widget.widget.user.email = widget.widget.emailController.text;
-    widget.widget.user.password = widget.widget.passwordController.text;
+    widget.widget.newUser.username = widget.widget.usernameController.text;
+    widget.widget.newUser.email = widget.widget.emailController.text;
+    widget.widget.newUser.password = widget.widget.passwordController.text;
   }
 
-  Future registerUser() async {
-    var responseData = await ApiRequestManager.register(widget.widget.user);
+  Future registerUser(NewUser newUser) async {
+    var responseData = await ApiRequestManager.register(widget.widget.newUser);
 
     failedLoginMessage = null;
 
-    widget.widget.user.registered = responseData["STATUSMESSAGE"] == "Registration successful";
+    newUser.registered = responseData["STATUSMESSAGE"] == "Registration successful";
 
-    if (widget.widget.user.registered == false) {
+    if (newUser.registered == false) {
       String responseMessage = responseData["STATUSMESSAGE"].toString();
 
       responseMessage = responseMessage.replaceAll("KorisnickoIme", "Username");
@@ -111,13 +112,13 @@ class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
               onPressed: () async {
                 if (widget.widget.formKey.currentState!.validate()) {
                   _setUserData();
-                  await registerUser();
+                  await registerUser(widget.widget.newUser);
 
                   // 'mounted' flag checked to make sure context didn't change during registration.
                   if (context.mounted) {
                     if (failedLoginMessage == null) {
                       RegisterScreen.of(context)?.showNextRegisterScreen();
-                      Message.info(context).show("Welcome, ${widget.widget.user.firstName}!");
+                      Message.info(context).show("Welcome, ${widget.widget.newUser.firstName}!");
                     } else {
                       Message.error(context).show(failedLoginMessage!);
                     }

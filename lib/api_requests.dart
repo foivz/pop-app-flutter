@@ -48,7 +48,7 @@ class ApiRequestManager {
     return responseData;
   }
 
-  static Future register(User user) async {
+  static Future register(NewUser user) async {
     var fm = {
       "Ime": user.firstName,
       "Prezime": user.lastName,
@@ -80,8 +80,8 @@ class ApiRequestManager {
   /// Wraps whatever fetching logic into a token check.
   /// If the server reports token is invalid, this method attempts login once.
   /// If the new token is still invalid, method returns null instead of response.
-  /// [requestCallback] should return a response body!
-  static Future<dynamic> _executeWithToken(User user, dynamic requestCallback) async {
+  /// [requestCallback] should return a response.bodyBytes in order to parse UTF-8 chars!
+  static Future<dynamic> _executeWithToken(dynamic requestCallback) async {
     int attempts = 0;
 
     dynamic responseData;
@@ -91,7 +91,7 @@ class ApiRequestManager {
       responseData = jsonDecode(utf8.decode(body));
       isTokenValid = _isTokenValid(responseData);
       if (!isTokenValid) {
-        login(user.username, user.password);
+        login(User.loggedIn.username, User.loggedIn.password);
       }
     } while (!isTokenValid && ++attempts != 2);
 
@@ -102,15 +102,15 @@ class ApiRequestManager {
     return responseData;
   }
 
-  static Future<dynamic> getAllStores(User user) async {
+  static Future<dynamic> getAllStores() async {
     var fm = {
       "Token": _token,
-      "KorisnickoIme": user.username,
+      "KorisnickoIme": User.loggedIn.username,
       "Readall": "True",
     };
 
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(body: fm, route(Routes.trgovine));
       return response.bodyBytes;
     });
@@ -118,17 +118,17 @@ class ApiRequestManager {
     return responseData;
   }
 
-  static Future<Store> createStore(User user, String storeName) async {
+  static Future<Store> createStore(String storeName) async {
     var fm = {
       "Token": _token,
-      "KorisnickoIme": user.username,
+      "KorisnickoIme": User.loggedIn.username,
       "CREATESTORE": "True",
       "NazivTrgovine": storeName
     };
 
     dynamic responseData;
 
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(body: fm, route(Routes.trgovine));
       return response.bodyBytes;
     });
@@ -136,17 +136,17 @@ class ApiRequestManager {
     return Store(responseData["DATA"]["Id_Trgovine"], responseData["DATA"]["NazivTrgovine"], 0, 0);
   }
 
-  static Future<bool> assignStore(User user, Store store) async {
+  static Future<bool> assignStore(Store store) async {
     var fm = {
       "Token": _token,
-      "KorisnickoIme": user.username,
+      "KorisnickoIme": User.loggedIn.username,
       "ASSIGNSTORESELF": "True",
       "Id_Trgovine": store.storeId.toString()
     };
 
     dynamic responseData;
 
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(body: fm, route(Routes.trgovine));
       dynamic body = response.bodyBytes;
       return body;
@@ -155,20 +155,20 @@ class ApiRequestManager {
     return (responseData["STATUSMESSAGE"] == "STORE ASSIGNED");
   }
 
-  static Future<bool> assignRole(User user) async {
-    if (user.role == null) {
+  static Future<bool> setLoggedUsersRole() async {
+    if (User.loggedIn.role == null) {
       return false;
     }
 
     var fm = {
       "Token": _token,
-      "KorisnickoIme": user.username,
+      "KorisnickoIme": User.loggedIn.username,
       "SETOWNROLE": "True",
-      "RoleId": user.role!.roleId.toString()
+      "RoleId": User.loggedIn.role!.roleId.toString()
     };
 
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(body: fm, route(Routes.korisnici));
       return response.bodyBytes;
     });
@@ -176,8 +176,8 @@ class ApiRequestManager {
     return (responseData["STATUSMESSAGE"] == "OWN ROLE SET");
   }
 
-  static Future<double> getBalance(User user) async {
-    if (user.role == null) {
+  static Future<double> getBalance() async {
+    if (User.loggedIn.role == null) {
       throw Exception("Can't get balance: user's role not set!");
     }
 
@@ -188,13 +188,13 @@ class ApiRequestManager {
 
     var fm = {
       "Token": _token,
-      "KorisnickoIme": user.username,
-      roleMap[user.role!.roleName]: "True",
+      "KorisnickoIme": User.loggedIn.username,
+      roleMap[User.loggedIn.role!.roleName]: "True",
     };
 
     dynamic responseData;
 
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(
         body: fm,
         route(Routes.novcanik),
@@ -215,16 +215,14 @@ class ApiRequestManager {
   }
 
   static Future<List<Invoice>> getAllInvoices() async {
-    User user = await User.loggedIn;
-
     var fm = {
       "Token": _token,
-      "KorisnickoIme": user.username,
+      "KorisnickoIme": User.loggedIn.username,
       "Readall": "True",
     };
 
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(body: fm, route(Routes.racuni));
       return response.bodyBytes;
     });
@@ -242,10 +240,8 @@ class ApiRequestManager {
 
   /// Finalizes an invoice with a complete form data request body.
   static Future<Invoice?> _finalizeInvoice({required Map<String, String> fm}) async {
-    User user = await User.loggedIn;
-
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(body: fm, route(Routes.racuni));
       return response.bodyBytes;
     });
@@ -266,31 +262,27 @@ class ApiRequestManager {
   }
 
   static Future<Invoice?> finalizeInvoiceViaQR(String code) async {
-    User user = await User.loggedIn;
     return _finalizeInvoice(fm: {
       "Token": _token!,
-      "KorisnickoIme": user.username,
+      "KorisnickoIme": User.loggedIn.username,
       "CONFIRMSALE": "True",
       "Id_Racuna": code
     });
   }
 
   static Future<Invoice?> finalizeInvoiceViaCode(String code) async {
-    User user = await User.loggedIn;
     return _finalizeInvoice(fm: {
       "Token": _token!,
-      "KorisnickoIme": user.username,
+      "KorisnickoIme": User.loggedIn.username,
       "CONFIRMSALEFROMCODE": "True",
       "Kod_Racuna": code
     });
   }
 
   static Future<InitialInvoice> generateInvoice(double discount, List<Item> items) async {
-    User user = await User.loggedIn;
-
     Map<String, Object> fm = {
       "Token": _token!,
-      "KorisnickoIme": user.username,
+      "KorisnickoIme": User.loggedIn.username,
       "GENERATESALE": "True",
       "PopustRacuna": discount.toStringAsFixed(0),
     };
@@ -301,7 +293,7 @@ class ApiRequestManager {
     }
 
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(body: fm, route(Routes.racuni));
       return response.bodyBytes;
     });
@@ -322,20 +314,19 @@ class ApiRequestManager {
   }
 
   static Future<List> getAllPackages() async {
-    User user = await SecureStorage.getUser();
-    var fm = {"Token": _token, "KorisnickoIme": user.username, "GET": "True"};
+    var fm = {"Token": _token, "KorisnickoIme": User.loggedIn.username, "GET": "True"};
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(body: fm, route(Routes.paketi));
       return response.bodyBytes;
     });
     return [responseData];
   }
 
-  static Future<List> getAllProducts(User user) async {
-    var fm = {"Readall": "True", "Token": _token, "KorisnickoIme": user.username};
+  static Future<List> getAllProducts() async {
+    var fm = {"Readall": "True", "Token": _token, "KorisnickoIme": User.loggedIn.username};
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(body: fm, route(Routes.proizvodi));
       return response.bodyBytes;
     });
@@ -350,7 +341,7 @@ class ApiRequestManager {
       "Opis": product.description,
       "Cijena": product.price.toString(),
       "Kolicina": product.remainingAmount.toString(),
-      "KorisnickoIme": await SecureStorage.getUsername(),
+      "KorisnickoIme": User.loggedIn.username,
     });
     if (product.imageFile != null)
       req.files.add(
@@ -378,7 +369,7 @@ class ApiRequestManager {
       "Opis": package.description,
       "Popust": package.discount.toString(),
       "KolicinaPaketa": "1",
-      "KorisnickoIme": await SecureStorage.getUsername(),
+      "KorisnickoIme": User.loggedIn.username,
     });
     if (package.imageFile != null)
       req.files.add(
@@ -398,7 +389,7 @@ class ApiRequestManager {
   }
 
   static Future<bool> addProductsToPackage(List<int> ids, List<int> amounts, int packageId) async {
-    User user = await User.loggedIn;
+    User user = User.loggedIn;
 
     var fm = {
       "Token": _token,
@@ -413,7 +404,7 @@ class ApiRequestManager {
     }
 
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
+    responseData = await _executeWithToken(() async {
       http.Response response = await http.post(body: fm, route(Routes.paketi));
       return response.bodyBytes;
     });
@@ -427,7 +418,7 @@ class ApiRequestManager {
       "Token": _token!,
       "Id": packageId,
       "DELETE": true.toString(),
-      "KorisnickoIme": await SecureStorage.getUsername(),
+      "KorisnickoIme": User.loggedIn.username,
     });
     http.StreamedResponse responseData;
     try {
@@ -449,7 +440,7 @@ class ApiRequestManager {
       "Kolicina": "1",
       "Popust": package.discount.toString(),
       // slika
-      "KorisnickoIme": await SecureStorage.getUsername(),
+      "KorisnickoIme": User.loggedIn.username,
     });
     if (package.imageFile != null && package.imagePath == null) {
       req.files.add(
@@ -474,7 +465,7 @@ class ApiRequestManager {
     req.fields.addAll({
       "Token": _token!,
       "Id": productId.toString(),
-      "KorisnickoIme": await SecureStorage.getUsername(),
+      "KorisnickoIme": User.loggedIn.username,
     });
     http.StreamedResponse responseData;
     try {
@@ -495,7 +486,7 @@ class ApiRequestManager {
       "Opis": product.description,
       "Cijena": product.price.toString(),
       "Kolicina": product.remainingAmount.toString(),
-      "KorisnickoIme": await SecureStorage.getUsername(),
+      "KorisnickoIme": User.loggedIn.username,
     });
     if (product.imageFile != null && product.imagePath == null) {
       req.files.add(

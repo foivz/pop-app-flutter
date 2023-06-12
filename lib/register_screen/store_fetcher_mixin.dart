@@ -17,13 +17,13 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
   Store? selectedStoreObject;
   List<Store> fetchedStores = List.empty(growable: true);
 
-  void _createStoreAndProceed(User user, String storeName) async {
-    selectedStoreObject = await ApiRequestManager.createStore(user, storeName);
+  void _createStoreAndProceed(String storeName) async {
+    selectedStoreObject = await ApiRequestManager.createStore(storeName);
     onStoreFetched();
   }
 
-  void _assignStoreAndProceed(User user, Store selectedStore) async {
-    if (await ApiRequestManager.assignStore(user, selectedStore)) {
+  void _assignStoreAndProceed(Store selectedStore) async {
+    if (await ApiRequestManager.assignStore(selectedStore)) {
       selectedStoreObject = selectedStore;
     } else {
       selectedStoreObject = null;
@@ -32,8 +32,8 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
     setState(() {});
   }
 
-  Future fetchStores(User user) async {
-    var stores = await ApiRequestManager.getAllStores(user);
+  Future fetchStores() async {
+    var stores = await ApiRequestManager.getAllStores();
     setState(() {
       if ((stores?["DATA"] != null)) {
         fetchedStores.clear();
@@ -47,9 +47,8 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
     return stores;
   }
 
-  Widget storeSelection(
-      User user, GlobalKey<FormState> formKey, TextEditingController storeNameController) {
-    return user.role?.roleName == "seller"
+  Widget storeSelection(GlobalKey<FormState> formKey, TextEditingController storeNameController) {
+    return User.loggedIn.role?.roleName == "seller"
         ? Form(
             key: formKey,
             child: Column(
@@ -66,7 +65,7 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
                   buttonText: 'Next',
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      _createStoreAndProceed(user, storeNameController.text);
+                      _createStoreAndProceed(storeNameController.text);
                     }
                   },
                 )
@@ -74,7 +73,7 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
             ),
           )
         : CompanySelectionScreen(
-            onCompanySelected: (company) async => _assignStoreAndProceed(user, company),
+            onCompanySelected: (company) async => _assignStoreAndProceed(company),
             stores: fetchedStores,
             showAppBar: false,
           );

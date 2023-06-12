@@ -11,12 +11,7 @@ import '../items_tab.dart';
 class ProductsTab extends ItemsTab {
   final int startAmount;
 
-  ProductsTab({
-    super.key,
-    required super.user,
-    super.onSelectionStateChange,
-    this.startAmount = 1,
-  });
+  ProductsTab({super.key, super.onSelectionStateChange, this.startAmount = 1});
 
   @override
   State<ProductsTab> createState() => ProductsTabState();
@@ -32,7 +27,7 @@ class ProductsTabState extends State<ProductsTab> {
   }
 
   void _storeProductsInProvider() async {
-    refreshAllProducts(context, widget.user, onNoItems: () {
+    refreshAllProducts(context, onNoItems: () {
       setState(() {
         noItemsForUser = true;
       });

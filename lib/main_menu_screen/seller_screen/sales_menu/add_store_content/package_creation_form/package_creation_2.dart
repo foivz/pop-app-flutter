@@ -5,7 +5,6 @@ import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
 import 'package:pop_app/models/available_products.dart';
 import 'package:pop_app/models/item.dart';
-import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
 import 'package:flutter/material.dart';
@@ -14,12 +13,7 @@ import 'package:provider/provider.dart';
 
 class PackageCreation2 extends StatefulWidget {
   final GlobalKey productListKey;
-  final User user;
-  const PackageCreation2({
-    super.key,
-    required this.user,
-    required this.productListKey,
-  });
+  const PackageCreation2({super.key, required this.productListKey});
 
   @override
   State<PackageCreation2> createState() => _PackageCreation2State();
