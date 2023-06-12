@@ -40,6 +40,7 @@ mixin MenuScreenMixin<T extends StatefulWidget> on State<T> {
 
 SizedBox buildButton(
     BuildContext context, String imagePath, String title, void Function() onPressedCallback) {
+  var size = MediaQuery.of(context).size;
   return SizedBox(
     width: 20,
     child: Padding(
@@ -65,7 +66,10 @@ SizedBox buildButton(
             const SizedBox(height: 8),
             Text(
               title.toUpperCase(),
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: size.width < 200 ? 12 : 20,
+              ),
             ),
           ],
         ),
