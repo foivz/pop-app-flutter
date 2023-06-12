@@ -1,11 +1,11 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'package:pop_app/exceptions/login_exception.dart';
 import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/invoice.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/package_data.dart';
 import 'package:pop_app/models/product_data.dart';
-import 'package:pop_app/secure_storage.dart';
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/models/user.dart';
 
@@ -35,7 +35,8 @@ class ApiRequestManager {
   /// Call an API route
   static Uri route(Routes route) => Uri.parse("$root${route.name}.php");
 
-  static Future login(String username, String password) async {
+  /// Returns a new logged in User object or throws an LoginException if something goes south.
+  static Future<User> login(String username, String password) async {
     var fm = {"KorisnickoIme": username, "Lozinka": password};
 
     http.Response response = await http.post(
@@ -43,9 +44,32 @@ class ApiRequestManager {
       route(Routes.login),
     );
     var responseData = json.decode(utf8.decode(response.bodyBytes));
-    _setToken(responseData);
 
-    return responseData;
+    User user;
+
+    if (responseData["STATUS"] == true) {
+      _setToken(responseData);
+
+      UserRole role;
+      if (responseData["DATA"]["Naziv_Uloge"] == "Prodavac") {
+        role = User.roles.where((element) => element.roleName == "seller").first;
+      } else {
+        role = User.roles.where((element) => element.roleName == "buyer").first;
+      }
+
+      user = User.full(
+        firstName: responseData["DATA"]["Ime"],
+        lastName: responseData["DATA"]["Prezime"],
+        email: responseData["DATA"]["Email"],
+        username: username,
+        password: password,
+        role: role,
+      );
+    } else {
+      throw LoginException(responseData["STATUSMESSAGE"]);
+    }
+
+    return user;
   }
 
   static Future register(NewUser user) async {
@@ -61,6 +85,8 @@ class ApiRequestManager {
       body: fm,
       route(Routes.registracija),
     );
+
+    var responseData = json.decode(utf8.decode(response.bodyBytes));
 
     if (responseData["STATUS"] == true) {
       _setToken(responseData);

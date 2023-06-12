@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/secure_storage.dart';
 
@@ -14,8 +12,7 @@ class User {
   UserRole? _role;
 
   static final List<UserRole> roles = List.from([UserRole(3, "seller"), UserRole(1, "buyer")]);
-  static void storeUserData(userData, username, password) {
-    SecureStorage.setUserData(json.encode(userData));
+  static void storeUserData(username, password) {
     SecureStorage.setUsername(username);
     SecureStorage.setPassword(password);
   }
@@ -39,8 +36,14 @@ class User {
     this.balance = 0.0,
   });
 
-  User.full(this.firstName, this.lastName, this.username, this.email, this.password, UserRole role,
-      this.store) {
+  User.full({
+    required this.firstName,
+    required this.lastName,
+    required this.username,
+    required this.email,
+    required this.password,
+    required UserRole role,
+  }) {
     setRole(role);
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:pop_app/exceptions/login_exception.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/role_selection/role_selection_screen.dart';
@@ -38,10 +39,6 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   }
 
   String message = "";
-  void error(bool showError, {String errorMessage = "Username or password not valid."}) {
-    showError ? setState(() => message = errorMessage) : message = "";
-  }
-
   void checkInternetConnection() async {
     try {
       await InternetAddress.lookup('example.com');
@@ -94,35 +91,30 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                     FormSubmitButton(
                       key: loginButton,
                       buttonText: 'Login',
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate() && !blockLoginRequests) {
                           blockLoginRequests = true;
                           (loginButton.currentState as FormSubmitButtonState).setLoading(true);
                           String username = usernameCont.text;
                           String password = passwordCont.text;
-                          ApiRequestManager.login(username, password).then((val) {
-                            User.loggedIn.username = username;
-                            User.loggedIn.password = password;
-                            if (val["STATUS"]) {
-                              User.storeUserData(val["DATA"], username, password);
-                              User.loggedIn.firstName = val["DATA"]["Ime"];
-                              User.loggedIn.lastName = val["DATA"]["Prezime"];
-                              if (val["DATA"]["Naziv_Uloge"] == "Prodavac") {
-                                role = UserRoleType.seller;
-                              }
-                              _navigateToMainScreen();
-                            } else if (val["STATUSMESSAGE"] == "USER NEEDS STORE") {
+
+                          try {
+                            User.loggedIn = await ApiRequestManager.login(username, password);
+                            User.storeUserData(username, password);
+
+                            _navigateToMainScreen();
+                          } on LoginException catch (ex) {
+                            if (ex.type == LoginExceptionType.storeMissing) {
                               _navigateToRoleSelection();
-                            } else if (val["STATUSMESSAGE"] ==
-                                "This user hasn't been confirmed yet. Please contact your admin.") {
-                              Message.info(context).show(
-                                  "Account awaiting confirmation.\nPlease be patient and try again later.");
-                            } else {
-                              error(val.keys.length > 0);
                             }
-                            (loginButton.currentState as FormSubmitButtonState).setLoading(false);
-                            blockLoginRequests = false;
-                          });
+                            if (ex.isError) {
+                              Message.error(context).show(ex.messageForUser);
+                            } else {
+                              Message.info(context).show(ex.messageForUser);
+                            }
+                          }
+                          (loginButton.currentState as FormSubmitButtonState).setLoading(false);
+                          blockLoginRequests = false;
                         }
                       },
                     ),
