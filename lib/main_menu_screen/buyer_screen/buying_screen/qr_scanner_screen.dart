@@ -34,12 +34,12 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   void attemptToFinalizeInvoice(String readCode) async {
     Invoice? invoice;
     try {
-      invoice = await ApiRequestManager.finalizeInvoice(readCode);
+      invoice = await ApiRequestManager.finalizeInvoiceViaQR(readCode);
       if (context.mounted) {
         if (invoice != null) {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => InvoiceDetailsScreen(invoice!)),
-              result: true);
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
+            return InvoiceDetailsScreen(invoice!);
+          }), result: true);
         } else {
           Message.error(context).show("Something went wrong, try again.");
         }

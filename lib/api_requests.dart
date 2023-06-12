@@ -240,15 +240,9 @@ class ApiRequestManager {
     return invoices;
   }
 
-  static Future<Invoice?> finalizeInvoice(String code) async {
+  /// Finalizes an invoice with a complete form data request body.
+  static Future<Invoice?> _finalizeInvoice({required Map<String, String> fm}) async {
     User user = await User.loggedIn;
-
-    var fm = {
-      "Token": _token,
-      "KorisnickoIme": user.username,
-      "CONFIRMSALE": "True",
-      "Id_Racuna": code
-    };
 
     dynamic responseData;
     responseData = await _executeWithToken(user, () async {
@@ -269,6 +263,26 @@ class ApiRequestManager {
     }
 
     return invoice;
+  }
+
+  static Future<Invoice?> finalizeInvoiceViaQR(String code) async {
+    User user = await User.loggedIn;
+    return _finalizeInvoice(fm: {
+      "Token": _token!,
+      "KorisnickoIme": user.username,
+      "CONFIRMSALE": "True",
+      "Id_Racuna": code
+    });
+  }
+
+  static Future<Invoice?> finalizeInvoiceViaCode(String code) async {
+    User user = await User.loggedIn;
+    return _finalizeInvoice(fm: {
+      "Token": _token!,
+      "KorisnickoIme": user.username,
+      "CONFIRMSALEFROMCODE": "True",
+      "Kod_Racuna": code
+    });
   }
 
   static Future<InitialInvoice> generateInvoice(double discount, List<Item> items) async {
