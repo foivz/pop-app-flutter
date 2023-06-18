@@ -6,6 +6,7 @@ import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/reusable_components/message.dart';
 
 abstract class StoreFetcher<T extends StatefulWidget> extends State<T> {
   void onStoreFetched();
@@ -18,8 +19,12 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
   List<Store> fetchedStores = List.empty(growable: true);
 
   void _createStoreAndProceed(String storeName) async {
-    selectedStoreObject = await ApiRequestManager.createStore(storeName);
-    onStoreFetched();
+    try {
+      selectedStoreObject = await ApiRequestManager.createStore(storeName);
+      onStoreFetched();
+    } on Exception catch (e) {
+      Message.error(context).show(e.toString());
+    }
   }
 
   void _assignStoreAndProceed(Store selectedStore) async {

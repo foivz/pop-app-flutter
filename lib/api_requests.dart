@@ -152,6 +152,10 @@ class ApiRequestManager {
       return response.bodyBytes;
     });
 
+    if (responseData["STATUSMESSAGE"] == "STORE ALREADY EXISTS") {
+      throw Exception("This store name is already taken!\nTry with a different name.");
+    }
+
     return Store(responseData["DATA"]["Id_Trgovine"], responseData["DATA"]["NazivTrgovine"], 0, 0);
   }
 
