@@ -14,8 +14,6 @@ class RoleSelectionScreen extends StatefulWidget {
 }
 
 class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
-  bool _lockSnackbar = false;
-
   bool shouldShowAppBar() {
     return widget.showAppBar;
   }
@@ -35,15 +33,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
           var roleSelect = roleSelectWidgetKey.currentState as RoleSelectWidgetState;
           String selectedOption = roleSelect.selectedOption;
           if (selectedOption == '') {
-            if (!_lockSnackbar) {
-              _lockSnackbar = true;
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                dismissDirection: DismissDirection.down,
-                content: Text("You must select a role."),
-                duration: Duration(seconds: 1),
-              ));
-              Future.delayed(const Duration(seconds: 1), () => _lockSnackbar = false);
-            }
+            Message.info(context).show("You must select a role.");
           } else {
             if (widget.onSelectedCallback != null) {
               UserRole? role = UserRole.getRoleByName(roleSelect.selectedOption);
