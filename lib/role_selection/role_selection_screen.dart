@@ -1,4 +1,5 @@
 import 'package:pop_app/models/user.dart';
+import 'package:pop_app/reusable_components/message.dart';
 import 'package:pop_app/role_selection/role_selection_widget.dart';
 
 import 'package:flutter/material.dart';
@@ -45,8 +46,12 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             }
           } else {
             if (widget.onSelectedCallback != null) {
-              widget.onSelectedCallback!.call(User.roles
-                  .firstWhere((element) => element.roleName == roleSelect.selectedOption));
+              UserRole? role = UserRole.getRoleByName(roleSelect.selectedOption);
+              if (role != null) {
+                widget.onSelectedCallback?.call(role);
+              } else {
+                Message.error(context).show("Role not supported!");
+              }
             } else {
               showAboutDialog(context: context);
             }

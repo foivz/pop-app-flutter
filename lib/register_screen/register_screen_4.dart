@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/register_screen/register.dart';
 import 'package:pop_app/register_screen/store_fetcher_mixin.dart';
 import 'package:pop_app/reusable_components/message.dart';
@@ -29,7 +30,7 @@ class _FourthRegisterScreenState extends StoreFetcher<FourthRegisterScreen> with
 
   @override
   void initState() {
-    if (widget.widget.newUser.role?.roleName == "buyer") {
+    if (widget.widget.newUser.role?.type == UserRoleType.buyer) {
       fetchStores();
     }
     super.initState();

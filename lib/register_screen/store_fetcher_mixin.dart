@@ -54,7 +54,7 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
   }
 
   Widget storeSelection(GlobalKey<FormState> formKey, TextEditingController storeNameController) {
-    return User.loggedIn.role?.roleName == "seller"
+    return User.loggedIn.role?.type == UserRoleType.seller
         ? Form(
             key: formKey,
             child: Column(

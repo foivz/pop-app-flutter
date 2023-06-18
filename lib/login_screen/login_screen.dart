@@ -182,7 +182,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   _navigateToMainScreen() {
     Navigator.of(context).push(PageRouteBuilder(
       settings: const RouteSettings(name: "main_menu"),
-      pageBuilder: (c, a, s) => MainMenuScreen(role: role),
+      pageBuilder: (c, a, s) => MainMenuScreen(role: User.loggedIn.role!),
       transitionsBuilder: ScreenTransitions.slideLeft,
     ));
   }

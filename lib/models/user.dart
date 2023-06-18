@@ -11,7 +11,6 @@ class User {
   late double balance;
   UserRole? _role;
 
-  static final List<UserRole> roles = List.from([UserRole(3, "seller"), UserRole(1, "buyer")]);
   static void storeUserData(username, password) {
     SecureStorage.setUsername(username);
     SecureStorage.setPassword(password);
@@ -22,7 +21,7 @@ class User {
   UserRole? get role => _role;
 
   void setRole(UserRole role) {
-    if (roles.contains(role)) {
+    if (UserRole._roles.contains(role)) {
       _role = role;
     }
   }
@@ -48,11 +47,36 @@ class User {
   }
 }
 
-class UserRole {
-  late int roleId;
-  late String roleName;
+enum UserRoleType { buyer, seller }
 
-  UserRole(this.roleId, this.roleName);
+class UserRole {
+  late final int id;
+
+  /// Use this field only for API, for displaying use the "getPrintableName" method.
+  late final UserRoleType type;
+
+  UserRole._(this.id, this.type);
+
+  /// Define all possible roles right here:
+  static final List<UserRole> _roles = List.from([
+    UserRole._(3, UserRoleType.seller),
+    UserRole._(1, UserRoleType.buyer),
+  ]);
+
+  static UserRole? getRole(UserRoleType roleType) {
+    return _roles.where((role) => role.type == roleType).firstOrNull;
+  }
+
+  /// Use another overload of the method with enum parameter if you can!
+  static UserRole? getRoleByName(String roleName) {
+    return _roles.where((role) => role.type.name == roleName).firstOrNull;
+  }
+
+  /// Add conditions for special cases or localization here.
+  /// This is where a role's readable name is returned to the user.
+  String getPrintableName() {
+    return type.name;
+  }
 }
 
 /// Only used in registration purposes

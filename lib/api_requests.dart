@@ -52,9 +52,9 @@ class ApiRequestManager {
 
       UserRole role;
       if (responseData["DATA"]["Naziv_Uloge"] == "Prodavac") {
-        role = User.roles.where((element) => element.roleName == "seller").first;
+        role = UserRole.getRole(UserRoleType.seller)!;
       } else {
-        role = User.roles.where((element) => element.roleName == "buyer").first;
+        role = UserRole.getRole(UserRoleType.buyer)!;
       }
 
       user = User.full(
@@ -178,7 +178,7 @@ class ApiRequestManager {
       return false;
     }
 
-    var fm = {"SETOWNROLE": "True", "RoleId": User.loggedIn.role!.roleId.toString()};
+    var fm = {"SETOWNROLE": "True", "RoleId": User.loggedIn.role!.id.toString()};
 
     dynamic responseData;
     responseData = await _executeWithToken(() async {
@@ -200,7 +200,7 @@ class ApiRequestManager {
     };
 
     var fm = {
-      roleMap[User.loggedIn.role!.roleName]!: "True",
+      roleMap[User.loggedIn.role!.type.name]!: "True",
     };
 
     dynamic responseData;
