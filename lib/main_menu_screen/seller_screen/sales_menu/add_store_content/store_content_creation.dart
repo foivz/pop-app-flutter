@@ -1,17 +1,14 @@
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/products_tab/products_tab.dart';
-import 'package:pop_app/models/user.dart';
 
 import 'package:flutter/material.dart';
 
 class StoreContentCreation extends StatefulWidget {
   // 0 -> products, 1 -> packages
   final int selectedIndex;
-  final User user;
   const StoreContentCreation({
     super.key,
-    required this.user,
     required this.selectedIndex,
   });
 
@@ -54,10 +51,7 @@ class _StoreContentCreationState extends State<StoreContentCreation>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.index = widget.selectedIndex;
-    packageCreationForm = PackageCreationTab(
-      productListKey: _productListKey,
-      user: widget.user,
-    );
+    packageCreationForm = PackageCreationTab(productListKey: _productListKey);
     productCreationForm = const ProductCreationTab();
   }
 

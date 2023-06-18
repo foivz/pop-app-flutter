@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:pop_app/exceptions/login_exception.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
 import 'package:pop_app/role_selection/role_selection_screen.dart';
@@ -25,7 +26,6 @@ class BaseLoginScreen extends StatefulWidget {
 class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetcherMixin {
   TextEditingController usernameCont = TextEditingController();
   TextEditingController passwordCont = TextEditingController();
-  User? loggedUser;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool blockLoginRequests = false;
@@ -39,10 +39,6 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   }
 
   String message = "";
-  void error(bool showError, {String errorMessage = "Username or password not valid."}) {
-    showError ? setState(() => message = errorMessage) : message = "";
-  }
-
   void checkInternetConnection() async {
     try {
       await InternetAddress.lookup('example.com');
@@ -95,34 +91,30 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                     FormSubmitButton(
                       key: loginButton,
                       buttonText: 'Login',
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate() && !blockLoginRequests) {
                           blockLoginRequests = true;
                           (loginButton.currentState as FormSubmitButtonState).setLoading(true);
                           String username = usernameCont.text;
                           String password = passwordCont.text;
-                          ApiRequestManager.login(username, password).then((val) {
-                            loggedUser = User.loginInfo(username: username, password: password);
-                            if (val["STATUS"]) {
-                              User.storeUserData(val["DATA"], username, password);
-                              loggedUser!.firstName = val["DATA"]["Ime"];
-                              loggedUser!.lastName = val["DATA"]["Prezime"];
-                              if (val["DATA"]["Naziv_Uloge"] == "Prodavac") {
-                                role = UserRoleType.seller;
-                              }
-                              _navigateToMainScreen();
-                            } else if (val["STATUSMESSAGE"] == "USER NEEDS STORE") {
+
+                          try {
+                            await ApiRequestManager.login(username, password);
+                            User.storeUserData(username, password);
+
+                            _navigateToMainScreen();
+                          } on LoginException catch (ex) {
+                            if (ex.type == LoginExceptionType.storeMissing) {
                               _navigateToRoleSelection();
-                            } else if (val["STATUSMESSAGE"] ==
-                                "This user hasn't been confirmed yet. Please contact your admin.") {
-                              Message.info(context).show(
-                                  "Account awaiting confirmation.\nPlease be patient and try again later.");
-                            } else {
-                              error(val.keys.length > 0);
                             }
-                            (loginButton.currentState as FormSubmitButtonState).setLoading(false);
-                            blockLoginRequests = false;
-                          });
+                            if (ex.isError) {
+                              Message.error(context).show(ex.messageForUser);
+                            } else {
+                              Message.info(context).show(ex.messageForUser);
+                            }
+                          }
+                          (loginButton.currentState as FormSubmitButtonState).setLoading(false);
+                          blockLoginRequests = false;
                         }
                       },
                     ),
@@ -155,9 +147,8 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
       PageRouteBuilder(
         pageBuilder: (c, a, s) => RoleSelectionScreen(
           onSelectedCallback: (selectedRole) async {
-            loggedUser!.setRole(selectedRole);
-            if (selectedRole.roleName == "seller") role = UserRoleType.seller;
-            if (await ApiRequestManager.assignRole(loggedUser!)) {
+            User.loggedIn.setRole(selectedRole);
+            if (await ApiRequestManager.setLoggedUsersRole()) {
               _navigateToStoreSelection();
             } else if (context.mounted) {
               Message.error(context).show("Role couldn't be selected!"
@@ -171,13 +162,12 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   }
 
   _navigateToStoreSelection() {
-    fetchStores(loggedUser!).then(
+    fetchStores().then(
       (value) => Navigator.of(context).push(
         PageRouteBuilder(
           pageBuilder: (c, a, s) => Scaffold(
             body: Center(
               child: storeSelection(
-                loggedUser!,
                 GlobalKey(),
                 TextEditingController(),
               ),
@@ -192,7 +182,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   _navigateToMainScreen() {
     Navigator.of(context).push(PageRouteBuilder(
       settings: const RouteSettings(name: "main_menu"),
-      pageBuilder: (c, a, s) => MainMenuScreen(role: role, user: loggedUser!),
+      pageBuilder: (c, a, s) => MainMenuScreen(role: User.loggedIn.role!),
       transitionsBuilder: ScreenTransitions.slideLeft,
     ));
   }
@@ -201,7 +191,8 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
   void onStoreFetched() {
     setState(() {});
     if (selectedStoreObject != null) {
-      loggedUser!.store = selectedStoreObject!;
+      User.loggedIn.store = selectedStoreObject!;
+      Navigator.popUntil(context, (route) => route.isFirst);
       _navigateToMainScreen();
     } else {
       Message.error(context).show("Oh no!\n"

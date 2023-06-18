@@ -63,15 +63,17 @@ abstract class PackageDataApiInterface {
 
   static List<ProductData> productsFromApi(dynamic productList) {
     List<ProductData> products = List.empty(growable: true);
-    for (var product in productList) {
-      products.add(ProductData(
-        id: product["Id"],
-        title: product["Naziv"],
-        description: product["Opis"],
-        price: double.parse(product["Cijena"]),
-        imagePath: product["Slika"],
-        remainingAmount: int.parse(product["Kolicina"]),
-      ));
+    if (productList != null) {
+      for (var product in productList) {
+        products.add(ProductData(
+          id: product["Id"],
+          title: product["Naziv"],
+          description: product["Opis"],
+          price: double.parse(product["Cijena"]),
+          imagePath: product["Slika"],
+          remainingAmount: int.parse(product["Kolicina"]),
+        ));
+      }
     }
     return products;
   }

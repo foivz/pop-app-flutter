@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pop_app/main_menu_screen/invoices_screen/invoices_screen.dart';
 import 'package:pop_app/main_menu_screen/wallet_screen/wallet_screen.dart';
-import 'package:pop_app/models/user.dart';
 import 'package:pop_app/myconstants.dart';
 
 mixin MenuScreenMixin<T extends StatefulWidget> on State<T> {
@@ -20,11 +19,9 @@ mixin MenuScreenMixin<T extends StatefulWidget> on State<T> {
       shrinkWrap: true,
       children: [
         buildButton(context, 'assets/icons/sell-icon.png', nameOfCustomOption, () {
-          User.loggedIn.then((user) {
-            Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-              return customOptionScreen;
-            }));
-          });
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+            return customOptionScreen;
+          }));
         }),
         buildButton(context, 'assets/icons/view-icon.png', 'Invoices', () {
           Navigator.of(context).push(MaterialPageRoute(builder: (_) => const InvoicesScreen()));

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/secure_storage.dart';
 
@@ -12,34 +10,21 @@ class User {
   late Store store;
   late double balance;
   UserRole? _role;
-  bool registered = false;
 
-  static final List<UserRole> roles = List.from([UserRole(3, "seller"), UserRole(1, "buyer")]);
-  static void storeUserData(userData, username, password) {
-    SecureStorage.setUserData(json.encode(userData));
+  static void storeUserData(username, password) {
     SecureStorage.setUsername(username);
     SecureStorage.setPassword(password);
   }
 
-  static get loggedIn async {
-    return User(
-      username: await SecureStorage.getUsername(),
-      password: await SecureStorage.getPassword(),
-    );
-  }
+  static User loggedIn = User();
 
-  get role => _role;
+  UserRole? get role => _role;
 
   void setRole(UserRole role) {
-    if (roles.contains(role)) {
+    if (UserRole._roles.contains(role)) {
       _role = role;
     }
   }
-
-  User.empty();
-
-  User.username({required this.username});
-  User.loginInfo({required this.username, required this.password});
 
   User({
     this.firstName = "",
@@ -50,17 +35,51 @@ class User {
     this.balance = 0.0,
   });
 
-  User.withUsername({required this.username});
-
-  User.full(this.firstName, this.lastName, this.username, this.email, this.password, UserRole role,
-      this.store) {
+  User.full({
+    required this.firstName,
+    required this.lastName,
+    required this.username,
+    required this.email,
+    required this.password,
+    required UserRole role,
+  }) {
     setRole(role);
   }
 }
 
-class UserRole {
-  late int roleId;
-  late String roleName;
+enum UserRoleType { buyer, seller }
 
-  UserRole(this.roleId, this.roleName);
+class UserRole {
+  late final int id;
+
+  /// Use this field only for API, for displaying use the "getPrintableName" method.
+  late final UserRoleType type;
+
+  UserRole._(this.id, this.type);
+
+  /// Define all possible roles right here:
+  static final List<UserRole> _roles = List.from([
+    UserRole._(3, UserRoleType.seller),
+    UserRole._(1, UserRoleType.buyer),
+  ]);
+
+  static UserRole? getRole(UserRoleType roleType) {
+    return _roles.where((role) => role.type == roleType).firstOrNull;
+  }
+
+  /// Use another overload of the method with enum parameter if you can!
+  static UserRole? getRoleByName(String roleName) {
+    return _roles.where((role) => role.type.name == roleName).firstOrNull;
+  }
+
+  /// Add conditions for special cases or localization here.
+  /// This is where a role's readable name is returned to the user.
+  String getPrintableName() {
+    return type.name;
+  }
+}
+
+/// Only used in registration purposes
+class NewUser extends User {
+  bool registered = false;
 }

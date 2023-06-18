@@ -7,12 +7,9 @@ import 'package:pop_app/myconstants.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
-enum UserRoleType { buyer, seller }
-
 class MainMenuScreen extends StatelessWidget {
-  final UserRoleType role;
-  final User user;
-  const MainMenuScreen({super.key, required this.role, required this.user});
+  final UserRole role;
+  const MainMenuScreen({super.key, required this.role});
 
   static MainMenuScreen? of(BuildContext context) {
     try {
@@ -31,7 +28,9 @@ class MainMenuScreen extends StatelessWidget {
     return Scaffold(
       key: mainMenuKey,
       appBar: AppBar(
-        title: Text("Welcome, ${role.name} ${user.firstName} ${user.lastName}!"),
+        title: Text(
+          "Welcome, ${role.getPrintableName()} ${User.loggedIn.firstName} ${User.loggedIn.lastName}!",
+        ),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -93,7 +92,7 @@ class MainMenuScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: role == UserRoleType.seller ? sellerMenu : buyerMenu,
+      body: role.type == UserRoleType.seller ? sellerMenu : buyerMenu,
     );
   }
 }

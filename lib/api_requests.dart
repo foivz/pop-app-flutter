@@ -1,11 +1,11 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'package:pop_app/exceptions/login_exception.dart';
 import 'package:pop_app/models/initial_invoice.dart';
 import 'package:pop_app/models/invoice.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/package_data.dart';
 import 'package:pop_app/models/product_data.dart';
-import 'package:pop_app/secure_storage.dart';
 import 'package:pop_app/models/store.dart';
 import 'package:pop_app/models/user.dart';
 
@@ -35,6 +35,48 @@ class ApiRequestManager {
   /// Call an API route
   static Uri route(Routes route) => Uri.parse("$root${route.name}.php");
 
+  /// Original name was _appendUsernameAndTokenToFormDataRequestBody. But I figured it was too long.
+  static Map<String, String> _appendUserToReq(Map<String, String> fm) {
+    return fm..addAll({"Token": _token ?? "", "KorisnickoIme": User.loggedIn.username});
+  }
+
+  /// Check whether the current response indicates an old token.
+  static bool _isTokenValid(responseData) {
+    return responseData["STATUSMESSAGE"] != "OLD TOKEN";
+  }
+
+  /// Wraps whatever fetching logic into a token check.
+  /// If the server reports token is invalid, this method attempts login once.
+  /// If the new token is still invalid, method returns null instead of response.
+  /// [requestCallback] should return a response.bodyBytes in order to parse UTF-8 chars!
+  static Future<dynamic> _executeWithToken(dynamic requestCallback) async {
+    int attempts = 0;
+
+    dynamic responseData;
+    bool isTokenValid = false;
+    do {
+      dynamic body = await requestCallback();
+      responseData = jsonDecode(utf8.decode(body));
+      isTokenValid = _isTokenValid(responseData);
+      if (!isTokenValid) {
+        login(User.loggedIn.username, User.loggedIn.password);
+      }
+    } while (!isTokenValid && ++attempts != 2);
+
+    if (attempts == 2) {
+      responseData = null;
+    }
+
+    return responseData;
+  }
+
+  /// Sets private "_token" variable to newest token value directly from response object.
+  static void _setToken(responseData) {
+    var tokenData = responseData["DATA"]["Token"];
+    _token = tokenData;
+  }
+
+  /// Sets the User.loggedIn object. Throws exception if something went south.
   static Future login(String username, String password) async {
     var fm = {"KorisnickoIme": username, "Lozinka": password};
 
@@ -42,13 +84,40 @@ class ApiRequestManager {
       body: fm,
       route(Routes.login),
     );
-    var responseData = json.decode(response.body);
-    _updateTokenData(responseData);
+    var responseData = json.decode(utf8.decode(response.bodyBytes));
 
-    return responseData;
+    bool success = false;
+
+    if (responseData["STATUS"] == true) {
+      _setToken(responseData);
+
+      UserRole role;
+      if (responseData["DATA"]["Naziv_Uloge"] == "Prodavac") {
+        role = UserRole.getRole(UserRoleType.seller)!;
+      } else {
+        role = UserRole.getRole(UserRoleType.buyer)!;
+      }
+
+      User.loggedIn = User.full(
+        firstName: responseData["DATA"]["Ime"],
+        lastName: responseData["DATA"]["Prezime"],
+        email: responseData["DATA"]["Email"],
+        username: username,
+        password: password,
+        role: role,
+      );
+      success = true;
+    } else if (responseData["STATUSMESSAGE"] == "USER NEEDS STORE") {
+      _setToken(responseData);
+      User.loggedIn = User(username: username, password: password);
+    }
+
+    if (!success) {
+      throw LoginException(responseData["STATUSMESSAGE"]);
+    }
   }
 
-  static Future register(User user) async {
+  static Future register(NewUser user) async {
     var fm = {
       "Ime": user.firstName,
       "Prezime": user.lastName,
@@ -62,92 +131,56 @@ class ApiRequestManager {
       route(Routes.registracija),
     );
 
-    var responseData = json.decode(response.body);
-    _updateTokenData(responseData);
+    var responseData = json.decode(utf8.decode(response.bodyBytes));
 
-    return responseData;
-  }
-
-  static void _updateTokenData(responseData) {
-    try {
-      var tokenData = responseData["DATA"]["Token"];
-      _token = tokenData;
-    } catch (e) {
-      SecureStorage.setUserData(json.encode("{}"));
-    }
-  }
-
-  /// Wraps whatever fetching logic into a token check.
-  /// If the server reports token is invalid, this method attempts login once.
-  /// If the new token is still invalid, method returns null instead of response.
-  /// [requestCallback] should return a response body!
-  static Future<dynamic> _executeWithToken(User user, dynamic requestCallback) async {
-    int attempts = 0;
-
-    dynamic responseData;
-    bool isTokenValid = false;
-    do {
-      dynamic body = await requestCallback();
-      responseData = jsonDecode(utf8.decode(body));
-      isTokenValid = _isTokenValid(responseData);
-      if (!isTokenValid) {
-        login(user.username, user.password);
-      }
-    } while (!isTokenValid && ++attempts != 2);
-
-    if (attempts == 2) {
-      responseData = null;
+    if (responseData["STATUS"] == true) {
+      _setToken(responseData);
     }
 
     return responseData;
   }
 
-  static Future<dynamic> getAllStores(User user) async {
+  static Future<dynamic> getAllStores() async {
     var fm = {
-      "Token": _token,
-      "KorisnickoIme": user.username,
       "Readall": "True",
     };
 
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(body: fm, route(Routes.trgovine));
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.trgovine));
       return response.bodyBytes;
     });
 
     return responseData;
   }
 
-  static Future<Store> createStore(User user, String storeName) async {
+  static Future<Store> createStore(String storeName) async {
     var fm = {
-      "Token": _token,
-      "KorisnickoIme": user.username,
       "CREATESTORE": "True",
-      "NazivTrgovine": storeName
+      "NazivTrgovine": storeName,
     };
 
     dynamic responseData;
 
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(body: fm, route(Routes.trgovine));
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.trgovine));
       return response.bodyBytes;
     });
+
+    if (responseData["STATUSMESSAGE"] == "STORE ALREADY EXISTS") {
+      throw Exception("This store name is already taken!\nTry with a different name.");
+    }
 
     return Store(responseData["DATA"]["Id_Trgovine"], responseData["DATA"]["NazivTrgovine"], 0, 0);
   }
 
-  static Future<bool> assignStore(User user, Store store) async {
-    var fm = {
-      "Token": _token,
-      "KorisnickoIme": user.username,
-      "ASSIGNSTORESELF": "True",
-      "Id_Trgovine": store.storeId.toString()
-    };
+  static Future<bool> assignStore(Store store) async {
+    var fm = {"ASSIGNSTORESELF": "True", "Id_Trgovine": store.storeId.toString()};
 
     dynamic responseData;
 
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(body: fm, route(Routes.trgovine));
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.trgovine));
       dynamic body = response.bodyBytes;
       return body;
     });
@@ -155,29 +188,24 @@ class ApiRequestManager {
     return (responseData["STATUSMESSAGE"] == "STORE ASSIGNED");
   }
 
-  static Future<bool> assignRole(User user) async {
-    if (user.role == null) {
+  static Future<bool> setLoggedUsersRole() async {
+    if (User.loggedIn.role == null) {
       return false;
     }
 
-    var fm = {
-      "Token": _token,
-      "KorisnickoIme": user.username,
-      "SETOWNROLE": "True",
-      "RoleId": user.role!.roleId.toString()
-    };
+    var fm = {"SETOWNROLE": "True", "RoleId": User.loggedIn.role!.id.toString()};
 
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(body: fm, route(Routes.korisnici));
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.korisnici));
       return response.bodyBytes;
     });
 
     return (responseData["STATUSMESSAGE"] == "OWN ROLE SET");
   }
 
-  static Future<double> getBalance(User user) async {
-    if (user.role == null) {
+  static Future<double> getBalance() async {
+    if (User.loggedIn.role == null) {
       throw Exception("Can't get balance: user's role not set!");
     }
 
@@ -187,18 +215,13 @@ class ApiRequestManager {
     };
 
     var fm = {
-      "Token": _token,
-      "KorisnickoIme": user.username,
-      roleMap[user.role!.roleName]: "True",
+      roleMap[User.loggedIn.role!.type.name]!: "True",
     };
 
     dynamic responseData;
 
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(
-        body: fm,
-        route(Routes.novcanik),
-      );
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.novcanik));
 
       return response.bodyBytes;
     });
@@ -215,17 +238,13 @@ class ApiRequestManager {
   }
 
   static Future<List<Invoice>> getAllInvoices() async {
-    User user = await User.loggedIn;
-
     var fm = {
-      "Token": _token,
-      "KorisnickoIme": user.username,
       "Readall": "True",
     };
 
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(body: fm, route(Routes.racuni));
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.racuni));
       return response.bodyBytes;
     });
 
@@ -241,12 +260,11 @@ class ApiRequestManager {
   }
 
   /// Finalizes an invoice with a complete form data request body.
+  /// Also adds user data to the form data request, so no need to invoke `_appendUserToReq`.
   static Future<Invoice?> _finalizeInvoice({required Map<String, String> fm}) async {
-    User user = await User.loggedIn;
-
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(body: fm, route(Routes.racuni));
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.racuni));
       return response.bodyBytes;
     });
 
@@ -266,31 +284,21 @@ class ApiRequestManager {
   }
 
   static Future<Invoice?> finalizeInvoiceViaQR(String code) async {
-    User user = await User.loggedIn;
     return _finalizeInvoice(fm: {
-      "Token": _token!,
-      "KorisnickoIme": user.username,
       "CONFIRMSALE": "True",
-      "Id_Racuna": code
+      "Id_Racuna": code,
     });
   }
 
   static Future<Invoice?> finalizeInvoiceViaCode(String code) async {
-    User user = await User.loggedIn;
     return _finalizeInvoice(fm: {
-      "Token": _token!,
-      "KorisnickoIme": user.username,
       "CONFIRMSALEFROMCODE": "True",
-      "Kod_Racuna": code
+      "Kod_Racuna": code,
     });
   }
 
   static Future<InitialInvoice> generateInvoice(double discount, List<Item> items) async {
-    User user = await User.loggedIn;
-
-    Map<String, Object> fm = {
-      "Token": _token!,
-      "KorisnickoIme": user.username,
+    var fm = {
       "GENERATESALE": "True",
       "PopustRacuna": discount.toStringAsFixed(0),
     };
@@ -301,8 +309,8 @@ class ApiRequestManager {
     }
 
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(body: fm, route(Routes.racuni));
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.racuni));
       return response.bodyBytes;
     });
 
@@ -317,26 +325,25 @@ class ApiRequestManager {
     }
   }
 
-  static bool _isTokenValid(responseData) {
-    return responseData["STATUSMESSAGE"] != "OLD TOKEN";
-  }
-
   static Future<List> getAllPackages() async {
-    User user = await SecureStorage.getUser();
-    var fm = {"Token": _token, "KorisnickoIme": user.username, "GET": "True"};
+    var fm = {
+      "GET": "True",
+    };
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(body: fm, route(Routes.paketi));
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.paketi));
       return response.bodyBytes;
     });
     return [responseData];
   }
 
-  static Future<List> getAllProducts(User user) async {
-    var fm = {"Readall": "True", "Token": _token, "KorisnickoIme": user.username};
+  static Future<List> getAllProducts() async {
+    var fm = {
+      "Readall": "True",
+    };
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(body: fm, route(Routes.proizvodi));
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.proizvodi));
       return response.bodyBytes;
     });
     return [responseData];
@@ -344,14 +351,12 @@ class ApiRequestManager {
 
   static Future addProductToStore(ProductData product) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
-    req.fields.addAll({
-      "Token": _token!,
+    req.fields.addAll(_appendUserToReq({
       "Naziv": product.title,
       "Opis": product.description,
       "Cijena": product.price.toString(),
       "Kolicina": product.remainingAmount.toString(),
-      "KorisnickoIme": await SecureStorage.getUsername(),
-    });
+    }));
     if (product.imageFile != null)
       req.files.add(
         http.MultipartFile.fromBytes(
@@ -371,15 +376,13 @@ class ApiRequestManager {
 
   static Future addPackageToStore(PackageData package) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
-    req.fields.addAll({
-      "Token": _token!,
+    req.fields.addAll(_appendUserToReq({
       "ADD": "True",
       "Naziv": package.title,
       "Opis": package.description,
       "Popust": package.discount.toString(),
       "KolicinaPaketa": "1",
-      "KorisnickoIme": await SecureStorage.getUsername(),
-    });
+    }));
     if (package.imageFile != null)
       req.files.add(
         http.MultipartFile.fromBytes(
@@ -398,11 +401,7 @@ class ApiRequestManager {
   }
 
   static Future<bool> addProductsToPackage(List<int> ids, List<int> amounts, int packageId) async {
-    User user = await User.loggedIn;
-
     var fm = {
-      "Token": _token,
-      "KorisnickoIme": user.username,
       "ADDTOPACKET": "True",
       "Id_Paket": packageId.toString(),
     };
@@ -413,8 +412,8 @@ class ApiRequestManager {
     }
 
     dynamic responseData;
-    responseData = await _executeWithToken(user, () async {
-      http.Response response = await http.post(body: fm, route(Routes.paketi));
+    responseData = await _executeWithToken(() async {
+      http.Response response = await http.post(body: _appendUserToReq(fm), route(Routes.paketi));
       return response.bodyBytes;
     });
 
@@ -423,12 +422,10 @@ class ApiRequestManager {
 
   static Future deletePackage(String packageId) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
-    req.fields.addAll({
-      "Token": _token!,
+    req.fields.addAll(_appendUserToReq({
       "Id": packageId,
       "DELETE": true.toString(),
-      "KorisnickoIme": await SecureStorage.getUsername(),
-    });
+    }));
     http.StreamedResponse responseData;
     try {
       responseData = await req.send();
@@ -440,17 +437,14 @@ class ApiRequestManager {
 
   static Future editPackage(PackageData package) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.paketi));
-    req.fields.addAll({
-      "Token": _token!,
+    req.fields.addAll(_appendUserToReq({
       "UPDATE": true.toString(),
       "Id": package.id.toString(),
       "Naziv": package.title,
       "Opis": package.description,
       "Kolicina": "1",
       "Popust": package.discount.toString(),
-      // slika
-      "KorisnickoIme": await SecureStorage.getUsername(),
-    });
+    }));
     if (package.imageFile != null && package.imagePath == null) {
       req.files.add(
         http.MultipartFile.fromBytes(
@@ -471,11 +465,9 @@ class ApiRequestManager {
 
   static Future deleteProduct(String productId) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
-    req.fields.addAll({
-      "Token": _token!,
-      "Id": productId.toString(),
-      "KorisnickoIme": await SecureStorage.getUsername(),
-    });
+
+    req.fields.addAll(_appendUserToReq({"Id": productId.toString()}));
+
     http.StreamedResponse responseData;
     try {
       responseData = await req.send();
@@ -487,16 +479,16 @@ class ApiRequestManager {
 
   static Future editProduct(ProductData product) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
-    req.fields.addAll({
+
+    req.fields.addAll(_appendUserToReq({
       "Edit": true.toString(),
-      "Token": _token!,
       "Id": product.id.toString(),
       "Naziv": product.title,
       "Opis": product.description,
       "Cijena": product.price.toString(),
       "Kolicina": product.remainingAmount.toString(),
-      "KorisnickoIme": await SecureStorage.getUsername(),
-    });
+    }));
+
     if (product.imageFile != null && product.imagePath == null) {
       req.files.add(
         http.MultipartFile.fromBytes(

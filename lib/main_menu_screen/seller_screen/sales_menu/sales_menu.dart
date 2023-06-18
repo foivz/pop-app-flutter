@@ -6,15 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/sell_items_screen.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/items_selected_for_selling.dart';
-import 'package:pop_app/models/user.dart';
 import 'package:pop_app/reusable_components/message.dart';
 import 'package:pop_app/utils/seller_logic.dart';
 import 'package:provider/provider.dart';
 
 class SalesMenuScreen extends StatefulWidget {
-  final User user;
   static late void Function(int selectedTab)? refreshTab;
-  const SalesMenuScreen({super.key, required this.user});
+  const SalesMenuScreen({super.key});
 
   @override
   State<SalesMenuScreen> createState() => SalesMenuScreenState();
@@ -41,14 +39,8 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
   late PackagesTab packagesTab;
 
   void generateNewProductsTabAndPackagesTabObjects() {
-    productsTab = ProductsTab(
-      user: widget.user,
-      onSelectionStateChange: onSelectionStateChange,
-    );
-    packagesTab = PackagesTab(
-      user: widget.user,
-      onSelectionStateChange: onSelectionStateChange,
-    );
+    productsTab = ProductsTab(onSelectionStateChange: onSelectionStateChange);
+    packagesTab = PackagesTab(onSelectionStateChange: onSelectionStateChange);
   }
 
   @override
@@ -58,7 +50,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
     _animCont = AnimationController(vsync: this, duration: const Duration(milliseconds: 150));
 
     SalesMenuScreen.refreshTab = (selectedTabIndex) {
-      refreshAllProducts(context, widget.user);
+      refreshAllProducts(context);
       loadTabContents();
       tabController.index = selectedTabIndex;
     };
@@ -122,7 +114,6 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: Scaffold(
                         body: StoreContentCreation(
-                          user: widget.user,
                           selectedIndex: tabController.index,
                         ),
                       ),

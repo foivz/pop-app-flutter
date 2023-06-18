@@ -1,4 +1,5 @@
 import 'package:pop_app/models/user.dart';
+import 'package:pop_app/reusable_components/message.dart';
 import 'package:pop_app/role_selection/role_selection_widget.dart';
 
 import 'package:flutter/material.dart';
@@ -13,8 +14,6 @@ class RoleSelectionScreen extends StatefulWidget {
 }
 
 class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
-  bool _lockSnackbar = false;
-
   bool shouldShowAppBar() {
     return widget.showAppBar;
   }
@@ -34,19 +33,15 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
           var roleSelect = roleSelectWidgetKey.currentState as RoleSelectWidgetState;
           String selectedOption = roleSelect.selectedOption;
           if (selectedOption == '') {
-            if (!_lockSnackbar) {
-              _lockSnackbar = true;
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                dismissDirection: DismissDirection.down,
-                content: Text("You must select a role."),
-                duration: Duration(seconds: 1),
-              ));
-              Future.delayed(const Duration(seconds: 1), () => _lockSnackbar = false);
-            }
+            Message.info(context).show("You must select a role.");
           } else {
             if (widget.onSelectedCallback != null) {
-              widget.onSelectedCallback!.call(User.roles
-                  .firstWhere((element) => element.roleName == roleSelect.selectedOption));
+              UserRole? role = UserRole.getRoleByName(roleSelect.selectedOption);
+              if (role != null) {
+                widget.onSelectedCallback?.call(role);
+              } else {
+                Message.error(context).show("Role not supported!");
+              }
             } else {
               showAboutDialog(context: context);
             }

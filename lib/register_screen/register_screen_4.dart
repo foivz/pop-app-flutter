@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pop_app/models/user.dart';
 import 'package:pop_app/register_screen/register.dart';
 import 'package:pop_app/register_screen/store_fetcher_mixin.dart';
 import 'package:pop_app/reusable_components/message.dart';
@@ -18,7 +19,7 @@ class _FourthRegisterScreenState extends StoreFetcher<FourthRegisterScreen> with
   @override
   void onStoreFetched() {
     if (selectedStoreObject != null) {
-      widget.widget.user.store = selectedStoreObject!;
+      widget.widget.newUser.store = selectedStoreObject!;
       RegisterScreen.of(context)?.showNextRegisterScreen();
     } else {
       Message.error(context).show("Oh no!\n"
@@ -29,8 +30,8 @@ class _FourthRegisterScreenState extends StoreFetcher<FourthRegisterScreen> with
 
   @override
   void initState() {
-    if (widget.widget.user.role?.roleName == "buyer") {
-      fetchStores(widget.widget.user);
+    if (widget.widget.newUser.role?.type == UserRoleType.buyer) {
+      fetchStores();
     }
     super.initState();
   }
@@ -38,6 +39,8 @@ class _FourthRegisterScreenState extends StoreFetcher<FourthRegisterScreen> with
   @override
   Widget build(BuildContext context) {
     return storeSelection(
-        widget.widget.user, widget.widget.formKey, widget.widget.storeNameController);
+      widget.widget.formKey,
+      widget.widget.storeNameController,
+    );
   }
 }

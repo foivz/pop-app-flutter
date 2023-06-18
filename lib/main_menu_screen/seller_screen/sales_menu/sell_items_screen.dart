@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/exceptions/printable_exception.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/item_card.dart';
 import 'package:pop_app/main_menu_screen/seller_screen/sales_menu/seller_qr_code_screen.dart';
 import 'package:pop_app/models/initial_invoice.dart';
@@ -220,9 +221,7 @@ class _SellContentState extends State<SellContent> {
                                         );
                                       }
                                     } on Exception catch (ex, _) {
-                                      Message.info(context).show(
-                                        ex.toString().replaceFirst("Exception: ", ""),
-                                      );
+                                      Message.info(context).show(ex.message);
                                       Navigator.of(context, rootNavigator: true).pop('dialog');
                                     }
                                   },
