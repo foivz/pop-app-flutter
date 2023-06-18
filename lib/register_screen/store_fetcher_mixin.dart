@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/exceptions/printable_exception.dart';
 import 'package:pop_app/login_screen/company_selection.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
 import 'package:pop_app/login_screen/custom_textformfield_widget.dart';
@@ -23,7 +24,7 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
       selectedStoreObject = await ApiRequestManager.createStore(storeName);
       onStoreFetched();
     } on Exception catch (e) {
-      Message.error(context).show(e.toString());
+      Message.error(context).show(e.message);
     }
   }
 
