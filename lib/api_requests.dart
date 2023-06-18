@@ -35,6 +35,47 @@ class ApiRequestManager {
   /// Call an API route
   static Uri route(Routes route) => Uri.parse("$root${route.name}.php");
 
+  /// Original name was _appendUsernameAndTokenToFormDataRequestBody. But I figured it was too long.
+  static Map<String, String> _appendUserToReq(Map<String, String> fm) {
+    return fm..addAll({"Token": _token ?? "", "KorisnickoIme": User.loggedIn.username});
+  }
+
+  /// Check whether the current response indicates an old token.
+  static bool _isTokenValid(responseData) {
+    return responseData["STATUSMESSAGE"] != "OLD TOKEN";
+  }
+
+  /// Wraps whatever fetching logic into a token check.
+  /// If the server reports token is invalid, this method attempts login once.
+  /// If the new token is still invalid, method returns null instead of response.
+  /// [requestCallback] should return a response.bodyBytes in order to parse UTF-8 chars!
+  static Future<dynamic> _executeWithToken(dynamic requestCallback) async {
+    int attempts = 0;
+
+    dynamic responseData;
+    bool isTokenValid = false;
+    do {
+      dynamic body = await requestCallback();
+      responseData = jsonDecode(utf8.decode(body));
+      isTokenValid = _isTokenValid(responseData);
+      if (!isTokenValid) {
+        login(User.loggedIn.username, User.loggedIn.password);
+      }
+    } while (!isTokenValid && ++attempts != 2);
+
+    if (attempts == 2) {
+      responseData = null;
+    }
+
+    return responseData;
+  }
+
+  /// Sets private "_token" variable to newest token value directly from response object.
+  static void _setToken(responseData) {
+    var tokenData = responseData["DATA"]["Token"];
+    _token = tokenData;
+  }
+
   /// Sets the User.loggedIn object. Throws exception if something went south.
   static Future login(String username, String password) async {
     var fm = {"KorisnickoIme": username, "Lozinka": password};
@@ -94,36 +135,6 @@ class ApiRequestManager {
 
     if (responseData["STATUS"] == true) {
       _setToken(responseData);
-    }
-
-    return responseData;
-  }
-
-  static void _setToken(responseData) {
-    var tokenData = responseData["DATA"]["Token"];
-    _token = tokenData;
-  }
-
-  /// Wraps whatever fetching logic into a token check.
-  /// If the server reports token is invalid, this method attempts login once.
-  /// If the new token is still invalid, method returns null instead of response.
-  /// [requestCallback] should return a response.bodyBytes in order to parse UTF-8 chars!
-  static Future<dynamic> _executeWithToken(dynamic requestCallback) async {
-    int attempts = 0;
-
-    dynamic responseData;
-    bool isTokenValid = false;
-    do {
-      dynamic body = await requestCallback();
-      responseData = jsonDecode(utf8.decode(body));
-      isTokenValid = _isTokenValid(responseData);
-      if (!isTokenValid) {
-        login(User.loggedIn.username, User.loggedIn.password);
-      }
-    } while (!isTokenValid && ++attempts != 2);
-
-    if (attempts == 2) {
-      responseData = null;
     }
 
     return responseData;
@@ -314,10 +325,6 @@ class ApiRequestManager {
     }
   }
 
-  static bool _isTokenValid(responseData) {
-    return responseData["STATUSMESSAGE"] != "OLD TOKEN";
-  }
-
   static Future<List> getAllPackages() async {
     var fm = {
       "GET": "True",
@@ -498,10 +505,5 @@ class ApiRequestManager {
     } catch (e) {
       throw Exception("Failed to connect");
     }
-  }
-
-  /// Original name was _appendUsernameAndTokenToFormDataRequestBody. But I figured it was too long.
-  static Map<String, String> _appendUserToReq(Map<String, String> fm) {
-    return fm..addAll({"Token": _token ?? "", "KorisnickoIme": User.loggedIn.username});
   }
 }
