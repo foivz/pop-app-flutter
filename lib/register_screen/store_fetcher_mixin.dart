@@ -44,8 +44,12 @@ mixin StoreFetcherMixin<T extends StatefulWidget> on StoreFetcher<T> {
       if ((stores?["DATA"] != null)) {
         fetchedStores.clear();
         for (var store in stores["DATA"]) {
-          fetchedStores.add(Store(int.parse(store["Id_Trgovine"]), store["NazivTrgovine"],
-              int.parse(store["StanjeRacuna"]), store["BrojZaposlenika"]));
+          fetchedStores.add(Store(
+            int.parse(store["Id_Trgovine"]),
+            store["NazivTrgovine"],
+            double.parse(store["StanjeRacuna"]),
+            store["BrojZaposlenika"],
+          ));
         }
       }
       areStoresFetched = true;
