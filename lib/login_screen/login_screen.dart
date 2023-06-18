@@ -99,7 +99,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
                           String password = passwordCont.text;
 
                           try {
-                            User.loggedIn = await ApiRequestManager.login(username, password);
+                            await ApiRequestManager.login(username, password);
                             User.storeUserData(username, password);
 
                             _navigateToMainScreen();
@@ -192,6 +192,7 @@ class _BaseLoginScreenState extends StoreFetcher<BaseLoginScreen> with StoreFetc
     setState(() {});
     if (selectedStoreObject != null) {
       User.loggedIn.store = selectedStoreObject!;
+      Navigator.popUntil(context, (route) => route.isFirst);
       _navigateToMainScreen();
     } else {
       Message.error(context).show("Oh no!\n"

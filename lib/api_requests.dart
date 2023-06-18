@@ -35,8 +35,8 @@ class ApiRequestManager {
   /// Call an API route
   static Uri route(Routes route) => Uri.parse("$root${route.name}.php");
 
-  /// Returns a new logged in User object or throws an LoginException if something goes south.
-  static Future<User> login(String username, String password) async {
+  /// Sets the User.loggedIn object. Throws exception if something went south.
+  static Future login(String username, String password) async {
     var fm = {"KorisnickoIme": username, "Lozinka": password};
 
     http.Response response = await http.post(
@@ -45,7 +45,7 @@ class ApiRequestManager {
     );
     var responseData = json.decode(utf8.decode(response.bodyBytes));
 
-    User user;
+    bool success = false;
 
     if (responseData["STATUS"] == true) {
       _setToken(responseData);
@@ -57,7 +57,7 @@ class ApiRequestManager {
         role = UserRole.getRole(UserRoleType.buyer)!;
       }
 
-      user = User.full(
+      User.loggedIn = User.full(
         firstName: responseData["DATA"]["Ime"],
         lastName: responseData["DATA"]["Prezime"],
         email: responseData["DATA"]["Email"],
@@ -65,11 +65,15 @@ class ApiRequestManager {
         password: password,
         role: role,
       );
-    } else {
-      throw LoginException(responseData["STATUSMESSAGE"]);
+      success = true;
+    } else if (responseData["STATUSMESSAGE"] == "USER NEEDS STORE") {
+      _setToken(responseData);
+      User.loggedIn = User(username: username, password: password);
     }
 
-    return user;
+    if (!success) {
+      throw LoginException(responseData["STATUSMESSAGE"]);
+    }
   }
 
   static Future register(NewUser user) async {
