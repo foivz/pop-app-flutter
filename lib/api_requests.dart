@@ -344,12 +344,12 @@ class ApiRequestManager {
 
   static Future addProductToStore(ProductData product) async {
     http.MultipartRequest req = http.MultipartRequest('POST', route(Routes.proizvodi));
-    req.fields.addAll({
+    req.fields.addAll(_appendUserToReq({
       "Naziv": product.title,
       "Opis": product.description,
       "Cijena": product.price.toString(),
       "Kolicina": product.remainingAmount.toString(),
-    });
+    }));
     if (product.imageFile != null)
       req.files.add(
         http.MultipartFile.fromBytes(
