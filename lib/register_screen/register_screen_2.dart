@@ -63,6 +63,8 @@ class _SecondRegisterScreenState extends State<SecondRegisterScreen> {
 
       failedLoginMessage = "$responseMessage.\n"
           "Please double-check the entered data and try again.";
+    } else {
+      User.loggedIn = newUser;
     }
   }
 
