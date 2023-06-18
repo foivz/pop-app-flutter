@@ -12,10 +12,10 @@ class LoginException implements Exception {
     switch (serverStatusMessage) {
       case "USER NEEDS STORE":
         messageForUser = "You are not assigned to any stores, yet!";
+        type = LoginExceptionType.storeMissing;
         break;
       case "This user hasn't been confirmed yet. Please contact your admin.":
         messageForUser = "Account awaiting confirmation.\nPlease be patient and try again later.";
-        type = LoginExceptionType.storeMissing;
         break;
       default:
         messageForUser = "Check your username and password!";
