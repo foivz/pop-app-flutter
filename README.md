@@ -3,15 +3,16 @@
 ## ENG
 Application for the course Entrepreneurial Venture.
 
-The application enables cooperation between buyers and sellers in a virtual market.  
-The seller has a store and the items he sells, and the customers buy the items with their available funds.
+The application enables cooperation between buyers (vendors) and sellers (customers) in a virtual market.  
+The seller has a store and the items they sell, and the buyers buy the items with their available funds.
 
 The application is a complete rebuild of the obsolete Android application from the private repository github.com/AIR-FOI-HR/AIR1903.
 
 ## HRV
 Aplikacija za kolegij Poduzetnički pothvat.
 
-Aplikacija omogućuje suradnju kupaca i prodavača na virtualnoj tržnici. Prodavač ima dućan i artikle koje prodaje, a kupci kupuju artikle raspoloživim sredstvima.
+Aplikacija omogućuje suradnju kupaca i prodavača na virtualnoj tržnici.  
+Prodavač ima dućan i artikle koje prodaje, a kupci kupuju artikle raspoloživim sredstvima.
 
 Aplikacija je restauracija zastarjele Android aplikacije s privatnog repozitorija github.com/AIR-FOI-HR/AIR1903.
 
