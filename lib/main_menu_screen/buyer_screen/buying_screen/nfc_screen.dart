@@ -8,14 +8,14 @@ import 'package:pop_app/myconstants.dart';
 import 'package:pop_app/reusable_components/message.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-class QRScannerScreen extends StatefulWidget {
-  const QRScannerScreen({Key? key}) : super(key: key);
+class NFCScreen extends StatefulWidget {
+  const NFCScreen({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _QRScannerScreenState();
+  State<StatefulWidget> createState() => _NFCScreenState();
 }
 
-class _QRScannerScreenState extends State<QRScannerScreen> {
+class _NFCScreenState extends State<NFCScreen> {
   bool codeScanned = false;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -55,9 +55,6 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Scan a QR code"),
-      ),
       backgroundColor: MyConstants.red,
       body: _buildQrView(context),
       bottomSheet: Container(
@@ -71,8 +68,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
         ),
         padding: const EdgeInsets.all(16.0),
         child: Text(
-          !codeScanned ? "Scan a seller's QR code to make a purchase." : "Processing...",
-          textAlign: TextAlign.center,
+          !codeScanned ? "Scan a seller's QR code" : "Processing scanned code...",
           style: TextStyle(color: !codeScanned ? Colors.white : MyConstants.accentColor),
         ),
       ),

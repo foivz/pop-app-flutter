@@ -1,3 +1,4 @@
+import 'package:pop_app/main_menu_screen/buyer_screen/buying_screen/nfc_screen.dart';
 import 'package:pop_app/main_menu_screen/buyer_screen/buying_screen/qr_scanner_screen.dart';
 import 'package:pop_app/invoice_details_screen/invoice_details_screen.dart';
 import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 class BuyingScreen extends StatelessWidget {
   const BuyingScreen({super.key});
 
+  final String _qrLabel = "Scan QR Code", _nfcLabel = "NFC payment", _enterCodeLabel = "Enter code";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,64 +25,85 @@ class BuyingScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text(
-                    "Make sure the seller is ready to sell the product!",
-                    style: Theme.of(context).textTheme.headlineMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                _header(context),
                 const SizedBox(height: MyConstants.formInputSpacer * 4),
-                FormSubmitButton(
-                  buttonText: 'Scan the QR Code',
-                  color: MyConstants.accentColor2,
-                  onPressed: () async {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                      return const QRScannerScreen();
-                    })).then((value) => value is bool ? null : Navigator.pop(context));
-                  },
-                ),
+                _btn(_qrLabel, null, () => _qrCode(context)),
                 const SizedBox(height: MyConstants.formInputSpacer),
-                const LineWithText(lineText: 'or'),
-                const SizedBox(height: MyConstants.formInputSpacer),
-                FormSubmitButton(
-                  buttonText: 'Enter code to purchase',
-                  color: MyConstants.accentColor2,
-                  type: FormSubmitButtonStyle.OUTLINE,
-                  onPressed: () async {
-                    TextEditingController codeCont = TextEditingController();
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: const Text('Purchase via code'),
-                        content: SizedBox(
-                          height: MyConstants.submitButtonHeight,
-                          child: Center(
-                            child: Form(
-                              child: CustomTextFormField(
-                                inputLabel: "Enter code",
-                                textEditingController: codeCont,
-                                autoFocus: true,
-                              ),
-                            ),
-                          ),
-                        ),
-                        surfaceTintColor: Colors.white,
-                        actions: <Widget>[
-                          TextButton(
-                            child: const Text('Confirm purchase'),
-                            onPressed: () => finalizeInvoiceViaInput(codeCont.text, context),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                _btn(_nfcLabel, null, () => _nfc(context)),
+                ...or,
+                _btn(_enterCodeLabel, FormSubmitButtonStyle.OUTLINE, () => _enterCode(context)),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  FormSubmitButton _btn(String label, FormSubmitButtonStyle? type, void Function() onPressed) {
+    return FormSubmitButton(
+      buttonText: label,
+      color: label == _nfcLabel ? MyConstants.accentColor : MyConstants.accentColor2,
+      highlightColor: label == _nfcLabel ? MyConstants.accentColor2 : MyConstants.accentColor,
+      type: type ?? FormSubmitButtonStyle.FILL,
+      onPressed: onPressed,
+    );
+  }
+
+  SizedBox _header(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.8,
+      child: Text(
+        "Make sure the seller is ready to sell the product!",
+        style: Theme.of(context).textTheme.headlineMedium,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  final List or = const [
+    SizedBox(height: MyConstants.formInputSpacer),
+    LineWithText(lineText: 'or'),
+    SizedBox(height: MyConstants.formInputSpacer),
+  ];
+
+  void _qrCode(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return const QRScannerScreen();
+    })).then((value) => value is bool ? null : Navigator.pop(context));
+  }
+
+  void _nfc(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return const NFCScreen();
+    })).then((value) => value is bool ? null : Navigator.pop(context));
+  }
+
+  void _enterCode(BuildContext context) {
+    TextEditingController codeCont = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Purchase via code'),
+        content: SizedBox(
+          height: MyConstants.submitButtonHeight,
+          child: Center(
+            child: Form(
+              child: CustomTextFormField(
+                inputLabel: "Enter code",
+                textEditingController: codeCont,
+                autoFocus: true,
+              ),
+            ),
+          ),
+        ),
+        surfaceTintColor: Colors.white,
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Confirm purchase'),
+            onPressed: () => finalizeInvoiceViaInput(codeCont.text, context),
+          ),
+        ],
       ),
     );
   }
