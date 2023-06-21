@@ -49,22 +49,25 @@ class FormSubmitButtonState extends State<FormSubmitButton> {
   @override
   Widget build(BuildContext context) {
     // double squareSize = widget.height > widget.width ? widget.width - 20 : widget.height - 20;
-    return loading
-        ? const CircularProgressIndicator()
-        : ElevatedButton(
-            style: _style(),
-            onPressed: widget.onPressed,
-            child: Row(mainAxisAlignment: widget.mainAxisAlignment, children: [
-              if (widget.leading != null) widget.leading!,
-              Text(
-                widget.buttonText,
-                style: TextStyle(
-                  color: _isFill() ? Colors.white : widget.color,
-                  fontSize: widget.fontSize ?? Theme.of(context).textTheme.titleLarge!.fontSize,
+    return ElevatedButton(
+      style: _style(),
+      onPressed: widget.onPressed,
+      child: !loading
+          ? Row(
+              mainAxisAlignment: widget.mainAxisAlignment,
+              children: [
+                if (widget.leading != null) widget.leading!,
+                Text(
+                  widget.buttonText,
+                  style: TextStyle(
+                    color: _isFill() ? Colors.white : widget.color,
+                    fontSize: widget.fontSize ?? Theme.of(context).textTheme.titleLarge!.fontSize,
+                  ),
                 ),
-              ),
-            ]),
-          );
+              ],
+            )
+          : const CircularProgressIndicator(color: Colors.white),
+    );
   }
 
   bool _isFill() => widget.type == FormSubmitButtonStyle.FILL;

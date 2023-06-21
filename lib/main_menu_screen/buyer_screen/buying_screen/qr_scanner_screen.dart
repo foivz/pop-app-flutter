@@ -55,20 +55,12 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Scan a QR code"),
-      ),
+      appBar: AppBar(title: const Text("Scan a QR code")),
       backgroundColor: MyConstants.red,
       body: _buildQrView(context),
       bottomSheet: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
-          color: MyConstants.red,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          ),
-        ),
+        decoration: _roundBorder,
         padding: const EdgeInsets.all(16.0),
         child: Text(
           !codeScanned ? "Scan a seller's QR code to make a purchase." : "Processing...",
@@ -78,6 +70,14 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       ),
     );
   }
+
+  final _roundBorder = const BoxDecoration(
+    color: MyConstants.red,
+    borderRadius: BorderRadius.only(
+      topLeft: Radius.circular(20.0),
+      topRight: Radius.circular(20.0),
+    ),
+  );
 
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
