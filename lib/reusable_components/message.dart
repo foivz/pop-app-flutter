@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/utils/myconstants.dart';
 
 class Message {
   late Color _color;

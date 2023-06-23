@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/utils/api_requests.dart';
 import 'package:pop_app/reusable_components/message.dart';
 
 class WalletScreen extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:pop_app/models/store.dart';
-import 'package:pop_app/secure_storage.dart';
+import 'package:pop_app/utils/secure_storage.dart';
 
 class User {
   late String firstName;

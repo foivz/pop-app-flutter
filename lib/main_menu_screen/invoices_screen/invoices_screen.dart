@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/utils/api_requests.dart';
 import 'package:pop_app/main_menu_screen/invoices_screen/invoice_card.dart';
-import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/utils/myconstants.dart';
 
 class InvoicesScreen extends StatefulWidget {
   const InvoicesScreen({super.key});

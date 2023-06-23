@@ -1,6 +1,6 @@
-import 'package:pop_app/login_screen/login_screen.dart';
+import 'package:pop_app/user_info_screen/login_screen/login_screen.dart';
 import 'package:pop_app/models/available_products.dart';
-import 'package:pop_app/themes.dart';
+import 'package:pop_app/utils/themes.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

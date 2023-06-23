@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pop_app/main_menu_screen/invoices_screen/invoices_screen.dart';
 import 'package:pop_app/main_menu_screen/wallet_screen/wallet_screen.dart';
-import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/utils/myconstants.dart';
 
 mixin MenuScreenMixin<T extends StatefulWidget> on State<T> {
   static const double iconSize = 148;

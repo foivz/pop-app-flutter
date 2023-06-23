@@ -1,8 +1,8 @@
-import 'package:pop_app/main_menu_screen/seller_screen/seller_menu.dart';
-import 'package:pop_app/login_screen/custom_elevatedbutton_widget.dart';
-import 'package:pop_app/main_menu_screen/buyer_screen/buyer_menu.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/seller_menu.dart';
+import 'package:pop_app/reusable_components/form_submit_button_widget.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/buyer_screen/buyer_menu.dart';
 import 'package:pop_app/models/user.dart';
-import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/utils/myconstants.dart';
 
 import 'package:flutter/material.dart';
 import 'dart:ui';

@@ -1,7 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
-import 'package:pop_app/invoice_details_screen/invoice_details_screen.dart';
+import 'package:pop_app/main_menu_screen/invoices_screen/invoice_details_screen/invoice_details_screen.dart';
 import 'package:pop_app/models/invoice.dart';
-import 'package:pop_app/myconstants.dart';
+import 'package:pop_app/utils/myconstants.dart';
 
 import 'package:flutter/material.dart';
 

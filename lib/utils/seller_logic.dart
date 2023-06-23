@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pop_app/api_requests.dart';
+import 'package:pop_app/utils/api_requests.dart';
 import 'package:pop_app/models/available_products.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/package_data.dart';
