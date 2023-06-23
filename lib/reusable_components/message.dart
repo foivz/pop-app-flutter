@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:pop_app/utils/myconstants.dart';
+import 'package:flutter/material.dart';
 
 class Message {
   late Color _color;
@@ -19,25 +19,68 @@ class Message {
     _color = Colors.red;
   }
 
-  void show(String displayText) {
-    ScaffoldMessenger.of(_context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        content: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: _color,
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-          ),
-          child: Text(
-            displayText,
-            textAlign: _textAlign,
-            style: TextStyle(color: _textColor, fontWeight: FontWeight.w500),
+  Future<void> clear() async {
+    _animCont!.reverse();
+    await Future.delayed(_animReverseDuration, () {
+      if (_context.mounted) {
+        ScaffoldMessenger.of(_context).removeCurrentSnackBar();
+      }
+      _isShowing = false;
+    });
+  }
+
+  static bool _isShowing = false;
+  static AnimationController? _animCont;
+  final Duration duration = const Duration(seconds: 4);
+  final Duration _animForwardDuration = const Duration(milliseconds: 250);
+  final Duration _animReverseDuration = const Duration(milliseconds: 150);
+
+  void show(String displayText) async {
+    _animCont ??= AnimationController(
+      vsync: Scaffold.of(_context),
+      duration: _animForwardDuration,
+      reverseDuration: _animReverseDuration,
+    );
+
+    if (_isShowing) {
+      await clear();
+    }
+
+    if (_context.mounted) {
+      ScaffoldMessenger.of(_context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.transparent,
+          behavior: SnackBarBehavior.floating,
+          duration: duration,
+          elevation: 0,
+          content: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(parent: _animCont!..forward(), curve: Curves.easeInOut)),
+            child: ScaleTransition(
+              scale: Tween<double>(
+                begin: 0,
+                end: 1,
+              ).animate(CurvedAnimation(parent: _animCont!..forward(), curve: Curves.easeInOut)),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: _color,
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                ),
+                child: Text(
+                  displayText,
+                  textAlign: _textAlign,
+                  style: TextStyle(color: _textColor, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ),
           ),
         ),
-      ),
-    );
+      );
+      Future.delayed(duration - _animReverseDuration, clear);
+      _isShowing = true;
+    }
   }
 }

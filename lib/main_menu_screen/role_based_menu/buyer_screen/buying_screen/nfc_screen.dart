@@ -6,7 +6,7 @@ import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 import 'package:pop_app/models/invoice.dart';
 import 'package:pop_app/utils/api_requests.dart';
 import 'package:pop_app/utils/myconstants.dart';
-import 'package:ndef/ndef.dart' as ndef;
+// import 'package:ndef/ndef.dart' as ndef; // TODO: uncomment this when implementing NFC
 
 import 'package:flutter/material.dart';
 

@@ -82,39 +82,44 @@ class _ItemCardState extends State<ItemCard>
             ListTile(
               leading: const Icon(Icons.edit_square, color: Colors.white),
               title: Text('Edit $type', style: const TextStyle(color: Colors.white)),
-              onTap: () {
-                switch (itemType) {
-                  case StoreContentType.Product:
-                    editProduct(context);
-                    break;
-                  case StoreContentType.Package:
-                    editPackage(context);
-                    break;
-                  default:
-                }
-              },
+              onTap: () => _editItem(itemType, id),
             ),
             if (!isSelected)
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.white),
                 title: Text('Delete $type', style: const TextStyle(color: Colors.white)),
-                onTap: () {
-                  switch (itemType) {
-                    case StoreContentType.Product:
-                      deleteProduct(context, id);
-                      break;
-                    case StoreContentType.Package:
-                      deletePackage(context, id);
-                      break;
-                    default:
-                  }
-                  Navigator.pop(context);
-                },
+                onTap: () => _deleteItem(itemType, id),
               ),
           ],
         );
       },
     );
+  }
+
+  void _editItem(StoreContentType itemType, String id) {
+    switch (itemType) {
+      case StoreContentType.Product:
+        editProduct(context);
+        break;
+      case StoreContentType.Package:
+        editPackage(context);
+        break;
+      default:
+    }
+    ;
+  }
+
+  void _deleteItem(StoreContentType itemType, String id) {
+    switch (itemType) {
+      case StoreContentType.Product:
+        deleteProduct(context, id);
+        break;
+      case StoreContentType.Package:
+        deletePackage(context, id);
+        break;
+      default:
+    }
+    Navigator.pop(context);
   }
 
   void deleteProduct(BuildContext context, String productId) {
@@ -295,22 +300,20 @@ class _ItemCardState extends State<ItemCard>
 
   Card _card(double width, bool notInCounterMode) {
     return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
       shadowColor: Colors.black,
       elevation: 10,
       borderOnForeground: true,
-      child: Padding(
+      child: Container(
+        color: isSelected ? MyConstants.accentColor.withOpacity(0.5) : Colors.white,
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Row(
-              children: [
-                _imagePreview(width),
-                _titleAndText(width),
-                _priceOrAmount(notInCounterMode),
-              ],
-            ),
+            Row(children: [
+              _imagePreview(width),
+              _titleAndText(width),
+              _priceOrAmount(notInCounterMode),
+            ]),
             _remainingAmount(),
           ],
         ),

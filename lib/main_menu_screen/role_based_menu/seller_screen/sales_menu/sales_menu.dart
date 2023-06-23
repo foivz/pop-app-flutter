@@ -69,97 +69,100 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("In stock"),
-        actions: [
-          RotationTransition(
-            turns: Tween(begin: 0.0, end: 1.0).animate(_animCont),
-            child: ScaleTransition(
-              scale: Tween(begin: 0.0, end: 1.0).animate(_animCont),
-              child: IconButton(
-                key: _sellIconKey,
-                style: ButtonStyle(iconSize: MaterialStateProperty.resolveWith((states) => 24)),
-                onPressed: () {
-                  List<Item> selectedItems = List.from(productsTab.selectedItems);
-                  selectedItems.addAll(packagesTab.selectedItems);
-
-                  if (selectedItems.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChangeNotifierProvider<ItemsSelectedForSelling>(
-                            create: (context) => ItemsSelectedForSelling(selectedItems),
-                            child: const SellItemsScreen()),
-                      ),
-                    );
-                  } else {
-                    Message.error(context).show(
-                      "You can't sell products until you select them. Select products to sell them.",
-                    );
-                  }
-                },
-                icon: const Icon(Icons.attach_money),
-              ),
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                showModalBottomSheet(
-                  showDragHandle: true,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.white,
-                  context: context,
-                  builder: (context) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Scaffold(
-                        body: StoreContentCreation(
-                          selectedIndex: tabController.index,
-                        ),
-                      ),
-                    );
-                  },
-                ).then((value) {
-                  if (value is bool) loadTabContents();
-                });
-              });
-            },
-            icon: const Icon(Icons.add),
-          ),
-        ],
+        title: const Text("Store content"),
+        actions: [_salesButtonWithAnimations(), _createStoreContentButton()],
       ),
       body: tabs(),
     );
   }
 
+  Widget _salesButtonWithAnimations() {
+    Tween<double> tween = Tween(begin: 0.0, end: 1.0);
+    return RotationTransition(
+      turns: tween.animate(_animCont),
+      child: ScaleTransition(
+        scale: tween.animate(_animCont),
+        // actual button
+        child: _makeSaleButton(),
+      ),
+    );
+  }
+
+  Widget _makeSaleButton() {
+    return IconButton(
+      key: _sellIconKey,
+      style: ButtonStyle(iconSize: MaterialStateProperty.resolveWith((states) => 24)),
+      onPressed: _makeSaleMenu,
+      icon: const Icon(Icons.attach_money),
+    );
+  }
+
+  void _makeSaleMenu() {
+    // if products are selected, open the sell items screen
+    List<Item> selectedItems = List.from(productsTab.selectedItems);
+    selectedItems.addAll(packagesTab.selectedItems);
+    if (selectedItems.isNotEmpty) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return ChangeNotifierProvider<ItemsSelectedForSelling>(
+          create: (context) => ItemsSelectedForSelling(selectedItems),
+          child: const SellItemsScreen(),
+        );
+      }));
+    } else {
+      Message.error(context).show(
+        "You can't sell products until you select them. Select products to sell them.",
+      );
+    }
+  }
+
+  Widget _createStoreContentButton() {
+    return IconButton(onPressed: _createContentMenu, icon: const Icon(Icons.add));
+  }
+
+  void _createContentMenu() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      showModalBottomSheet(
+        showDragHandle: true,
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Scaffold(
+              body: StoreContentCreation(selectedIndex: tabController.index),
+            ),
+          );
+        },
+      ).then((value) {
+        if (value is bool) loadTabContents();
+      });
+    });
+  }
+
   List<Widget> tabContents = List.empty(growable: true);
   bool loadTabContents() {
     generateNewProductsTabAndPackagesTabObjects();
-    setState(
-      () {
-        tabContents = [Container()];
-        tabContents = [productsTab, packagesTab];
-      },
-    );
+    setState(() {
+      tabContents = [Container()];
+      tabContents = [productsTab, packagesTab];
+    });
     return true;
   }
 
   Widget tabs() {
     return Column(
       children: [
-        TabBar(
-          controller: tabController,
-          tabs: const <Tab>[
-            Tab(text: "PRODUCTS"),
-            Tab(text: "PACKAGES"),
-          ],
-        ),
+        TabBar(controller: tabController, tabs: const <Tab>[
+          Tab(text: "PRODUCTS"),
+          Tab(text: "PACKAGES"),
+        ]),
         Expanded(
           child: TabBarView(
             controller: tabController,
             children: tabContents,
           ),
-        ),
+        )
       ],
     );
   }
