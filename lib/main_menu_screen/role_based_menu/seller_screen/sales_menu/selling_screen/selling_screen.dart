@@ -1,3 +1,4 @@
+import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/seller_qr_code_screen.dart';
 import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/selling_screen/nfc_screen.dart';
 import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/widgets/item_card.dart';
@@ -225,10 +226,23 @@ class _SellContentState extends State<SellContent> {
             ),
             child: const Text('Payment via QR code'),
           ),
-          TextButton(
-            onPressed: () => _calculateInvoice(
-                model: model, route: (initialInvoice) => SellerNFCScreen(invoice: initialInvoice)),
-            child: const Text('Payment via NFC'),
+          FutureBuilder(
+            future: FlutterNfcKit.nfcAvailability,
+            builder: (builder, snapshot) {
+              return TextButton(
+                onPressed: () {
+                  if (snapshot.hasData && snapshot.data == NFCAvailability.available) {
+                    _calculateInvoice(
+                      model: model,
+                      route: (initialInvoice) => SellerNFCScreen(invoice: initialInvoice),
+                    );
+                  }
+                },
+                child: snapshot.hasData && snapshot.data == NFCAvailability.available
+                    ? const Text('Payment via NFC')
+                    : const Text('Payment via NFC', style: TextStyle(color: Colors.grey)),
+              );
+            },
           ),
         ],
       ),

@@ -25,7 +25,12 @@ class Message {
       if (_context.mounted) {
         try {
           ScaffoldMessenger.of(_context).removeCurrentSnackBar();
-        } catch (e) {}
+        } catch (e) {
+          // maybe do stuff but probably not neccessary
+          //   This catch block only executes when the user bypasses the NFC availability check
+          //   and has the button for NFC payments enabled in spite of not having NFC enabled
+          //   on their device.
+        }
       }
       _isShowing = false;
     });
@@ -38,6 +43,8 @@ class Message {
   final Duration _animReverseDuration = const Duration(milliseconds: 150);
 
   void show(String displayText, {GlobalKey<ScaffoldState>? scaffoldKey}) async {
+    // had to add this line because of errors when scaffold for some reason doesn't register
+    // as existing, so you can pass the key instead to avoid the error
     ScaffoldState scaffoldState = scaffoldKey?.currentState ?? Scaffold.of(_context);
     _animCont ??= AnimationController(
       vsync: scaffoldState,
