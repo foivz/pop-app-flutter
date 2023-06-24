@@ -5,11 +5,10 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:pop_app/utils/myconstants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class SellerQRCodeScreen extends StatelessWidget {
   final InitialInvoice invoice;
-  const SellerQRCodeScreen(this.invoice, {super.key});
+  const SellerQRCodeScreen({super.key, required this.invoice});
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +62,7 @@ class SellerQRCodeScreen extends StatelessWidget {
       const SizedBox(height: MyConstants.formInputSpacer),
       FormSubmitButton(
         key: invoiceKey,
+        leading: const Icon(Icons.share, color: MyConstants.accentColor2),
         color: MyConstants.accentColor2,
         type: FormSubmitButtonStyle.OUTLINE,
         buttonText: invoice.code,

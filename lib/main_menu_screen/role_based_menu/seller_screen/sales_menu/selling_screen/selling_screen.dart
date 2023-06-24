@@ -1,4 +1,5 @@
 import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/seller_qr_code_screen.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/selling_screen/nfc_screen.dart';
 import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/widgets/item_card.dart';
 import 'package:pop_app/models/items_selected_for_selling.dart';
 import 'package:pop_app/exceptions/printable_exception.dart';
@@ -213,20 +214,31 @@ class _SellContentState extends State<SellContent> {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Initiate Payment'),
+        title: const Text('Initiate payment'),
         content: const Text('Confirm payment:'),
         surfaceTintColor: Colors.white,
         actions: <Widget>[
           TextButton(
-            onPressed: () => _calculateInvoice(model),
-            child: const Text('Generate QR Code for buyer'),
+            onPressed: () => _calculateInvoice(
+              model: model,
+              route: (initialInvoice) => SellerQRCodeScreen(invoice: initialInvoice),
+            ),
+            child: const Text('Payment via QR code'),
+          ),
+          TextButton(
+            onPressed: () => _calculateInvoice(
+                model: model, route: (initialInvoice) => SellerNFCScreen(invoice: initialInvoice)),
+            child: const Text('Payment via NFC'),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _calculateInvoice(ItemsSelectedForSelling model) async {
+  Future<void> _calculateInvoice({
+    required ItemsSelectedForSelling model,
+    required Widget Function(InitialInvoice) route,
+  }) async {
     try {
       double discountAmount = double.parse(discountInputCont.text);
       InitialInvoice initialInvoice = await ApiRequestManager.generateInvoice(
@@ -236,7 +248,7 @@ class _SellContentState extends State<SellContent> {
       if (context.mounted) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SellerQRCodeScreen(initialInvoice)),
+          MaterialPageRoute(builder: (context) => route(initialInvoice)),
         );
       }
     } on Exception catch (ex, _) {

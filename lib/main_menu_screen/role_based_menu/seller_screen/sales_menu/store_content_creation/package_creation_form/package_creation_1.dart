@@ -1,7 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
-import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_tab.dart';
-import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/store_content_creation/package_creation_form/package_creation_tab.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/store_content_creation/product_creation_form/product_creation_tab.dart';
 import 'package:pop_app/reusable_components/form_submit_button_widget.dart';
 import 'package:pop_app/reusable_components/form_text_input_field.dart';
 import 'package:pop_app/models/package_data.dart';

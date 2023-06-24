@@ -10,30 +10,32 @@ import 'package:pop_app/utils/myconstants.dart';
 
 import 'package:flutter/material.dart';
 
-class NFCScreen extends StatefulWidget {
-  const NFCScreen({Key? key}) : super(key: key);
+class BuyerNFCScreen extends StatefulWidget {
+  const BuyerNFCScreen({Key? key}) : super(key: key);
   @override
-  State<StatefulWidget> createState() => _NFCScreenState();
+  State<StatefulWidget> createState() => _BuyerNFCScreenState();
 }
 
-class _NFCScreenState extends State<NFCScreen> {
-  bool nfcFound = false;
-
+class _BuyerNFCScreenState extends State<BuyerNFCScreen> {
   @override
   void initState() {
     super.initState();
-    _initNFC();
+    _initNFC(scaffoldKey);
   }
 
-  void _initNFC() async {
+  bool nfcFound = false;
+  void _initNFC(key) async {
     var availability = await FlutterNfcKit.nfcAvailability;
     if (availability != NFCAvailability.available) {
       if (context.mounted) {
-        Message.error(context).show("NFC is not available on this device.");
+        try {
+          Message.error(context).show("NFC is not available on this device.", scaffoldKey: key);
+        } catch (e) {
+          print(e);
+        }
         Navigator.pop(context, false);
       }
     } else {
-      // timeout is android-exclusive
       var tag = await FlutterNfcKit.poll(
         iosMultipleTagMessage: "Multiple tags found!",
         iosAlertMessage: "Scan your tag",
@@ -63,9 +65,11 @@ class _NFCScreenState extends State<NFCScreen> {
     }
   }
 
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(title: const Text("Payment via NFC")),
       body: _buildNFCView(context),
       bottomSheet: Container(
@@ -94,13 +98,10 @@ class _NFCScreenState extends State<NFCScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              const Icon(Icons.nfc_rounded, size: 256),
-              if (!nfcFound) const CircularProgressIndicator(strokeWidth: 5),
-            ],
-          ),
+          Stack(alignment: Alignment.center, children: [
+            const Icon(Icons.nfc_rounded, size: 256),
+            if (!nfcFound) const CircularProgressIndicator(strokeWidth: 5)
+          ]),
           const SizedBox(height: MyConstants.formInputSpacer),
         ],
       ),

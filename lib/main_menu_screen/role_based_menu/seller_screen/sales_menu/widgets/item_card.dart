@@ -1,9 +1,9 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 import 'package:flutter/services.dart';
 import 'package:pop_app/utils/api_requests.dart';
-import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/add_store_content/package_creation_form/package_creation_1.dart';
-import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/add_store_content/product_creation_form/product_creation_tab.dart';
-import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/sales_menu.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/store_content_creation/package_creation_form/package_creation_1.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/store_content_creation/product_creation_form/product_creation_tab.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/selling_screen/sales_menu.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/package_data.dart';
 import 'package:pop_app/models/product_data.dart';
@@ -106,7 +106,6 @@ class _ItemCardState extends State<ItemCard>
         break;
       default:
     }
-    ;
   }
 
   void _deleteItem(StoreContentType itemType, String id) {
@@ -305,7 +304,10 @@ class _ItemCardState extends State<ItemCard>
       elevation: 10,
       borderOnForeground: true,
       child: Container(
-        color: isSelected ? MyConstants.accentColor.withOpacity(0.5) : Colors.white,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: isSelected ? MyConstants.accentColor.withOpacity(0.5) : Colors.white,
+        ),
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [

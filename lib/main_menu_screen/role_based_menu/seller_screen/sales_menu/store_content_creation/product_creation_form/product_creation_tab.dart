@@ -1,5 +1,5 @@
 // ignore_for_file: constant_identifier_names, curly_braces_in_flow_control_structures, unused_field
-import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/sales_menu.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/selling_screen/sales_menu.dart';
 import 'package:pop_app/reusable_components/form_submit_button_widget.dart';
 import 'package:pop_app/reusable_components/form_text_input_field.dart';
 import 'package:pop_app/models/product_data.dart';

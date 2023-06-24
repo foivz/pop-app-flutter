@@ -23,7 +23,9 @@ class Message {
     _animCont!.reverse();
     await Future.delayed(_animReverseDuration, () {
       if (_context.mounted) {
-        ScaffoldMessenger.of(_context).removeCurrentSnackBar();
+        try {
+          ScaffoldMessenger.of(_context).removeCurrentSnackBar();
+        } catch (e) {}
       }
       _isShowing = false;
     });
@@ -35,9 +37,10 @@ class Message {
   final Duration _animForwardDuration = const Duration(milliseconds: 250);
   final Duration _animReverseDuration = const Duration(milliseconds: 150);
 
-  void show(String displayText) async {
+  void show(String displayText, {GlobalKey<ScaffoldState>? scaffoldKey}) async {
+    ScaffoldState scaffoldState = scaffoldKey?.currentState ?? Scaffold.of(_context);
     _animCont ??= AnimationController(
-      vsync: Scaffold.of(_context),
+      vsync: scaffoldState,
       duration: _animForwardDuration,
       reverseDuration: _animReverseDuration,
     );

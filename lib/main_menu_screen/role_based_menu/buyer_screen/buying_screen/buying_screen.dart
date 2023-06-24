@@ -1,5 +1,6 @@
-import 'package:pop_app/main_menu_screen/role_based_menu/buyer_screen/buying_screen/nfc_screen.dart';
-import 'package:pop_app/main_menu_screen/role_based_menu/buyer_screen/buying_screen/qr_scanner_screen.dart';
+import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/buyer_screen/buying_screen/buying_view/nfc_screen.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/buyer_screen/buying_screen/buying_view/qr_scanner_screen.dart';
 import 'package:pop_app/main_menu_screen/invoices_screen/invoice_details_screen/invoice_details_screen.dart';
 import 'package:pop_app/reusable_components/form_submit_button_widget.dart';
 import 'package:pop_app/reusable_components/form_text_input_field.dart';
@@ -10,10 +11,15 @@ import 'package:pop_app/utils/myconstants.dart';
 
 import 'package:flutter/material.dart';
 
-class BuyingScreen extends StatelessWidget {
+class BuyingScreen extends StatefulWidget {
   const BuyingScreen({super.key});
+  @override
+  State<BuyingScreen> createState() => _BuyingScreenState();
+}
 
+class _BuyingScreenState extends State<BuyingScreen> {
   final String _qrLabel = "Scan QR Code", _nfcLabel = "NFC payment", _enterCodeLabel = "Enter code";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +35,16 @@ class BuyingScreen extends StatelessWidget {
                 const SizedBox(height: MyConstants.formInputSpacer * 4),
                 _btn(_qrLabel, null, () => _qrCode(context)),
                 const SizedBox(height: MyConstants.formInputSpacer),
-                _btn(_nfcLabel, null, () => _nfc(context)),
+                FutureBuilder(
+                  future: FlutterNfcKit.nfcAvailability,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data == NFCAvailability.available) {
+                      return _btn(_nfcLabel, null, () => _nfc(context));
+                    } else {
+                      return _btn(_nfcLabel, null, () => _nfc(context), enabled: false);
+                    }
+                  },
+                ),
                 ...or,
                 _btn(_enterCodeLabel, FormSubmitButtonStyle.OUTLINE, () => _enterCode(context)),
               ],
@@ -40,11 +55,16 @@ class BuyingScreen extends StatelessWidget {
     );
   }
 
-  FormSubmitButton _btn(String label, FormSubmitButtonStyle? type, void Function() onPressed) {
+  final GlobalKey<FormSubmitButtonState> _nfcBtnKey = GlobalKey<FormSubmitButtonState>();
+
+  FormSubmitButton _btn(String label, FormSubmitButtonStyle? type, void Function() onPressed,
+      {bool enabled = true}) {
+    if (!enabled) _nfcBtnKey.currentState?.setEnabled(false);
     return FormSubmitButton(
+      key: label == _nfcLabel ? _nfcBtnKey : null,
       buttonText: label,
-      color: label == _nfcLabel ? MyConstants.accentColor : MyConstants.accentColor2,
-      highlightColor: label == _nfcLabel ? MyConstants.accentColor2 : MyConstants.accentColor,
+      color: MyConstants.accentColor2,
+      highlightColor: MyConstants.accentColor,
       type: type ?? FormSubmitButtonStyle.FILL,
       onPressed: onPressed,
     );
@@ -69,14 +89,17 @@ class BuyingScreen extends StatelessWidget {
 
   void _qrCode(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return const QRScannerScreen();
+      return const BuyerQRScreen();
     })).then((value) => value is bool ? null : Navigator.pop(context));
   }
 
   void _nfc(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return const NFCScreen();
-    })).then((value) => value is bool ? null : Navigator.pop(context));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) {
+          return const BuyerNFCScreen();
+        }))
+        .then((value) => value is bool ? null : Navigator.pop(context))
+        .catchError((e) => Message.error(context).show("failure"));
   }
 
   void _enterCode(BuildContext context) {

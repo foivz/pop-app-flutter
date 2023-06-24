@@ -51,7 +51,7 @@ class FormSubmitButtonState extends State<FormSubmitButton> {
     // double squareSize = widget.height > widget.width ? widget.width - 20 : widget.height - 20;
     return ElevatedButton(
       style: _style(),
-      onPressed: widget.onPressed,
+      onPressed: enabled ? widget.onPressed : null,
       child: !loading
           ? Row(
               mainAxisAlignment: widget.mainAxisAlignment,

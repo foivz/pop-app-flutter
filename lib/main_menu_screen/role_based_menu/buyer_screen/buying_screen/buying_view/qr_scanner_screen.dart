@@ -8,14 +8,14 @@ import 'package:pop_app/utils/myconstants.dart';
 import 'package:pop_app/reusable_components/message.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-class QRScannerScreen extends StatefulWidget {
-  const QRScannerScreen({Key? key}) : super(key: key);
+class BuyerQRScreen extends StatefulWidget {
+  const BuyerQRScreen({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _QRScannerScreenState();
+  State<StatefulWidget> createState() => _BuyerQRScreenState();
 }
 
-class _QRScannerScreenState extends State<QRScannerScreen> {
+class _BuyerQRScreenState extends State<BuyerQRScreen> {
   bool codeScanned = false;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');

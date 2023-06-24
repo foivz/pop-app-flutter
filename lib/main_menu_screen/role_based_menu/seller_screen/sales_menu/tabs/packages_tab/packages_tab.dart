@@ -5,7 +5,7 @@ import 'package:pop_app/utils/api_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:pop_app/models/package_data.dart';
 
-import '../widgets/items_tab.dart';
+import '../../widgets/items_tab.dart';
 
 class PackagesTab extends ItemsTab {
   PackagesTab({super.key, required super.onSelectionStateChange});

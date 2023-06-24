@@ -1,9 +1,9 @@
-import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/products_tab/products_tab.dart';
-import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/packages_tab/packages_tab.dart';
-import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/add_store_content/store_content_creation_menu.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/tabs/products_tab/products_tab.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/tabs/packages_tab/packages_tab.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/store_content_creation/store_content_creation_menu.dart';
 
 import 'package:flutter/material.dart';
-import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/sell_items_screen.dart';
+import 'package:pop_app/main_menu_screen/role_based_menu/seller_screen/sales_menu/selling_screen/selling_screen.dart';
 import 'package:pop_app/models/item.dart';
 import 'package:pop_app/models/items_selected_for_selling.dart';
 import 'package:pop_app/reusable_components/message.dart';
@@ -130,7 +130,7 @@ class SalesMenuScreenState extends State<SalesMenuScreen> with TickerProviderSta
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Scaffold(
-              body: StoreContentCreation(selectedIndex: tabController.index),
+              body: StoreContentCreationMenu(selectedIndex: tabController.index),
             ),
           );
         },

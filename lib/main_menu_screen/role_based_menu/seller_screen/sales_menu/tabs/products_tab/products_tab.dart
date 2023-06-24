@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:pop_app/utils/seller_logic.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/items_tab.dart';
+import '../../widgets/items_tab.dart';
 
 class ProductsTab extends ItemsTab {
   final int startAmount;
